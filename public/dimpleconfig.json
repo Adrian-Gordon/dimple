@@ -1,0 +1,9 @@
+{
+  
+    "databasehost"     : "dimpledbinstance.ck95qqenkefj.eu-west-1.rds.amazonaws.com",
+    "databaseuser"     : "dimpledbuser",
+    "databasepassword" : "dimpledbpw",
+    "database": "dimpledbdsd"
+    
+  
+}

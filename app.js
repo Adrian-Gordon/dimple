@@ -39,6 +39,37 @@ if(typeof String.prototype.endsWith !== "function") {
     };
 }
 
+
+//nconf is used globally
+nconf=require('nconf');
+
+//favour environment variables and command line arguments
+nconf.env().argv();
+
+//if 'conf' environment variable or command line argument is provided, load 
+//the configuration JSON file provided as the value
+if(path=nconf.get('conf')){
+  console.log("use file: " + path);
+  nconf.file({file:path});
+ 
+}
+
+//nconf.defaults({
+  
+ //   databasehost     : 'dimpledbinstance.ck95qqenkefj.eu-west-1.rds.amazonaws.com',
+ //   databaseuser     : 'dimpledbuser',
+ //   databasepassword : 'dimpledbpw',
+  //  database: 'dimpledb'
+    
+  
+//});
+
+
+
+
+
+
+
 /*Authentication*/
  var authenticateAPI = function(req, res, next){
   //console.log("authenticate API");
@@ -191,11 +222,13 @@ app.get('/dimpleconsole.html',authenticate); //must be logged in to go to the co
 app.use(express.static(__dirname + '/public'));
 
 
+console.log("database: " + nconf.get('database'));
+
  pool  = mysql.createPool({
-    host     : 'dimpledbinstance.ck95qqenkefj.eu-west-1.rds.amazonaws.com',
-    user     : 'dimpledbuser',
-    password : 'dimpledbpw',
-    database: 'dimpledb'
+    host     : nconf.get('databasehost'),
+    user     : nconf.get('databaseuser'),
+    password : nconf.get('databasepassword'),
+    database: nconf.get('database')
 });
 
 /*Authentication*/
