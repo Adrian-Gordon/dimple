@@ -1,0 +1,1 @@
+curl --data "assetdescription=A+Test+Asset&assettypeid=3&rating=0&posterassetid=0&userid=1&assetsubtypeid=0&version=1.0&username=culturehub&apikey=abcdefghijklmnopqrstuvwxyz1234567890" http://localhost:3000/api/v1/assets
