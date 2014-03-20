@@ -79,15 +79,16 @@ if(path=nconf.get('conf')){
     }
     else{ //see if username/parameters match
 
-      console.log("check call username api key");
-      console.log("req: " + JSON.stringify(req.query));
-      var username=req.query.username;
-      var apikey=req.query.apikey;
+      
+      //console.log("req: " + JSON.stringify(req.query));
+      var username=req.param('username');
+      var apikey=req.param('apikey');
+      console.log("check call username " + username + " api key " + apikey);
 
      // console.log("username: " + username + " apikey: " + apikey);
 
       if((username !== undefined)&&(users.getUserApiKey(username)===apikey)){
-       // console.log("API auth OK");
+        console.log("API auth OK");
         return next();
       }
      // else{
@@ -197,6 +198,7 @@ app.put('/api/v1/users/:userid/projects/:projectid',authenticateAPI,users.update
 //assets
 
 app.get('/api/v1/assets/',authenticateAPI,assets.getAssets);
+app.post('/api/v1/assets',authenticateAPI,assets.addAsset);
 
 
 app.use('/api/v1/users/',users.handleError);
@@ -2101,7 +2103,17 @@ function assembleAssets(req,res){
     }
 
     function uploadImageFromUrl(req,res){
+
+      var parsedUrl= require('url').parse(req.url,true);
+      var pathName=parsedUrl.pathname;
+      var host=parsedUrl.host;
+
+      
+      console.log("parsed url: " + JSON.stringify(parsedUrl));
+      console.log("pathname: " + pathName);
+
       var url=req.body.url;
+      var assetdescription=req.body.description;
 
      
       var fname= randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -2112,7 +2124,43 @@ function assembleAssets(req,res){
        console.log("upload to " + pathToUpload + " from: " + url);
 
        download(url,pathToUpload,function(){
-          res.end("{url:'" +"/uploads/" + fname +'.' + extension +"'}");
+
+        //at this point we need to create the asset
+          console.log("assetdescription: " + assetdescription + " userid: " + req["user"].userid);
+          console.log(JSON.stringify(req["user"]));
+          var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
+          console.log("uri: " + uri);
+          //create the asset
+          request({
+              uri:uri,
+              method:"POST",
+              form:{
+                "assetdescription": assetdescription,
+                "userid":req["user"].userid,
+                "assettypeid":3,
+                "assetsubtypeid":0,
+                "rating": 0,
+                "posterassetid":0,
+                "version":1.0,
+                "username":req["user"].username,
+                "apikey": users.getUserApiKey(req["user"].username)
+              }
+
+          },
+          function(error,response,body){
+            if(error){
+              console.log("error " + error);
+            }
+              console.log("add asset response body:" + body);
+              var returnedObject= eval('(' + body + ')');
+
+              var newAssetId= returnedObject.insertId;
+              res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',bannerassetid:" + newAssetId + "}");
+
+          }
+            );
+
+          //res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',bannerassetid:" + newAssetId + "}");
        });
        
     }

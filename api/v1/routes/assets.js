@@ -188,6 +188,77 @@ module.exports.getAsset=function(req,res,next){
           });
 }
 
+
+
+module.exports.addAsset=function(req,res,next){
+  pool.getConnection(function(err, connection) {
+            
+            
+            var assetdescription=req.param('assetdescription');
+            var assettypeid=req.param('assettypeid');
+            var rating=req.param('rating');
+            var posterassetid=req.param('posterassetid');
+            var userid=req.param('userid');
+            var assetsubtypeid=req.param('assetsubtypeid');
+            var version=req.param('version');
+            
+            console.log("req.body:" + JSON.stringify(req.query));
+              var assetQuery = "insert into asset values(null,'" + assetdescription + "'," + assettypeid +"," + rating + "," + posterassetid + "," + userid + "," + assetsubtypeid + "," + version + ");";
+
+              console.log("insert query: " + assetQuery);
+             if (err){
+                    var error=new Error("Database Connection Error");
+                    error.http_code=500;
+                    error.error_type='Internal Server Error';
+                    next(error);
+                            console.log("getConnection error: " + err);
+                            //doneAllQueries("Error","Internal Database Connection Error");
+                            //returnObject.response="Error";
+                            //returnObject.message="Internal Database Connection Error";
+                            //res.end(JSON.stringify(returnObject));
+                            //res.status(404).send('Not found');
+                            //return; //we're done
+             }
+            
+             connection.query(assetQuery,function(err,rows){
+                 console.log("rows: " + JSON.stringify(rows));
+               
+                 if (err){
+                      var error=new Error("Database Query Error");
+                    error.http_code=500;
+                    error.error_type='Internal Server Error'
+                    next(error);
+                            console.log("database query error: " + err); 
+                            //returnObject.response="Error";
+                            //returnObject.message="Internal Database Query Error";
+                            //res.end(JSON.stringify(returnObject));
+                           // res.status(404).send('Not found');
+                            //return;
+                  }
+
+                  //succeeded
+                  console.log(JSON.stringify(rows));
+                  console.log("new asset: " + rows.insertId);
+                  res.end(JSON.stringify(rows));
+
+                  //if(rows.length > 0){
+                  //  res.writeHead(200, {'Content-Type': 'application/json'});
+                  //res.end(JSON.stringify(rows));
+                //}
+                //else{
+                //  var error=new Error("Not Found");
+                //    error.http_code=404;
+                //    error.error_type='Client Error';
+          //    next(error);
+              //return;
+
+                //}
+              //console.log(JSON.stringify(rows));
+              });
+
+          });
+}
+
 /*module.exports.getUserProjects=function(req,res,next){
 	pool.getConnection(function(err, connection) {
               var userQuery = "select * from project where userid=" + req.params.userid;

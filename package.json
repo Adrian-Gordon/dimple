@@ -11,7 +11,8 @@
     "xml2js": "~0.4.1",
     "passport-local": "~0.1.6",
     "mysql": "~2.1.0",
-    "request": "~2.34.0"
+    "request": "~2.34.0",
+    "kue": "~0.7.5"
   },
   "main": "app.js",
   "scripts": {

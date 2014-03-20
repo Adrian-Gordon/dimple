@@ -86,6 +86,11 @@
 
 <!-- Templates -->
 
+
+
+
+
+
 <script type="text/template" id='project-item-template'>
   
   
@@ -245,6 +250,14 @@
 </script>
 
 
+
+<script type="text/template" id='enter-image-url-template'>
+<p><label>url:</label><input name="url" type="text"></input>
+   <label>description:</label><input name="description" type="text"></input>
+   <button type="button" >OK</button>
+</p>
+</script>
+
 <!-- end Templates -->
 <!-- models -->
 
@@ -260,13 +273,14 @@
 <script src="javascripts/views/projectdetails.js"></script>
 <script src="javascripts/views/setimage.js"></script>
 <script src="javascripts/views/selectimage.js"></script>
+<script src="javascripts/views/enterimageurl.js"></script>
 
 
 <!-- Collections -->
 
 <script src="javascripts/collections/projects.js"></script>
 <script src="javascripts/collections/assets.js"></script>
-<script src="javascripts/collections/images.js"></script>
+<!--<script src="javascripts/collections/images.js"></script>-->
 
 
 <!-- Auxilliary functions -->
@@ -359,7 +373,7 @@
   $(function(){
 
 
-
+/*
      var frm=$('#uploadbannerimageform');
       //console.log("Form: " + frm);
     $('#uploadbannerimageform').submit(function (ev) {
@@ -370,7 +384,7 @@
             url: frm.attr('action'),
             data: frm.serialize(),
             success: function (data) {
-                //console.log("uplaoded from url: " + data);
+                console.log("uplaoded from url: " + data);
                 
                 var rval = eval('(' + data + ')');
                //console.log("url now: " + rval.url);
@@ -381,6 +395,7 @@
 
         ev.preventDefault();
       });
+  */
 
     $( "#choosebanner" ).dialog({
       autoOpen: false,
@@ -546,15 +561,16 @@
      
         <h3>Enter Banner URL</h3>
          <form   id="uploadbannerimageform"  name="uploadbannerimageform" method="post" action="UploadImageFromUrl">
-            <div>
-              <p><label>url:</label><input name="url" type="text"></input><button type="button" onclick="$('#uploadbannerimageform').submit()">OK</button></p>
+            <div id="enterimageurldiv">
           </div>
         </form>
       <h3>Upload Banner Image</h3>
       <div>
         <form id='choosebanneruploadform' method="post" enctype="multipart/form-data">
+          <div id="uploadimagediv">
           <input type="file" name="image" id='bannerfile'/>
           <p><image id="bannerimagetarget"></image></p>
+        </div>
         </form>
       </div>
       <h3>Choose Existing Image</h3>

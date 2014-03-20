@@ -24,6 +24,14 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 		//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
 		var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:this.model,targetAttribute:'bannerassetid',targetEl:'projectbannerimg'});
 
+		//create the new enterimageurl view
+
+		var enterImageUrlView=new dimpleConsoleApp.EnterImageUrlView({el:'#enterimageurldiv',model:this.model});
+
+		//create the new uploadImageView
+
+		//var uploadImageView=dimpleConsoleApp.UploadImageView({el:'uploadimagediv',model:this.model});
+
 		return (this);
     },
 
@@ -75,9 +83,9 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 	},*/
         
         setBanner: function(){
-            console.log("set banner");
-            this.paginatedImageCollection=new dimpleConsoleApp.ImageAssets(dimpleConsoleApp.allUserImageAssets);
-            console.log("length: " + dimpleConsoleApp.allUserImageAssets.length + " " + JSON.stringify(this.paginatedImageCollection));
+            //console.log("set banner");
+            //this.paginatedImageCollection=new dimpleConsoleApp.ImageAssets(dimpleConsoleApp.allUserImageAssets);
+            //console.log("length: " + dimpleConsoleApp.allUserImageAssets.length + " " + JSON.stringify(this.paginatedImageCollection));
             //this.paginatedImageCollection.bootstrap();
             
             
