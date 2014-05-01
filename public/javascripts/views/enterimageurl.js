@@ -41,7 +41,7 @@ dimpleConsoleApp.EnterImageUrlView=Backbone.View.extend({
                //console.log("url now: " + rval.url);
                $('#dlgcurrentbannerimg').attr('src',rval.url);
               // model.bannerassetid=rval.bannerassetid;
-               model.set({bannerassetid:rval.bannerassetid});
+               model.set({bannerassetid:rval.assetid});
                model.save();
                 //alert('ok');
             }

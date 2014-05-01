@@ -2,7 +2,8 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
 
 //Project Model
 dimpleConsoleApp.Asset=Backbone.Model.extend({
-		idAttribute:'assettid',
+		urlRoot : '/api/v1/assets/',
+		idAttribute:'assetid',
 		defaults:{
 			"assetdescription":null,
 			"assettypeid":0,

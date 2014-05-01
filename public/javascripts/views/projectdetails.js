@@ -19,18 +19,38 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 		$(this.el).html(this.template(this.model.toJSON()));
 
 
+		//create the new image/description view
 
-		//create the new paginated image view
-		//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
-		var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:this.model,targetAttribute:'bannerassetid',targetEl:'projectbannerimg'});
+		//imageAndDescriptionView gets the Asset that is the image as its model
 
-		//create the new enterimageurl view
+		//get the banner asset
 
-		var enterImageUrlView=new dimpleConsoleApp.EnterImageUrlView({el:'#enterimageurldiv',model:this.model});
+		console.log("model: " + JSON.stringify(this.model));
+		var bannerAsset=new dimpleConsoleApp.Asset({assetid: this.model.get('bannerassetid')});
+		var model=this.model;
+		bannerAsset.fetch().done(function(){
+			console.log("banner Asset: " + bannerAsset.toJSON());
+			var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:bannerAsset});
 
-		//create the new uploadImageView
 
-		//var uploadImageView=dimpleConsoleApp.UploadImageView({el:'uploadimagediv',model:this.model});
+		
+
+			//var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:this.model});
+
+			
+			//create the new enterimageurl view
+
+			var enterImageUrlView=new dimpleConsoleApp.EnterImageUrlView({el:'#enterimageurldiv',model:model});
+
+			//create the new uploadImageView
+			var uploadLocalImageView=new dimpleConsoleApp.UploadLocalImageView({el:'#uploadlocalimagediv',model:model});
+
+			//create the new paginated image view
+			//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
+			var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerassetid',targetEl:'dlgcurrentbannerimg'});
+
+		});
+		
 
 		return (this);
     },

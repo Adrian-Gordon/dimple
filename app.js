@@ -6,7 +6,7 @@ if(typeof String.prototype.endsWith !== "function") {
      * String.prototype.endsWith
      * Check if given string locate at the end of current string
      * @param {string} substring substring to locate in the current string.
-     * @param {number=} position end the endsWith check at that position
+     * @param {number=} position end the endsWith check at that positionusers
      * @return {boolean}
      *
      * @edition ECMA-262 6th Edition, 15.5.4.23
@@ -43,6 +43,11 @@ if(typeof String.prototype.endsWith !== "function") {
 //nconf is used globally
 nconf=require('nconf');
 
+var AWS = require('aws-sdk'); 
+
+
+
+
 //favour environment variables and command line arguments
 nconf.env().argv();
 
@@ -65,7 +70,9 @@ if(path=nconf.get('conf')){
 //});
 
 
-
+//AWS.config.loadFromPath('AWSCredentials.json');
+AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey")});
+var s3 = new AWS.S3();
 
 
 
@@ -123,6 +130,10 @@ var app = express();
 var projects=require('./api/v1/routes/projects');
 var users=require('./api/v1/routes/users');
 var assets=require('./api/v1/routes/assets');
+var assetassemblies=require('./api/v1/routes/assetassemblies');
+var gm=require('gm');
+var mime=require("mime");
+var util=require('util');
 passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy;
 
@@ -171,14 +182,23 @@ app.get('/GenerateStylesheet',generateStylesheet);
 app.post('/UploadImageFromUrl',authenticateAPI,uploadImageFromUrl);
 
 
+
+app.post('/UploadLocalImage',authenticateAPI,uploadLocalImage);
+
+
+
+
 //RESTful API
 
 //projects
 app.get('/api/v1/projects/',authenticateAPI,projects.getProjects);
+app.get('/api/v1/projects/:projectid/assetassemblies',projects.getProjectAssetAssemblies);
 app.get('/api/v1/projects/:projectid',authenticateAPI,projects.getProject);
 
 
-app.use('/api/v1/projects/',projects.handleError);
+app.use('/api/v1/projects/',authenticateAPI,projects.handleError);
+
+
 
 
 
@@ -198,7 +218,14 @@ app.put('/api/v1/users/:userid/projects/:projectid',authenticateAPI,users.update
 //assets
 
 app.get('/api/v1/assets/',authenticateAPI,assets.getAssets);
+app.get('/api/v1/assets/:assetid',authenticateAPI,assets.getAsset);
 app.post('/api/v1/assets',authenticateAPI,assets.addAsset);
+app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
+
+
+//assetassemblies
+app.get('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.getAssetAssemblies);
+app.get('/api/v1/assetassemblies/:assetassemblyid',authenticateAPI,assetassemblies.getAssetAssembly);
 
 
 app.use('/api/v1/users/',users.handleError);
@@ -2102,6 +2129,88 @@ function assembleAssets(req,res){
         
     }
 
+
+    function uploadLocalImage(req, res){
+      // the uploaded file can be found as `req.files.image` and the
+      // title field as `req.body.title`
+       var fname= randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      var extension=fileExtension(req.files.afile.originalFilename);
+      var assetdescription=req.body.description;
+    var ins = fs.createReadStream(req.files.afile.path);
+
+    var pathToUpload=__dirname + '/public/uploads/' + fname + '.' + extension;
+    var  ous = fs.createWriteStream(pathToUpload);
+          util.pump(ins, ous, function(err) {
+            if(err) {
+              console.log("error:" + err);
+            } else {
+
+              //create the asset
+
+
+        //at this point we need to create the asset
+          console.log("assetdescription: " + assetdescription + " userid: " + req["user"].userid);
+          console.log(JSON.stringify(req["user"]));
+          var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
+          console.log("uri: " + uri);
+          //create the asset
+          request({
+              uri:uri,
+              method:"POST",
+              form:{
+                "assetdescription": assetdescription,
+                "userid":req["user"].userid,
+                "assettypeid":3,
+                "assetsubtypeid":0,
+                "rating": 0,
+                "posterassetid":0,
+                "version":1.0,
+                "username":req["user"].username,
+                "apikey": users.getUserApiKey(req["user"].username)
+              }
+
+             },
+              function(error,response,body){
+                if(error){
+                  console.log("error " + error);
+                }
+                  console.log("add asset response body:" + body);
+                  var returnedObject= eval('(' + body + ')');
+
+                  var newAssetId= returnedObject.insertId;
+
+                  //upload original image to cloudfront
+                  var key="user" + req["user"].userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
+                  uploadToAWS(pathToUpload,key,"image",newAssetId,req["user"].userid);
+
+
+                 
+
+
+                  res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
+
+              }
+                );
+
+
+
+
+
+              //res.end("{url:'" + '/uploads/' + fname + '.' + extension + "'}");
+            }
+          });
+
+
+     // console.log("path:" + JSON.stringify(req.files.afile.path));
+      // console.log("filename:" + JSON.stringify(req.files.afile.originalFilename));
+      /*res.send(format('\nuploaded %s (%d Kb) to %s as %s'
+       , req.files.image.name
+        , req.files.image.size / 1024 | 0 
+        , req.files.image.path
+        , req.body.title));*/
+    };
+
+
     function uploadImageFromUrl(req,res){
 
       var parsedUrl= require('url').parse(req.url,true);
@@ -2155,7 +2264,16 @@ function assembleAssets(req,res){
               var returnedObject= eval('(' + body + ')');
 
               var newAssetId= returnedObject.insertId;
-              res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',bannerassetid:" + newAssetId + "}");
+
+              //upload original image to cloudfront
+              var key="user" + req["user"].userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
+              uploadToAWS(pathToUpload,key,"image",newAssetId,req["user"].userid);
+
+
+             
+
+
+              res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
 
           }
             );
@@ -2188,17 +2306,123 @@ function assembleAssets(req,res){
   }
 
 
-// // Example reading from the request query string of an HTTP get request.
-// app.get('/test', function(req, res) {
-//   // GET http://example.parseapp.com/test?message=hello
-//   res.send(req.query.message);
-// });
+/*Upload a file to AWS*/
 
-// // Example reading from the request body of an HTTP post request.
-// app.post('/test', function(req, res) {
-//   // POST http://example.parseapp.com/test (with request body "message=hello")
-//   res.send(req.body.message);
-// });
+  function uploadToAWS(path,key,type,newAssetId,userId){
 
-// Attach the Express app to Cloud Code.
+
+        fs.readFile(path, function(err, file_buffer){
+            var params = {
+                ACL:'public-read',
+                Bucket: nconf.get("awsbucket"),
+                Key: key,
+                Body: file_buffer
+              };
+
+              s3.putObject(params, function (perr, pres) {
+              if (perr) {
+                  console.log("Error uploading data: ", perr);
+              } else {
+                  console.log("Successfully uploaded data to " + params.Bucket + "/" + key);
+                   //create and queue a new job
+                   //image conversion
+                   if(type ==="image"){
+                        queue.create('imageconversion', {
+                          url: "http://" + nconf.get("awsdistribution") + "/" + key,
+                          assetid: newAssetId,
+                          userid: userId
+
+                   
+                        }).save();
+
+                         gm(path).size(function(err,value){
+                                 if(!err){
+                                      console.log("size returns: " + JSON.stringify(value));
+                                      var width=value.width;
+                                      var height=value.height;
+                                      var mimeType=mime.lookup(path);
+
+                                      var awsUrl="http://" + nconf.get("awsdistribution")+ "/" + key;
+
+                                      var insertQuery="insert into assetpresentation values(null," + newAssetId + ",'" + mimeType + "','" + awsUrl + "',null,null," + width + "," + height + ",null,null,null);";
+                                      console.log("insertQuery: " + insertQuery);
+
+                                      //now create the asset presentation
+                                     pool.getConnection(function(err, connection) {
+                                            if (err){
+                                                  var error=new Error("Database Connection Error");
+                                                  error.http_code=500;
+                                                  error.error_type='Internal Server Error';
+                                                  console.log("error: " + err);
+                                                  connection.release();
+                                                throw(error);
+                  
+                                            }
+
+                                            connection.query(insertQuery,function(err,rows){
+                                                  if(connection != null)connection.release();
+                                                  if (err){
+                                                        var error=new Error("Database Query Error");
+                                                       error.http_code=500;
+                                                       error.error_type='Internal Server Error';
+                                                       console.log("error: " + err);
+                                                      
+                                                       throw(error);
+                                 
+                                                  }
+                                                 if(rows.length > 0){
+                                   
+                                                        var res=rows[0]; 
+                                                        console.log("insert returns: " + JSON.stringify(res));
+                                                       
+                                                    }else{
+                                                        
+                                                        console.log("insert returns nothing");
+                                                    }
+
+                                            });//connection.query
+
+
+                                     });
+
+
+                                 }//!err
+
+
+
+                         });//gm(path)
+
+
+                   }//type==image
+
+
+
+
+
+
+                }
+
+          });
+
+
+
+        }); //fs.readfile
+  }
+
+        
+
+  
+
+
+
+
+//Set up the job queue for image resizing and audio/video transcoding
+
+var kue = require('kue');
+var queue = kue.createQueue({
+    redis: nconf.get("redis")
+    
+  });
+
+
 app.listen(app.get('port'));

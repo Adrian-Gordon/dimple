@@ -12,7 +12,10 @@
     "passport-local": "~0.1.6",
     "mysql": "~2.1.0",
     "request": "~2.34.0",
-    "kue": "~0.7.5"
+    "kue": "~0.7.5",
+    "aws-sdk": "~2.0.0-rc12",
+    "gm": "~1.14.2",
+    "mime": "~1.2.11"
   },
   "main": "app.js",
   "scripts": {

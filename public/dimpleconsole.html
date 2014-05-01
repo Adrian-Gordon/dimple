@@ -120,6 +120,11 @@
 </script>
 
 <script type="text/template" id="set-image-template">
+                <div>
+                    <div style="float:left"><input style="" type="text"  size="15" id="search" title="Search for image"></input></div>
+                    <div style="float:left"><a class="searchbutton"></a></div>
+                </div>
+
                 <div class="setbannercontentdiv">
                     <div id='<%=listid%>'></div>
                 </div>
@@ -251,11 +256,49 @@
 
 
 
+<script type="text/template" id='image-and-description-template'>
+        <img id='dlgcurrentbannerimg' src="<%= (assetid==0) || (assetid==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + assetid + '&maxwidth=800>'%>"style="width:250px"></img>
+        <label>description:</label><input name="assetdescription" value="<%=assetdescription%>" type="text" size="35"></input>
+        <div id="banneraccordion">
+     
+        <h3>Enter Banner URL</h3>
+         <form   id="uploadbannerimageform"  name="uploadbannerimageform" method="post" action="UploadImageFromUrl">
+            <div id="enterimageurldiv">
+          </div>
+        </form>
+      <h3>Upload Banner Image</h3>
+      <div>
+        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data" action="UploadLocalImage">
+          <div id="uploadlocalimagediv">
+          
+        </div>
+        </form>
+      </div>
+      <h3>Choose Existing Image</h3>
+      <div id="setbanneriddiv" style="border-style:solid;border-color:grey;border-width:1px">
+                  
+                 
+      </div>
+    </div>
+    <button type="button" >OK</button>
+
+</script>
+
+
 <script type="text/template" id='enter-image-url-template'>
 <p><label>url:</label><input name="url" type="text"></input>
    <label>description:</label><input name="description" type="text"></input>
    <button type="button" >OK</button>
 </p>
+</script>
+
+<script type="text/template" id='upload-local-image-template'>
+<input type="file" name="image" id='bannerfile'/>
+<p>
+<label>description:</label><input name="description" type="text"></input>
+    <image id="bannerimagetarget"></image>
+</p>
+<button type="button" >OK</button>
 </script>
 
 <!-- end Templates -->
@@ -274,6 +317,10 @@
 <script src="javascripts/views/setimage.js"></script>
 <script src="javascripts/views/selectimage.js"></script>
 <script src="javascripts/views/enterimageurl.js"></script>
+<script src="javascripts/views/uploadlocalimage.js"></script>
+<script src="javascripts/views/imageanddescription.js"></script>
+<script type="text/javascript" src="javascripts/mapScripts.js"></script>
+
 
 
 <!-- Collections -->
@@ -287,9 +334,18 @@
 <script src="javascripts/dimpleCMSScripts.js"></script>
 
 
-<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<!--<link href="styles/jquery-ui.css" rel="stylesheet" type="text/css"/>-->
+
+
 <link type="text/css" rel="stylesheet" href="themes/layout-default-latest.css" /> 
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+
+
+
 <link REL="SHORTCUT ICON" HREF="favico.ico" ></link>
+
 
 <!-- OLD Dimple Stuff
 
@@ -403,7 +459,7 @@
       width:400,
       modal: true,
       /*dialogClass: "no-close",*/
-    buttons: [
+    /*buttons: [
     {
       text: "OK",
       click: function() {
@@ -419,12 +475,12 @@
 
       }
     }
-    ]
+    ]*/
     });
-     $( "#banneraccordion" ).accordion({
-          collapsible: true,
-          heightStyle: "content"
-      });
+    // $( "#banneraccordion" ).accordion({
+     //     collapsible: true,
+    //      heightStyle: "content"
+    //  });
 
 
         $("#draggable").draggable({cancel: "#emulator-dimple-content-div,#emulatorclosebutton"});
@@ -544,20 +600,24 @@
                          mapfontcolorpickerobject=$.farbtastic('#mapfontcolorpicker',changemapfontcolor); 
            */            
 
- 
+    $( "#tabs" ).tabs();
   });
         </script>
 </HEAD>
 <!--<body onload="renderSDProjects();initializeMap();setMimesArray();setupWidthsAray();setupVideoformatsArray();" >-->
- <body> 
+ <body onload='initializeMap();'> 
 
 
 <!-- Modal dialogue to upload a banner image from a url or locally
 -->
 <div id="choosebanner" title="choose a banner image">
 
-  <img style="width:250px" id='dlgcurrentbannerimg'></img>
-    <div id="banneraccordion">
+  <div id='imageanddescriptiondiv'>
+        <!--<img style="width:250px" id='dlgcurrentbannerimg'></img>
+        <label>description:</label><input name="description" type="text"></input>
+      -->
+</div>
+   <!-- <div id="banneraccordion">
      
         <h3>Enter Banner URL</h3>
          <form   id="uploadbannerimageform"  name="uploadbannerimageform" method="post" action="UploadImageFromUrl">
@@ -566,10 +626,9 @@
         </form>
       <h3>Upload Banner Image</h3>
       <div>
-        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data">
-          <div id="uploadimagediv">
-          <input type="file" name="image" id='bannerfile'/>
-          <p><image id="bannerimagetarget"></image></p>
+        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data" action="UploadLocalImage">
+          <div id="uploadlocalimagediv">
+          
         </div>
         </form>
       </div>
@@ -579,6 +638,8 @@
                  
       </div>
     </div>
+  -->
+  
 
   <!--<div style="display:table">
     <div style="display:table-row">
@@ -3058,7 +3119,7 @@ var markerImages;
 
 <div class="ui-layout-center" style="overflow:hidden;">
     
-    <div >
+   <!-- <div >
        
             <b><div style="position:absolute;left:10px;top:10px;max-width:250px;color:#66cc33;" id ="simpleprojecttitle"></div></b>
        
@@ -3077,7 +3138,36 @@ var markerImages;
                             <img id="showpublishdialog" style="position:absolute;top:5px;margin-top:0;margin-left:0;margin-top:0;margin-bottom:0;left:400px;padding-bottom:5px;height:50px"src="images/publish-icon-inactive.png" align="middle" title="publish project" onclick="toggleShowPublishDialog();"></img>
                         </div>
     </div>
-    <div id='map_canvas'  style="width:100%;height:90%; z-index:-1;position:absolute;top:65;left:0"></div> 
+  -->
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Map </a></li>
+    <li><a href="#tabs-2">List </a></li>
+    <li><a href="#tabs-3">Style</a></li>
+    <li><a href="#tabs-4">Publish</a></li>
+  </ul>
+  <div id="tabs-1">
+               <div><div style="float:left"><a class="searchbutton" ></a></div>
+                     <div style="float:left">
+                      <input style="font-size:1.0em;" type="text"  size="15" id="search" onchange="geocode({address:this.value})" 
+                           onfocus="this.select()" title="Type placename or address"></input>
+
+                    </div>
+              </div>                
+    <div id='map_canvas'  style="width:100%;height:90%;"></div> 
+  </div>
+  <div id="tabs-2">
+    
+  </div>
+  <div id="tabs-3">
+    
+  </div>
+
+  <div id="tabs-4">
+    
+  </div>
+</div>
 
 
   <!--<div id="draggable2">Edit Text<br><textarea id="edittextarea" type="textarea" rows="5" cols="20"></textarea><br><input type="button" value="Save"></input></div>-->

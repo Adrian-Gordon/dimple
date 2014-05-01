@@ -41,6 +41,9 @@ dimpleConsoleApp.SelectImageView=Backbone.View.extend({
 
           if(this.options.targetEl){
             $('#'+this.options.targetEl).attr('src','/SelectImageAP?assetid=' + this.model.get('assetid') +'&maxwidth=800' );
+            console.log("Have set target");
+
+             //$('#dlgcurrentbannerimg').attr('src','/SelectImageAP?assetid=' + this.model.get('assetid') +'&maxwidth=800');
           }
         
       

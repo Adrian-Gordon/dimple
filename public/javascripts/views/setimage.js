@@ -7,11 +7,14 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
   				pageNo: 1,
   				imagesPerPage:10,
   				pages:0,
-  				listid:''
+  				listid:'',
+          searchCriteria:'',
+          originalModel:''
 		},
       initialize: function(){
       	this.options = _.extend({}, this.defaults, this.options);
       	this.options.pages=Math.ceil(this.model.length / this.options.imagesPerPage);
+        this.originalModel=this.model;
         this.render();
       },
       render: function(){
@@ -44,14 +47,41 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
 
 
       events: {
+        "change input": "changeSearchCriteria",
+        "click .searchbutton": "search",
    
-		"click .paginationnext": "incrementPage",
-		"click .paginationprevious": "decrementPage",
-		"click .paginationstart": "gotoFirstPage",
-		"click .paginationend": "gotoLastPage",
+		   "click .paginationnext": "incrementPage",
+		   "click .paginationprevious": "decrementPage",
+		   "click .paginationstart": "gotoFirstPage",
+		   "click .paginationend": "gotoLastPage",
        
 	
         },
+
+        changeSearchCriteria: function(event){
+          var target = event.target;
+          this.searchCriteria=target.value;
+          console.log("search crieteria: " + this.searchCriteria);
+
+        },
+
+
+        search: function(event){
+          var searchExp=this.searchCriteria;
+          var found=this.originalModel.filter(function(aModel){
+              var rExp=new RegExp(searchExp,"i");
+              var description=aModel.get('assetdescription');
+              console.log("testing " + description + " against " + rExp + " returns: " + rExp.test(description));
+              return rExp.test(aModel.get('assetdescription'));
+          });
+          console.log("found: " + JSON.stringify(found));
+
+          this.model=found;
+          this.options.pages=Math.ceil(this.model.length / this.options.imagesPerPage);
+          this.render();
+
+        },
+
         incrementPage: function(event) {
     		
     		if(this.options.pageNo < this.options.pages){
