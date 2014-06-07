@@ -55,9 +55,14 @@ dimpleConsoleApp.UploadLocalImageView=Backbone.View.extend({
             //var file = this.files[0];
             //alert('file: ' + file);
              var model=this.model;
-            var file=document.getElementById('bannerfile').files[0]
+            var file=document.getElementById('bannerfile').files[0];
+            var userid=$('#uploadimageuserid').val();
+            var description=$('#uploadimagedescription').val();
+
             var fd = new FormData();
             fd.append("afile", file);
+            fd.append("userid",userid);
+            fd.append("assetDescription",description);
             var xhr = new XMLHttpRequest();
             xhr.file = file; // not necessary if you create scopes like this
             xhr.addEventListener('progress', function(e) {
@@ -80,7 +85,7 @@ dimpleConsoleApp.UploadLocalImageView=Backbone.View.extend({
                   //console.log("url now: " + rval.url);
                   $('#dlgcurrentbannerimg').attr('src',rval.url);
                   // model.bannerassetid=rval.bannerassetid;
-                  model.set({bannerassetid:rval.assetid});
+                  model.set({bannerAsset:rval.assetid});
                   model.save();
 
                     //set the banner image

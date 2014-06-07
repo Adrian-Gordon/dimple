@@ -59,7 +59,7 @@ dimpleConsoleApp.ProjectsView = Backbone.View.extend({
 });
 
 dimpleConsoleApp.renderAllUserProjectsView =  function(){
-    //console.log("allUserProjects: " + JSON.stringify(dimpleConsoleApp.allUserProjects));
+    //console.log("renderAllUserProjectsView allUserProjects: " + JSON.stringify(dimpleConsoleApp.allUserProjects));
     //iterate over all models in the collection
     $('#projlist').empty();
     var index=1;

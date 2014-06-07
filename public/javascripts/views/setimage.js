@@ -70,9 +70,9 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
           var searchExp=this.searchCriteria;
           var found=this.originalModel.filter(function(aModel){
               var rExp=new RegExp(searchExp,"i");
-              var description=aModel.get('assetdescription');
+              var description=aModel.get('assetDescription');
               console.log("testing " + description + " against " + rExp + " returns: " + rExp.test(description));
-              return rExp.test(aModel.get('assetdescription'));
+              return rExp.test(aModel.get('assetDescription'));
           });
           console.log("found: " + JSON.stringify(found));
 

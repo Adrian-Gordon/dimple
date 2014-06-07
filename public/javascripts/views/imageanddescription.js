@@ -1,18 +1,23 @@
 var dimpleConsoleApp = dimpleConsoleApp || {};
 dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
+     defaults: {
+          project:''
+    },
 		 //el: $('#loggedinusername'),
 		 template: _.template($('#image-and-description-template').html()),
 
 		 
       initialize: function(){
+        this.options = _.extend({}, this.defaults, this.options);
+        console.log("ImageAndDescriptionView initialize model:" + JSON.stringify(this.model));
       	
         this.render();
      },
       render: function(){
-        console.log("model: " + JSON.stringify(this.model));
+        console.log("ImageAndDescriptionView model: " + JSON.stringify(this.model));
         //console.log("render EnterImageUrlView: " + this.template(this.model.toJSON()));
         //console.log("el contents: " + $(this.el).html());
-        console.log("el: " + this.el);
+        console.log(" ImageAndDescriptionView el: " + this.el);
         $(this.el).html(this.template(this.model.toJSON()));
 
 
@@ -47,7 +52,27 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
         },
 
         save: function(event){
-          this.model.save();
+          console.log("ImageAndDescriptionView go save");
+         // this.model.save();
+          this.model.save({
+              success: function (model, response) {
+                console.log("ImageAndDescriptionView save success " + JSON.stringify(model) + " " + JSON.stringify(response));
+              },
+              error: function (model, response) {
+                console.log("ImageAndDescriptionView save error: " + JSON.stringify(model) + " " + JSON.stringify(response));
+             }
+          });
+
+          this.options.project.save({
+            success: function(model,response){
+                console.log("image and descitpiom project save success" + JSON.stringify(model) + " " + JSON.stringify(response));
+            },
+
+            error: function(model, response){
+               console.log("image and descitpiom project save error " + JSON.stringify(model) + " " + JSON.stringify(response));
+
+            }
+          });
         }
     
 

@@ -39,6 +39,94 @@ if(typeof String.prototype.endsWith !== "function") {
     };
 }
 
+var mongoose=require('mongoose');
+
+var ObjectId = require('mongoose').Types.ObjectId; 
+
+
+var Schema=mongoose.Schema;
+
+
+var UserSchema= new Schema({
+    _id: Number,
+    userName: String,
+    screenName: String,
+    userPassword: String,
+    email: String,
+    confimationCode: String,
+    activated: Boolean,
+    useAws: Boolean,
+    awsBucket: Boolean,
+    useMimosaAwsCredentials: Boolean,
+    awsSecurityKey: String,
+    distribution: String,
+    ftpHost: String,
+    ftpDirectory: String,
+    ftpUserName: String,
+    ftpPassword: String,
+    defaultLanguage: String,
+    projects: [{
+      projectTitle: String,
+      description:String,
+      bannerAsset: Number,
+      styles: Schema.Types.ObjectId,
+      assetAssemblies:[{
+        assetAssembyId: Number,
+        assetAssemblyDescription: String,
+        location:[],
+        icon: Number,
+        layarImageUrl: String,
+        imageAsset:Number,
+        assets:[],
+        textElements:[{
+          languageCode: String,
+          title: String,
+          subtitle: String,
+          summary1: String,
+          summary2: String,
+          summary3: String,
+          summary4: String
+        }]
+      }]
+
+    }]
+    
+
+
+
+
+});
+
+var AssetSchema=new Schema({
+    _id:Number,
+    assetDescription: String,
+    assetTypeId:Number,
+    assetSubtypeId:Number,
+    rating:Number,
+    version: Number,
+    posterAsset: Number,
+    userid: Number,
+    captions:[{languageCode:String,caption:String}],
+    presentations:[{
+        mimetype:String,
+        url:String,
+        posterUrl:String,
+        quality:String,
+        width:Number,
+        height:Number,
+        languageCode:String,
+        data: Schema.Types.Mixed
+                
+    }]
+
+});
+
+ UserModel=mongoose.model('UserModel',UserSchema);
+
+ AssetModel=mongoose.model('AssetModel',AssetSchema);
+
+
+ 
 
 //nconf is used globally
 nconf=require('nconf');
@@ -71,6 +159,12 @@ if(path=nconf.get('conf')){
 
 
 //AWS.config.loadFromPath('AWSCredentials.json');
+
+
+
+mongoose.connect(nconf.get('databaseurl'));
+
+
 AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey")});
 var s3 = new AWS.S3();
 
@@ -110,8 +204,8 @@ var s3 = new AWS.S3();
 
 var authenticate=function(req,res,next){
   if (req.isAuthenticated()) { //we're logged in
-     // console.log("req[user]: " + JSON.stringify(req["user"]));
-      res.cookie('dimpleuserid',req["user"].userid,{maxAge:2592000000});
+      //console.log("req[user]: " + JSON.stringify(req["user"]));
+      res.cookie('dimpleuserid',req["user"]._id,{maxAge:2592000000});
       return next(); 
     }
     res.redirect('/login.html');
@@ -136,6 +230,9 @@ var mime=require("mime");
 var util=require('util');
 passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy;
+
+var collections = ["counters"]
+db = require("mongojs").connect(nconf.get('databaseurl'), collections);
 
 var fs = require('fs'),
 request = require('request');
@@ -207,7 +304,7 @@ app.use('/api/v1/projects/',authenticateAPI,projects.handleError);
 //});
 
 //users
-app.get('/api/v1/users/', authenticateAPI,users.getUsers);
+app.get('/api/v1/users/',authenticateAPI,users.getUsers);
 app.get('/api/v1/users/:userid',authenticateAPI,users.getUser);
 app.get('/api/v1/users/:userid/projects/',authenticateAPI,users.getUserProjects);
 app.post('/api/v1/users/:userid/projects/',authenticateAPI,users.addUserProject);
@@ -217,7 +314,7 @@ app.put('/api/v1/users/:userid/projects/:projectid',authenticateAPI,users.update
 
 //assets
 
-app.get('/api/v1/assets/',authenticateAPI,assets.getAssets);
+app.get('/api/v1/assets/',assets.getAssets);
 app.get('/api/v1/assets/:assetid',authenticateAPI,assets.getAsset);
 app.post('/api/v1/assets',authenticateAPI,assets.addAsset);
 app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
@@ -251,7 +348,7 @@ app.get('/dimpleconsole.html',authenticate); //must be logged in to go to the co
 app.use(express.static(__dirname + '/public'));
 
 
-console.log("database: " + nconf.get('database'));
+console.log("database: " + nconf.get('databaseurl'));
 
  pool  = mysql.createPool({
     host     : nconf.get('databasehost'),
@@ -262,71 +359,33 @@ console.log("database: " + nconf.get('database'));
 
 /*Authentication*/
  
-
-
 function check_auth_user(username,password,done,public_id){
-    
-   
+  UserModel.findOne({ userName:username,userPassword:password}, function (err, doc){
+   // console.log("Err: " + err);
+    //console.log("doc: " + doc);
+    if(typeof doc =='undefined'){
 
-    pool.getConnection(function(err, connection) {
-      var sql="SELECT * FROM user WHERE username = '"+ username +"' and userpassword = '"+ password +"' limit 1";
+       return done(null, false);
+    }
+    else{
 
-      //console.log(sql);
-        if (err){
-                    var error=new Error("Database Connection Error");
-                    error.http_code=500;
-                    error.error_type='Internal Server Error';
-                    throw(error);
-                    //next(error);
-                            //console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Connection Error";
-                            //res.end(JSON.stringify(returnObject));
-                            //res.status(404).send('Not found');
-                            //return; //we're done
-             }
-            
-             connection.query(sql,function(err,rows){
-              if(connection != null)connection.release();
-               if (err){
-                      var error=new Error("Database Query Error");
-                      error.http_code=500;
-                      error.error_type='Internal Server Error'
-                     throw(error);
-                            //console.log("database query error: " + err); 
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Query Error";
-                            //res.end(JSON.stringify(returnObject));
-                           // res.status(404).send('Not found');
-                            //return;
-                  }
-                  if(rows.length > 0){
+      passport.serializeUser(function(res, done) {
+              done(null,doc);
+        });
  
-                      var res=rows[0]; 
-                      //serialize the query result save whole data as session in req.user[] array  
-                      passport.serializeUser(function(res, done) {
-                          done(null,res);
-                      });
+      passport.deserializeUser(function(id, done) {
+              done(null,doc);
  
-                      passport.deserializeUser(function(id, done) {
-                          done(null,res);
- 
-                      });
-                     //console.log(JSON.stringify(results));
-                      //console.log(results[0]['member_id']);
-                      return done(null, res);
-                  }else{
-                      return done(null, false); 
- 
-                  }
+        });
+      return done(null, doc);
 
-             });
-    });
+    }
+  // doc is a Document
+  });
 
-    
- 
 }
+    
+
 
 
 
@@ -338,56 +397,48 @@ function selectImageAP(req,res){
     var assetid=query.assetid;
     var maxwidth=query.maxwidth;
 
-       pool.getConnection(function(err, connection) {
-              var assetQuery = "select mimetype, url,localurl,posterurl,localposterurl,quality,width,height,languagecode,version from assetpresentation,asset where assetpresentation.assetid=" + assetid + " and asset.assetid=" + assetid + " order by width desc;";
+    AssetModel.findOne({_id:assetid},function(err,doc){
 
+        if(err){
+           res.status(404).send('Not found');
+          return; //we're done
+        }
+        if(doc==null){
+          res.status(404).send('Not found');
+          return; //we're done
+        }
 
-             if (err){
-                            console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Connection Error";
-                            //res.end(JSON.stringify(returnObject));
-                            res.status(404).send('Not found');
-                            return; //we're done
-             }
-             connection.query(assetQuery,function(err,rows){
-               if(connection != null)connection.release();
+        var presentations=doc.presentations;
 
-                var redirectUrl="";
-                 if (err){
-                            console.log("database query error: " + err); 
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Query Error";
-                            //res.end(JSON.stringify(returnObject));
-                            res.status(404).send('Not found');
-                            return;
-                  }
-                  
-                  var selectedRow;
-                  console.log("rows: " + JSON.stringify(rows));
-                  for(rowindex in rows){
-                    row=rows[rowindex];
-
-                    if(selectedRow === undefined)selectedRow=row;
-                    if(row.width <= maxwidth){
-                      selectedRow=row;
-                      break;
-                    }
-                    if(row.width < selectedRow.width) selectedRow=row;
-                    
-                   
-                  }
-
-                  if(selectedRow !== undefined){
-                    redirectUrl=selectedRow.url;
-                    res.writeHead(302, {'location':redirectUrl});
-                    res.end();
-                  }
-                  else res.status(404).send('Not found');
-                  //res.end(JSON.stringify(rais));
-             });
+        presentations.sort(function(a,b){
+            return(b.width - a.width);
         });
+
+       // console.log("sorted presentations: " + presentations);
+
+        var redirectUrl;
+        for(var p in presentations){
+          //console.log(" width: " + presentations[p].width + " maxwidth: " + maxwidth);
+          if(presentations[p].width <= maxwidth){
+            redirectUrl=presentations[p].url;
+            break;
+
+          }
+        }
+
+        if(typeof redirectUrl === 'undefined'){
+         // console.log("no presentation, presentations: " + JSON.stringify(presentations));
+          if(typeof presentations[0] === 'undefined'){
+            redirectUrl='/images/noimage50x50.png';
+          }
+          else redirectUrl=presentations[presentations.length -1].url;
+        }
+
+        res.writeHead(302, {'location':redirectUrl});
+                    res.end();
+
+    });
+
 }
 
 
@@ -2135,7 +2186,8 @@ function assembleAssets(req,res){
       // title field as `req.body.title`
        var fname= randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
       var extension=fileExtension(req.files.afile.originalFilename);
-      var assetdescription=req.body.description;
+      var assetdescription=req.body.assetDescription;
+      var userid=req.body.userid;
     var ins = fs.createReadStream(req.files.afile.path);
 
     var pathToUpload=__dirname + '/public/uploads/' + fname + '.' + extension;
@@ -2149,8 +2201,8 @@ function assembleAssets(req,res){
 
 
         //at this point we need to create the asset
-          console.log("assetdescription: " + assetdescription + " userid: " + req["user"].userid);
-          console.log(JSON.stringify(req["user"]));
+          console.log("assetdescription: " + assetdescription + " userid: " + req["user"]);
+         console.log(JSON.stringify(req["user"]));
           var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
           console.log("uri: " + uri);
           //create the asset
@@ -2158,12 +2210,12 @@ function assembleAssets(req,res){
               uri:uri,
               method:"POST",
               form:{
-                "assetdescription": assetdescription,
-                "userid":req["user"].userid,
-                "assettypeid":3,
-                "assetsubtypeid":0,
+                "assetDescription": assetdescription,
+                "userid":userid,
+                "assetTypeId":3,
+                "assetSubtypeId":0,
                 "rating": 0,
-                "posterassetid":0,
+                "posterAsset":0,
                 "version":1.0,
                 "username":req["user"].username,
                 "apikey": users.getUserApiKey(req["user"].username)
@@ -2177,11 +2229,11 @@ function assembleAssets(req,res){
                   console.log("add asset response body:" + body);
                   var returnedObject= eval('(' + body + ')');
 
-                  var newAssetId= returnedObject.insertId;
+                  var newAssetId= returnedObject._id;
 
                   //upload original image to cloudfront
-                  var key="user" + req["user"].userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
-                  uploadToAWS(pathToUpload,key,"image",newAssetId,req["user"].userid);
+                  var key="user" + req["user"]._id + "/asset" + newAssetId +"/" + fname + '.' + extension;
+                  uploadToAWS(pathToUpload,key,"image",newAssetId,userid);
 
 
                  
@@ -2223,6 +2275,7 @@ function assembleAssets(req,res){
 
       var url=req.body.url;
       var assetdescription=req.body.description;
+      var userid=req.body.userid;
 
      
       var fname= randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -2235,8 +2288,8 @@ function assembleAssets(req,res){
        download(url,pathToUpload,function(){
 
         //at this point we need to create the asset
-          console.log("assetdescription: " + assetdescription + " userid: " + req["user"].userid);
-          console.log(JSON.stringify(req["user"]));
+          console.log("assetdescription: " + assetdescription + " userid: " + userid);
+          //console.log(JSON.stringify(req["user"]));
           var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
           console.log("uri: " + uri);
           //create the asset
@@ -2244,12 +2297,12 @@ function assembleAssets(req,res){
               uri:uri,
               method:"POST",
               form:{
-                "assetdescription": assetdescription,
-                "userid":req["user"].userid,
-                "assettypeid":3,
-                "assetsubtypeid":0,
+                "assetDescription": assetdescription,
+                "userid":userid,
+                "assetTypeId":3,
+                "assetSubtypeId":0,
                 "rating": 0,
-                "posterassetid":0,
+                "posterAsset":0,
                 "version":1.0,
                 "username":req["user"].username,
                 "apikey": users.getUserApiKey(req["user"].username)
@@ -2263,11 +2316,11 @@ function assembleAssets(req,res){
               console.log("add asset response body:" + body);
               var returnedObject= eval('(' + body + ')');
 
-              var newAssetId= returnedObject.insertId;
+              var newAssetId= returnedObject._id;
 
               //upload original image to cloudfront
-              var key="user" + req["user"].userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
-              uploadToAWS(pathToUpload,key,"image",newAssetId,req["user"].userid);
+              var key="user" + userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
+              uploadToAWS(pathToUpload,key,"image",newAssetId,userid);
 
 
              
@@ -2344,11 +2397,37 @@ function assembleAssets(req,res){
 
                                       var awsUrl="http://" + nconf.get("awsdistribution")+ "/" + key;
 
-                                      var insertQuery="insert into assetpresentation values(null," + newAssetId + ",'" + mimeType + "','" + awsUrl + "',null,null," + width + "," + height + ",null,null,null);";
-                                      console.log("insertQuery: " + insertQuery);
+
+
+                                      var presentationObject={
+                                        parentId:newAssetId,
+                                        mimetype:mimeType,
+                                        url:awsUrl,
+                                        posterUrl:null,
+                                        quality:null,
+                                        width:width,
+                                        height:height,
+                                        languageCode:null
+                                      }
+
+                                      AssetModel.update(
+                                        {$push:{'presentstions':presentationObject}},
+                                        {upsert:true},
+                                        function(err,data){
+                                          if(err)console.log("uploadToAWS error: " + err);
+                                          else{
+                                            console.log("uploadtoAws data: " + data);
+                                          }
+
+                                        }
+                                      );
+
+
+                                    //  var insertQuery="insert into assetpresentation values(null," + newAssetId + ",'" + mimeType + "','" + awsUrl + "',null,null," + width + "," + height + ",null,null,null);";
+                                     // console.log("insertQuery: " + insertQuery);
 
                                       //now create the asset presentation
-                                     pool.getConnection(function(err, connection) {
+                                 /*    pool.getConnection(function(err, connection) {
                                             if (err){
                                                   var error=new Error("Database Connection Error");
                                                   error.http_code=500;
@@ -2383,7 +2462,8 @@ function assembleAssets(req,res){
                                             });//connection.query
 
 
-                                     });
+                                     });//pool.getconnection
+                                    */
 
 
                                  }//!err
@@ -2411,7 +2491,17 @@ function assembleAssets(req,res){
 
         
 
-  
+  function getNextSequence(name) {
+   var ret = db.counters.findAndModify(
+          {
+            query: { _id: name },
+            update: { $inc: { seq: 1 } },
+            new: true
+          }
+   );
+
+   return ret.seq;
+}
 
 
 

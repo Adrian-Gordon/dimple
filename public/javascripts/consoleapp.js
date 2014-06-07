@@ -5,7 +5,7 @@ $(function(){
 //Create instances
 
 	 dimpleConsoleApp.allUserProjects = new dimpleConsoleApp.AllUserProjects();
-         dimpleConsoleApp.allUserImageAssets=new dimpleConsoleApp.Assets([],{url:'/api/v1/assets/?userid=' + $.cookie("dimpleuserid") + '&assettypeid=3'});
+     dimpleConsoleApp.allUserImageAssets=new dimpleConsoleApp.Assets([],{url:'/api/v1/assets/?userid=' + $.cookie("dimpleuserid") + '&assettypeid=3'});
 
 	//dimpleConsoleApp.AllUserProjects
 
@@ -20,8 +20,8 @@ $(function(){
 	//dimpleUser.fetch({success:renderLoggedinUserView()});
 	dimpleConsoleApp.dimpleUser.fetch().done(dimpleConsoleApp.renderLoggedinUserView);
 
-	dimpleConsoleApp.allUserProjects.fetch();//.done(dimpleConsoleApp.renderAllUserProjectsView);
-        dimpleConsoleApp.allUserImageAssets.fetch();
+	dimpleConsoleApp.allUserProjects.fetch().done(dimpleConsoleApp.renderAllUserProjectsView);
+    dimpleConsoleApp.allUserImageAssets.fetch();
         
         
     

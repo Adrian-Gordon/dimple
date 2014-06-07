@@ -6,11 +6,12 @@ dimpleConsoleApp.SelectImageView=Backbone.View.extend({
 
 		 
       initialize: function(){
-      	
+      	console.log("SelectImageView model: " + JSON.stringify(this.model));
         this.render();
       },
       render: function(){
        
+        console.log("SelectImageView model: " + JSON.stringify(this.model));
         this.$el.html(this.template(this.model.toJSON()));
 
         return(this);
@@ -33,14 +34,14 @@ dimpleConsoleApp.SelectImageView=Backbone.View.extend({
         imageChosen: function(event) {
           console.log("imageChosen " + this.model.get('assetid'));
         
-          this.options.target.set(this.options.targetAttribute,this.model.get('assetid'));
+          this.options.target.set(this.options.targetAttribute,this.model.get('_id'));
 
           console.log(this.options.target + ' ' + this.options.targetAttribute + ' is now set to : ' + this.options.target.get(this.options.targetAttribute));
 
           //set the target El, if any
 
           if(this.options.targetEl){
-            $('#'+this.options.targetEl).attr('src','/SelectImageAP?assetid=' + this.model.get('assetid') +'&maxwidth=800' );
+            $('#'+this.options.targetEl).attr('src','/SelectImageAP?assetid=' + this.model.get('_id') +'&maxwidth=800' );
             console.log("Have set target");
 
              //$('#dlgcurrentbannerimg').attr('src','/SelectImageAP?assetid=' + this.model.get('assetid') +'&maxwidth=800');

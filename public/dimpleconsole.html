@@ -97,7 +97,7 @@
   
 
 
-    <td><a class='<%= oddoreven %>' onclick='sdShowProjectDialog(<%=projectid %>,<%=stylesid%>);'> <%= title %></a></td>
+    <td><a class='<%= oddoreven %> showproject'> <%= projectTitle %></a></td>
 
     <td><a class='edit'  title="Edit this Project"></td>
     <td></a><a class="smallcrossbuttonred" title="Delete this Project" </a></td>
@@ -114,8 +114,8 @@
 </script>
 <script type="text/template" id="select-image-template">
 <div style="display:table;padding:2px 2px 2px 2px">
-  <div style="display:table-cell;width:100px;height:60px;margin-left:auto;margin-right:auto;text-align:center;vertical-align:middle;border-style:solid;border-width:1px;border-color:lightgrey;padding:3px 3px 3px 3px"><img class="paginatedSetImage" style="max-width:100px;max-height:60px" src='/SelectImageAP?assetid=<%=assetid%>&maxwidth=200'></img></div>
-  <div style="display:table-cell;padding-left:2px;width:300px;vertical-align:middle;"><textarea rows="3" cols="30"><%=assetdescription%></textarea></div>
+  <div style="display:table-cell;width:100px;height:60px;margin-left:auto;margin-right:auto;text-align:center;vertical-align:middle;border-style:solid;border-width:1px;border-color:lightgrey;padding:3px 3px 3px 3px"><img class="paginatedSetImage" style="max-width:100px;max-height:60px" src='/SelectImageAP?assetid=<%=_id%>&maxwidth=200'></img></div>
+  <div style="display:table-cell;padding-left:2px;width:300px;vertical-align:middle;"><textarea rows="3" cols="30"><%=assetDescription%></textarea></div>
   </div>
 </script>
 
@@ -153,12 +153,12 @@
             <div style="color:#66cc33;padding-left:10px;padding-right:10px;padding-bottom:10px;">
               <table>
                   <tr>
-                    <td><label labelfor='projtitle'><b>Project Title:</b></label></td><td><input style="font-size:12px;width:100%;"  type="text" id="projtitle" name="title" value="<%=title%>"  /></td>
+                    <td><label labelfor='projtitle'><b>Project Title:</b></label></td><td><input style="font-size:12px;width:100%;"  type="text" id="projtitle" name="projectTitle" value="<%=projectTitle%>"  /></td>
                   </tr>
                   <tr><td>    <label ><b>Description:</b></label></td>
                       <td><textarea id="projdesc" name="description" rows="4" cols="40" ><%=description%></textarea></td>
                   </tr>
-                  <tr><td><label><b>Banner Image:</b><br>(click to set)</label><td><img style="width:250px" id="projectbannerimg"  src="<%= (bannerassetid==0) || (bannerassetid==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + bannerassetid + '&maxwidth=800>'%>" onclick='$("#dlgcurrentbannerimg").attr("src",$("#projectbannerimg").attr("src"));$( "#choosebanner" ).dialog( "open" );'></img></td><td><a class="sd-deletebutton" title="clear banner image" onclick="clearBannerImage();"></a></td>
+                  <tr><td><label><b>Banner Image:</b><br>(click to set)</label><td><img style="width:250px" id="projectbannerimg"  src="<%= (bannerAsset==0) || (bannerAsset==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + bannerAsset + '&maxwidth=800'%>" onclick='$("#dlgcurrentbannerimg").attr("src",$("#projectbannerimg").attr("src"));$( "#choosebanner" ).dialog( "open" );'></img></td><td><a class="sd-deletebutton" title="clear banner image" onclick="clearBannerImage();"></a></td>
                   </tr>
               </table>
 
@@ -257,8 +257,8 @@
 
 
 <script type="text/template" id='image-and-description-template'>
-        <img id='dlgcurrentbannerimg' src="<%= (assetid==0) || (assetid==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + assetid + '&maxwidth=800>'%>"style="width:250px"></img>
-        <label>description:</label><input name="assetdescription" value="<%=assetdescription%>" type="text" size="35"></input>
+        <img id='dlgcurrentbannerimg' src="<%= (_id==0) || (_id==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + _id + '&maxwidth=800>'%>"style="width:250px"></img>
+        <label>description:</label><input name="assetDescription" value="<%=assetDescription%>" type="text" size="35"></input>
         <div id="banneraccordion">
      
         <h3>Enter Banner URL</h3>
@@ -288,6 +288,7 @@
 <script type="text/template" id='enter-image-url-template'>
 <p><label>url:</label><input name="url" type="text"></input>
    <label>description:</label><input name="description" type="text"></input>
+   <input type="hidden" name="userid" value="<%=userid%>"></input>
    <button type="button" >OK</button>
 </p>
 </script>
@@ -295,7 +296,8 @@
 <script type="text/template" id='upload-local-image-template'>
 <input type="file" name="image" id='bannerfile'/>
 <p>
-<label>description:</label><input name="description" type="text"></input>
+<label>description:</label><input id='uploadimagedescription' name="description" type="text"></input>
+<input type="hidden" id='uploadimageuserid' name="userid" value="<%=userid%>"></input>
     <image id="bannerimagetarget"></image>
 </p>
 <button type="button" >OK</button>
@@ -320,6 +322,7 @@
 <script src="javascripts/views/uploadlocalimage.js"></script>
 <script src="javascripts/views/imageanddescription.js"></script>
 <script type="text/javascript" src="javascripts/mapScripts.js"></script>
+<script type="text/javascript" src="javascripts/StyledMarker.js"></script>
 
 
 
@@ -375,11 +378,16 @@
 <link type="text/css" rel="stylesheet" href="farbtastic/farbtastic.css" />
 <link type="text/css" rel="stylesheet" href="fontselector.css" />
 -->
+
+
      
  <link type="text/css" rel="stylesheet" href="styles/simpledimplecss.css" />
     
   <style type="text/css">
-
+.ui-widget-overlay {
+    background: url("../img/overlay-bg.png") repeat scroll 50% 50% #000000;
+    opacity: 0.5;
+}
  .downarrow{
     background: url('images/smallgreydownarrow.png') no-repeat;
     display:block;

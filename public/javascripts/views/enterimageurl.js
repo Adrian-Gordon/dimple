@@ -30,6 +30,7 @@ dimpleConsoleApp.EnterImageUrlView=Backbone.View.extend({
         uploadFromUrl: function(ev){
           var frm=$('#uploadbannerimageform');
           var model=this.model;
+          console.log("serialize: " + frm.serialize());
           $.ajax({
             type: frm.attr('method'),
             url: frm.attr('action'),
@@ -41,7 +42,7 @@ dimpleConsoleApp.EnterImageUrlView=Backbone.View.extend({
                //console.log("url now: " + rval.url);
                $('#dlgcurrentbannerimg').attr('src',rval.url);
               // model.bannerassetid=rval.bannerassetid;
-               model.set({bannerassetid:rval.assetid});
+               model.set({bannerAsset:rval.assetid});
                model.save();
                 //alert('ok');
             }

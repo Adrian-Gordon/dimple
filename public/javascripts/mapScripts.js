@@ -13,6 +13,8 @@ var poly = new google.maps.Polyline({
 });
 var markers = []; //waypoint markers
 
+var showPOIs=true;
+
 
 
 function initializeMap() {
@@ -66,14 +68,20 @@ function setMapClickListener(body){
     
 }
 
-function addPOI(label,lat,lon,assetassemblyid,projectid){
-    var styleMarker2 = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.BUBBLE,{color:"ffffff",text:label}),position:new google.maps.LatLng(lat, lon),draggable:true});
+//function addPOI(label,lat,lon,assetassemblyid,projectid){
+function addPOI(assetAssembly,projectid){
+
+    console.log("AddPOI: " + JSON.stringify(assetAssembly) + " projectid: " + projectid);
+    var styledIcon=new StyledIcon(StyledIconTypes.BUBBLE,{color:"ffffff",text:assetAssembly.textElements[0].title});
+    
+
+    var styleMarker2 = new StyledMarker({styleIcon:styledIcon,position:new google.maps.LatLng(assetAssembly.location[1], assetAssembly.location[0]),draggable:true});
     
     
-    styleMarker2.oldlat=lat;
-    styleMarker2.oldlon=lon;
-    styleMarker2.assetassemblyid=assetassemblyid;
-    google.maps.event.addListener(styleMarker2,'click',new Function("previewAssetAssembly(" + assetassemblyid + "," + projectid + ");"));
+    styleMarker2.oldlat=assetAssembly.location[1];
+    styleMarker2.oldlon=assetAssembly.location[0];
+    styleMarker2.assetassemblyid=assetAssembly._id;
+    google.maps.event.addListener(styleMarker2,'click',new Function("previewAssetAssembly('" + assetAssembly._id + "','" + projectid + "');"));
     google.maps.event.addListener(styleMarker2,'dragend',function(event){
         var newLat=  styleMarker2.getPosition().lat();
         var newLon=styleMarker2.getPosition().lng();
@@ -151,11 +159,12 @@ if(opts.address && opts.address.trim)opts.address = opts.address.trim();
 if(opts.address || opts.latLng)geocoder.geocode(opts, geocodeResult); // no empty request
 }
 
-function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
+//function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
+function addSimplePOI(assetAssembly,projectid,index){
     //  alert("add poi " + showPOIs);
     
-    assetassembly.latitude=lat;
-    assetassembly.longitude=lon;
+    assetAssembly.latitude=assetAssembly.location[1];
+    assetAssembly.longitude=assetAssembly.location[0];
     var colour="66cc33";
     if(!showPOIs)colour="b3b3b3";
     //  var newstyledicon=new StyledIcon(StyledIconTypes.BUBBLE,{color:colour,text:label},lat,lon,(index*100)+1);
@@ -163,21 +172,21 @@ function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
     //      var styleMarker2 = new StyledMarker({position:new google.maps.LatLng(lat, lon),draggable:true,raiseOnDrag:false});
     //      styleMarker2.setStyledIcon(newstyledicon);
     
-    var iconUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + label + "  |" + colour + "|000000";
+    var iconUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + assetAssembly.textElements[0].title + "  |" + colour + "|000000";
     //  var imgUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + assembly.assetassemblytitle + "   |66cc33|000000";
     
     //  console.log("iconUrl: " + iconUrl);
  
     
   
-        var styleMarker2= new google.maps.Marker({position:new google.maps.LatLng(lat, lon),draggable:true,raiseOnDrag:false});
+        var styleMarker2= new google.maps.Marker({position:new google.maps.LatLng(assetAssembly.location[1], assetAssembly.location[0]),draggable:true,raiseOnDrag:false});
           styleMarker2.setOptions ({icon:{url:iconUrl,anchor:new google.maps.Point(0,42)}});
         styleMarker2.index=index;
-        styleMarker2.oldlat=lat;
-        styleMarker2.oldlon=lon;
+        styleMarker2.oldlat=assetAssembly.location[1];
+        styleMarker2.oldlon=assetAssembly.location[0];
         styleMarker2.projectid=projectid;
-        styleMarker2.assetassemblyid=assetassembly.assetassemblyid;
-        styleMarker2.assetassembly=assetassembly;
+        styleMarker2.assetassemblyid=assetAssembly._id;
+        styleMarker2.assetassembly=assetAssembly;
         styleMarker2.action=null;
         styleMarker2.setZIndex(index * 100);
         
@@ -191,7 +200,7 @@ function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
         
         if(showPOIs) {
          //   console.log("addSimplePOI Visible: " + assetassembly.visible + "label: " + label);
-            google.maps.event.addListener(styleMarker2,'click',new Function("populateEmulatorContentDivDialog(this,currentProject," + assetassembly.assetassemblyid + ");"));
+            google.maps.event.addListener(styleMarker2,'click',new Function("populateEmulatorContentDivDialog(this,currentProject,'" + assetAssembly._id + "');"));
             google.maps.event.addListener(styleMarker2, 'dragend', function() {
                 ///console.log("Add simple poi dragend POIs");
                 
@@ -200,8 +209,8 @@ function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
                 var newLat=styleMarker2.getPosition().lat();
                 var newLon=styleMarker2.getPosition().lng();
                 styleMarker2.assetassembly.move=true;
-                styleMarker2.assetassembly.latitude=newLat;
-                styleMarker2.assetassembly.longitude=newLon;
+                styleMarker2.assetassembly.location[1]=newLat;
+                styleMarker2.assetassembly.location[0]=newLon;
                 styleMarker2.action="move";
                 unsavedMove=true;
                 for (var i = 0, I = markers.length; i < I && markers[i] != styleMarker2; ++i);
@@ -226,8 +235,8 @@ function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
             var newLat=this.getPosition().lat();
             var newLon=this.getPosition().lng();
             this.assetassembly.move=true;
-            this.assetassembly.latitude=newLat;
-            this.assetassembly.longitude=newLon;
+            this.assetassembly.location[1]=newLat;
+            this.assetassembly.location[0]=newLon;
             this.action="move";
             unsavedMove=true;
             for (var i = 0, I = markers.length; i < I && markers[i] != this; ++i);
@@ -257,17 +266,17 @@ function addSimplePOI(label,lat,lon,assetassembly,projectid,index){
            // var image_ = document.createElement('img');
        //     image_.src=iconUrl;
             
-          
+                console.log("styleMarker2.assetassembly: " + JSON.stringify(styleMarker2.assetassembly));
                 
                 var newIcon={url:"images/simple-dimple-ui-icons-red.png",size:new google.maps.Size(16,16),origin:new google.maps.Point(32,192),anchor:new google.maps.Point(17-w,h-2)};//17-w
-                var closeMarker2 = new google.maps.Marker({icon:newIcon,position:new google.maps.LatLng(lat, lon),draggable:true,raiseOnDrag:false});
+                var closeMarker2 = new google.maps.Marker({icon:newIcon,position:new google.maps.LatLng(styleMarker2.assetassembly.location[1], styleMarker2.assetassembly.location[0]),draggable:true,raiseOnDrag:false});
                 //   console.log("Create a close Marker");
                 google.maps.event.addListener(closeMarker2,'click',function(event){simpleDeleteMapPOI(this)});
                 
                 closeMarker2.setZIndex((index * 100) +1);
 //                 console.log("close marker for index:" + index + " zindex= " + closeMarker2.getZIndex());
                // closeMarker2.setZIndex(10000000000);
-                if((lat==0)&&(lon==0));
+                if((styleMarker2.assetassembly.location[1]==0)&&(styleMarker2.assetassembly.location[0]==0));
                 else closeMarker2.setMap(map);
                 styleMarker2.closemarker=closeMarker2;
                 
@@ -534,6 +543,89 @@ function simpleDeleteMapPOI(deleteMarker){
     //tbodyEl.deleteRow(index);
     tbodyEl.childNodes[index].style.display="none";
     
+    
+}
+
+function showSimpleMarkers(){
+    //alert("showMarkers: " + windowid + " current:" + currentAssembliesWindowId + " force: " + force + " setbounds: " + setbounds );
+   // console.log("Show Simple Markers");
+    
+    //alert("current window length: " + assemblyWindowsPOIArray[currentAssembliesWindowId].length);
+    for(var i=0;i< simplePOIArray.length;i++){
+        simplePOIArray[i].setMap(null);
+        //  if(simplePOIArray[i].styleIcon.closemarker)simplePOIArray[i].styleIcon.closemarker.setMap(null);
+         if(simplePOIArray[i].closemarker)simplePOIArray[i].closemarker.setMap(null);
+    }
+  //  alert("showSimpleMarkers");
+    //alert("showMarkers: " + windowid);
+    //alert("new window length: " + assemblyWindowsPOIArray[windowid].length);
+    for(var i=0;i< simplePOIArray.length;i++){
+        var latitude=simplePOIArray[i].getPosition().lat();
+        var longitude=simplePOIArray[i].getPosition().lng();
+        //console.log("showSimpleMarkers " + latitude + " " + longitude);
+        if((latitude == 0)&&(longitude == 0)){
+         //   console.log("its 0,0");
+            
+        }
+        else if(simplePOIArray[i].action != "delete"){
+            //console.log("its not");
+           simplePOIArray[i].setMap(map);
+           
+           
+                 if(simplePOIArray[i].closemarker)  {
+                     //console.log("its there")
+                     simplePOIArray[i].closemarker.setMap(map);
+                     }
+                     
+                   //  else console.log("its not")
+           }
+           
+           //alert("showSimpleMArkers" + i);
+        
+    }
+    //  currentAssembliesWindowId=windowid;
+    
+}
+
+function setSimpleBounds(){
+    // alert("setbounds: " + windowid + "current: " + currentAssembliesWindowId +  " force: " + force);
+    
+    var minLat=360.0;
+    var minLng=360.0;
+    var maxLat=-360.0;
+    var maxLng=-360.0;
+    for(var i=0;i< simplePOIArray.length;i++){
+      
+        var lat= simplePOIArray[i].getPosition().lat();
+        var lng= simplePOIArray[i].getPosition().lng();
+     //   console.log("setSimpleBounds" + lat + " " + lng);
+        if((lat==0)&&(lng==0)){
+          //  console.log("its 0 0");
+        }
+        else{ //console.log("its not");
+        
+        simplePOIArray[i].setMap(map);
+        }
+        
+     //   if(i==0){
+      //      maxLat=minLat=lat;
+      //      minLng=maxLng=lng;
+     //   }
+     if((lat != 0)||(lng !=0)){
+        if(lat > maxLat)maxLat=lat;
+        if(lat < minLat)minLat=lat;
+        if(lng > maxLng)maxLng=lng;
+        if(lng< minLng)minLng=lng;
+        }
+    }
+    //alert("minLat: "  + minLat + " min Long: " + minLng + " maxLat: " + maxLat + " maxLong: " + maxLng)
+    
+    var sw=new  google.maps.LatLng(minLat,minLng,true);
+    var ne=new  google.maps.LatLng(maxLat,maxLng,true);
+    
+    var bounds = new  google.maps.LatLngBounds(sw,ne);
+    //fit map to bounds if required
+    if( simplePOIArray.length > 0)map.fitBounds(bounds);
     
 }
 

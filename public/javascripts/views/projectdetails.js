@@ -25,12 +25,12 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 
 		//get the banner asset
 
-		console.log("model: " + JSON.stringify(this.model));
-		var bannerAsset=new dimpleConsoleApp.Asset({assetid: this.model.get('bannerassetid')});
+		console.log("Project Details model: " + JSON.stringify(this.model));
+		var bannerAsset=new dimpleConsoleApp.Asset({"_id": this.model.get('bannerAsset')});
 		var model=this.model;
 		bannerAsset.fetch().done(function(){
-			console.log("banner Asset: " + bannerAsset.toJSON());
-			var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:bannerAsset});
+			console.log("banner Asset: " + JSON.stringify(bannerAsset));
+			var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:bannerAsset,project:model});
 
 
 		
@@ -47,7 +47,7 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 
 			//create the new paginated image view
 			//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
-			var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerassetid',targetEl:'dlgcurrentbannerimg'});
+			var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerAsset',targetEl:'dlgcurrentbannerimg'});
 
 		});
 		
@@ -75,8 +75,8 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 
 	saveProject: function() {
 		this.model.set({
-			userid:$.cookie("dimpleuserid"),
-			title: $('#projtitle').val(),
+			//userid:$.cookie("dimpleuserid"),
+			projectTitle: $('#projtitle').val(),
 			description: $('#projdesc').val()
 		});
 		console.log("saveProject");

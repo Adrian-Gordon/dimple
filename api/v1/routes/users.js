@@ -2,117 +2,55 @@
 
 
 module.exports.getUsers=function(req,res,next){
+  //console.log("Get users " + UserModel);
 
-	//console.log('getUsers')
-	pool.getConnection(function(err, connection) {
-              var userQuery = "select * from user";
+  UserModel.find({},function(err,docs){
+  // console.log("err: " + err + "docs: " + docs);
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify(docs));
+  });
 
-
-             if (err){
-             				var error=new Error("Database Connection Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error';
-							next(error);
-                            //console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Connection Error";
-                            //res.end(JSON.stringify(returnObject));
-                            //res.status(404).send('Not found');
-                            //return; //we're done
-             }
-            
-             connection.query(userQuery,function(err,rows){
-
-               
-                 if (err){
-                 			var error=new Error("Database Query Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error'
-							next(error);
-                            //console.log("database query error: " + err); 
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Query Error";
-                            //res.end(JSON.stringify(returnObject));
-                           // res.status(404).send('Not found');
-                            //return;
-                  }
-
-                  //succeeded
-                  res.writeHead(200, {'Content-Type': 'application/json'});
-          			res.end(JSON.stringify(rows));
-          		//console.log(JSON.stringify(rows));
-              });
-
-          });
+	
 }
 
 module.exports.getUser=function(req,res,next){
-	pool.getConnection(function(err, connection) {
-              var userQuery = "select * from user where userid=" + req.params.userid;
 
+  UserModel.find({_id:req.params.userid},function(err,docs){
+   //console.log("err: " + err + "docs: " + docs);
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    res.end(JSON.stringify(docs[0]));
+  });
 
-             if (err){
-             				var error=new Error("Database Connection Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error';
-							next(error);
-                            //console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Connection Error";
-                            //res.end(JSON.stringify(returnObject));
-                            //res.status(404).send('Not found');
-                            //return; //we're done
-             }
-            
-             connection.query(userQuery,function(err,rows){
-
-               
-                 if (err){
-                 			var error=new Error("Database Query Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error'
-							next(error);
-                            //console.log("database query error: " + err); 
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Query Error";
-                            //res.end(JSON.stringify(returnObject));
-                           // res.status(404).send('Not found');
-                            //return;
-                  }
-
-                  //succeeded
-                  //console.log(JSON.stringify(rows));
-
-                  if(rows.length > 0){
-                		res.writeHead(200, {'Content-Type': 'application/json'});
-          				res.end(JSON.stringify(rows[0]));
-          			}
-          			else{
-          				var error=new Error("Not Found");
-             				error.http_code=404;
-             				error.error_type='Client Error';
-							next(error);
-							//return;
-
-          			}
-          		//console.log(JSON.stringify(rows));
-              });
-
-          });
 }
 
 module.exports.getUserProjects=function(req,res,next){
-	pool.getConnection(function(err, connection) {
+	var userid=req.params.userid;
+
+  UserModel.findOne({_id:userid}, function (err, doc){
+    
+    if(typeof doc =='undefined'){
+
+       res.end(null);
+    }
+    else{
+
+      res.end(JSON.stringify(doc.projects));
+
+    }
+  // doc is a Document
+  });
+}
+
+module.exports.getUserProjectsOld=function(req,res,next){
+  pool.getConnection(function(err, connection) {
               var userQuery = "select * from project where userid=" + req.params.userid;
 
 
              if (err){
-             				var error=new Error("Database Connection Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error';
-							next(error);
+                    var error=new Error("Database Connection Error");
+                    error.http_code=500;
+                    error.error_type='Internal Server Error';
+              next(error);
                             //console.log("getConnection error: " + err);
                             //doneAllQueries("Error","Internal Database Connection Error");
                             //returnObject.response="Error";
@@ -126,10 +64,10 @@ module.exports.getUserProjects=function(req,res,next){
 
                
                  if (err){
-                 			var error=new Error("Database Query Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error'
-							next(error);
+                      var error=new Error("Database Query Error");
+                    error.http_code=500;
+                    error.error_type='Internal Server Error'
+              next(error);
                             //console.log("database query error: " + err); 
                             //returnObject.response="Error";
                             //returnObject.message="Internal Database Query Error";
@@ -142,18 +80,18 @@ module.exports.getUserProjects=function(req,res,next){
                   //console.log(JSON.stringify(rows));
 
                   //if(rows.length > 0){
-                	//	res.writeHead(200, {'Content-Type': 'application/json'});
-          				res.end(JSON.stringify(rows));
-          			//}
-          			//else{
-          			//	var error=new Error("Not Found");
-             		//		error.http_code=404;
-             		//		error.error_type='Client Error';
-					//		next(error);
-							//return;
+                  //  res.writeHead(200, {'Content-Type': 'application/json'});
+                  res.end(JSON.stringify(rows));
+                //}
+                //else{
+                //  var error=new Error("Not Found");
+                //    error.http_code=404;
+                //    error.error_type='Client Error';
+          //    next(error);
+              //return;
 
-          			//}
-          		//console.log(JSON.stringify(rows));
+                //}
+              //console.log(JSON.stringify(rows));
               });
 
           });
@@ -297,7 +235,40 @@ module.exports.deleteUserProject=function(req,res,next){
 }
 
 
+
 module.exports.updateUserProject=function(req,res,next){
+  var project=req.body;
+  var projectTitle=req.body.projectTitle;
+  var description=req.body.description;
+  var bannerAsset=req.body.bannerAsset;
+  var userid=req.body.userid;
+  var projectId=req.body._id;
+
+  console.log("updateUserProject " + userid + "  " + projectId);
+
+ // UserModel.update({_id:userid,"projects._id": projectId},
+ //                  {$set:{"projects.$.projectTitle":projectTitle,"projects.$.description":description,"projects.$.bannerAsset":bannerAsset}});
+
+ UserModel.findOne({_id:userid},function(err,user){
+        var project=user.projects.id(projectId);
+        console.log("updateUserProject: " + JSON.stringify(project));
+        project.projectTitle=projectTitle;
+        project.description=description;
+        project.bannerAsset=bannerAsset;
+        user.save(function(err){
+          //console.log(" updateUserProject err: " + err);
+          //console.log(" updateUserProject Project saved: " + JSON.stringify(user));
+          res.end(JSON.stringify(project));
+        })
+  });
+
+
+}
+
+
+
+
+module.exports.updateUserProjectOld=function(req,res,next){
 	pool.getConnection(function(err, connection) {
             
             var project=req.body;
