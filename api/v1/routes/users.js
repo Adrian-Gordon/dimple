@@ -1,10 +1,10 @@
-
+var models = require('../../../mongoosemodels');
 
 
 module.exports.getUsers=function(req,res,next){
   //console.log("Get users " + UserModel);
 
-  UserModel.find({},function(err,docs){
+  models.UserModel.find({},function(err,docs){
   // console.log("err: " + err + "docs: " + docs);
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(docs));
@@ -15,7 +15,7 @@ module.exports.getUsers=function(req,res,next){
 
 module.exports.getUser=function(req,res,next){
 
-  UserModel.find({_id:req.params.userid},function(err,docs){
+   models.UserModel.find({_id:req.params.userid},function(err,docs){
    //console.log("err: " + err + "docs: " + docs);
     res.writeHead(200, {'Content-Type': 'application/json'});
     res.end(JSON.stringify(docs[0]));
@@ -26,7 +26,7 @@ module.exports.getUser=function(req,res,next){
 module.exports.getUserProjects=function(req,res,next){
 	var userid=req.params.userid;
 
-  UserModel.findOne({_id:userid}, function (err, doc){
+   models.UserModel.findOne({_id:userid}, function (err, doc){
     
     if(typeof doc =='undefined'){
 

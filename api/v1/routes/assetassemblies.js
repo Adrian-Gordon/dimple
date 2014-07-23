@@ -1,3 +1,6 @@
+var models = require('../../../mongoosemodels')
+var ObjectId = require('mongoose').Types.ObjectId; 
+
 module.exports.getAssetAssemblies=function(req,res,next){
 
 	
@@ -36,59 +39,92 @@ module.exports.getAssetAssemblies=function(req,res,next){
 }
 
 
+module.exports.getAssetAssembly=function(req,res){
+  var aaid=req.params.assetassemblyid;
 
-module.exports.getAssetAssembly=function(req,res,next){
-	pool.getConnection(function(err, connection) {
-              var assetAssemblyQuery = "select * from assetassembly where assetassemblyid=" + req.params.assetassemblyid;
+  models.AssetAssemblyModel.findOne({"_id":aaid}, function (err, assetAssembly){
+  //UserModel.findOne({"projects.assetAssemblies":{$elemMatch:{_id:aaid}}}, function (err, user){
+    
+    if(err)console.log("Error: " + err);
 
+  //  console.log("user: " + JSON.stringify(user));
+    if((typeof assetAssembly =='undefined')||(assetAssembly===null)){
 
-             if (err){
-             				var error=new Error("Database Connection Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error';
-							next(error);
-                            //console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Connection Error";
-                            //res.end(JSON.stringify(returnObject));
-                            //res.status(404).send('Not found');
-                            //return; //we're done
-             }
-            
-             connection.query(assetAssemblyQuery,function(err,rows){
+       res.end(null);
+    }
+    else{
+      
+      res.end(JSON.stringify(assetAssembly));
 
-               
-                 if (err){
-                 			var error=new Error("Database Query Error");
-             				error.http_code=500;
-             				error.error_type='Internal Server Error'
-							next(error);
-                            //console.log("database query error: " + err); 
-                            //returnObject.response="Error";
-                            //returnObject.message="Internal Database Query Error";
-                            //res.end(JSON.stringify(returnObject));
-                           // res.status(404).send('Not found');
-                            //return;
-                  }
-
-                  //succeeded
-                  //console.log(JSON.stringify(rows));
-
-                  if(rows.length > 0){
-                		res.writeHead(200, {'Content-Type': 'application/json'});
-          				res.end(JSON.stringify(rows[0]));
-          			}
-          			else{
-          				var error=new Error("Not Found");
-             				error.http_code=404;
-             				error.error_type='Client Error';
-							next(error);
-							//return;
-
-          			}
-          		//console.log(JSON.stringify(rows));
-              });
-
-          });
+    }
+  // doc is a Document
+  });
 }
+
+module.exports.updateAssetAssembly=function(req,res){
+      var assetAssembly=req.body;
+
+    
+      var id= req.body._id;
+      var assetAssemblyDescription= req.body.assetAssemblyDescription;
+      var icon= req.body.icon;
+      var layarImageUrl= req.body.layarImageUrl;
+      var textElements= req.body.textElements;
+      var assets =req.body.assets;
+      var location =req.body.location;
+      
+
+     // AssetModel.update({_id:id},
+      //       {$set:{"assetSubtypeId":assetsubtypeid,"assetTypeId":assettypeid,"assetDescription":assetdescription,"posterAsset":posterassetid,"rating":rating,"userid":userid,"version":version,"captions":captions,"presentations":presentations}});
+
+      models.AssetAssemblyModel.findOne({_id:id},function(err,assetAssembly){
+        assetAssembly.assetAssemblyDescription=assetAssemblyDescription;
+        assetAssembly.icon=icon;
+        assetAssembly.layarImageUrl=layarImageUrl;
+        assetAssembly.textElements=textElements;
+        assetAssembly.assets=assets;
+        assetAssembly.location=location;
+
+        assetAssembly.save();
+        res.end(JSON.stringify(assetAssembly));
+      });
+
+
+
+}
+
+module.exports.deleteAssetAssembly=function(req,res){
+    var id= parseInt(req.params.assetassemblyid);
+
+    console.log("Delete AssetAssembly: " + id);
+
+    models.ProjectModel.find({assetAssemblies:{$elemMatch:{assetAssemblyId:id}}}, function (err, projects){
+        //console.log("remove AA from projects: " + JSON.stringify(projects));
+
+        for(i in projects){ //remove the asset assembly from any projects it is used in
+          var project=projects[i];
+          console.log("remove AA from project: " + JSON.stringify(project));
+          var pid = project._id;
+          
+          models.ProjectModel.update({_id:pid},{$pull:{'assetAssemblies':{assetAssemblyId:id}}},function(err){
+            if(err)console.log('models.ProjectModel.update err: ' + err);
+            else console.log('models.ProjectModel.update success');
+          });
+
+
+
+        }
+        //and remove the Asset Assembly itself
+        models.AssetAssemblyModel.findOneAndRemove({_id:id},function(err){
+          if(err)console.log('models.AssetAssemblyModel.findOneAndRemove err: ' + err);
+          else console.log('models.AssetAssemblyModel.findOneAndRemove done' );
+        });
+    });
+    res.end();
+}
+
+
+
+
+
+

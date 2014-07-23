@@ -64,16 +64,66 @@ dimpleConsoleApp.renderAllUserProjectsView =  function(){
     $('#projlist').empty();
     var index=1;
     var anchorclass='projanchoreven';
-    dimpleConsoleApp.allUserProjects.each(function(model){
-     // console.log("Go render model: " + JSON.stringify(model));
-      var view= new dimpleConsoleApp.ProjectView({model:model});
-      view.options={index: index,oddoreven:anchorclass};
-      index++;
-      if(anchorclass==='projanchoreven')anchorclass='projanchorodd';
-      else anchorclass='projanchoreven';
-      var newel=view.render().el;
-     // console.log("new el: " + JSON.stringify(newel));
-      $('#projlist').append(newel);
+   dimpleConsoleApp.allUserProjects.each(function(model){
+
+   // console.log("input model: " + JSON.stringify(model));
+    var trElement=$("<tr>").addClass(anchorclass);
+    if(anchorclass==='projanchoreven')anchorclass='projanchorodd';
+    else anchorclass='projanchoreven';
+    $('#projlist').append(trElement);
+
+
+      fn=function(model,trElement,index){
+          var pid=model.get("_id");
+         // console.log("PID: " + pid);
+          var newProjectModel=new dimpleConsoleApp.Project({_id:pid});
+         // console.log("newProjectModel: " + JSON.stringify(newProjectModel));
+          newProjectModel.fetch({
+                  error:function(pmodel,response){
+                      console.log("newProjectModel.fetch error: " + JSON.stringify(response));
+                  },
+                  success: function(pmodel,response){
+                   // console.log("newProjectModel.fetch success, response: " + JSON.stringify(response) + " model: " + JSON.stringify(pmodel));
+                    var view= new dimpleConsoleApp.ProjectView({model:pmodel,el:trElement});
+                    view.options={index: index};
+                   
+                    var newel=view.render().el;
+                   //console.log("About to append new el: " + JSON.stringify(newel));
+                    
+                  }
+
+              }
+      );
+
+      }(model,trElement,index);
+       index++;
+
+
+
+
+   //  console.log("Go render project model: " + JSON.stringify(model) + " id: " + model._id);
+   //  var pid=model._id;
+   // var pid=1;
+  //   var newProjectModel=new dimpleConsoleApp.Project({_id:pid});
+   /*  newProjectModel.fetch({
+                  error:function(model,response){
+                      console.log("newProjectModel.fetch error: " + response);
+                  },
+                  success: function(model,response){
+                    console.log("newProjectModel.fetch success, response: " + JSON.stringify(response) + " model: " + JSON.stringify(model));
+                    var view= new dimpleConsoleApp.ProjectView({model:model});
+                    view.options={index: index,oddoreven:anchorclass};
+                    index++;
+                    if(anchorclass==='projanchoreven')anchorclass='projanchorodd';
+                    else anchorclass='projanchoreven';
+                    var newel=view.render().el;
+                   //console.log("About to append new el: " + JSON.stringify(newel));
+                    $('#projlist').append(newel);
+                  }
+
+              }
+      );*/
+      
 
     });
 

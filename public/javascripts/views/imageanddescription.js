@@ -14,7 +14,7 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
         this.render();
      },
       render: function(){
-        console.log("ImageAndDescriptionView model: " + JSON.stringify(this.model));
+        //console.log("ImageAndDescriptionView model: " + JSON.stringify(this.model));
         //console.log("render EnterImageUrlView: " + this.template(this.model.toJSON()));
         //console.log("el contents: " + $(this.el).html());
         console.log(" ImageAndDescriptionView el: " + this.el);

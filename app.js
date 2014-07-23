@@ -40,11 +40,12 @@ if(typeof String.prototype.endsWith !== "function") {
 }
 
 var mongoose=require('mongoose');
+var autoIncrement = require('mongoose-auto-increment');
 
-var ObjectId = require('mongoose').Types.ObjectId; 
+//var ObjectId = require('mongoose').Types.ObjectId; 
+//var models = require('./mongoosemodels')(mongoose);
 
-
-var Schema=mongoose.Schema;
+/*
 
 
 var UserSchema= new Schema({
@@ -65,19 +66,29 @@ var UserSchema= new Schema({
     ftpUserName: String,
     ftpPassword: String,
     defaultLanguage: String,
-    projects: [{
+    
+
+});
+
+var ProjectSchema=new Schema({
+      _id:Number,
+       userid: Number,
       projectTitle: String,
       description:String,
       bannerAsset: Number,
+      assetAssemblies:[{assetAssemblyId:Number,visible:Boolean}],
       styles: Schema.Types.ObjectId,
-      assetAssemblies:[{
-        assetAssembyId: Number,
+
+});
+
+var AssetAssemblySchema=new Schema({
+       _id: Number,
         assetAssemblyDescription: String,
         location:[],
         icon: Number,
         layarImageUrl: String,
         imageAsset:Number,
-        assets:[],
+        assets:[{assetid:Number,index:Number}],
         textElements:[{
           languageCode: String,
           title: String,
@@ -87,15 +98,12 @@ var UserSchema= new Schema({
           summary3: String,
           summary4: String
         }]
-      }]
-
-    }]
-    
-
-
-
 
 });
+
+AssetAssemblySchema.index({ loc: '2d' });
+
+
 
 var AssetSchema=new Schema({
     _id:Number,
@@ -108,6 +116,7 @@ var AssetSchema=new Schema({
     userid: Number,
     captions:[{languageCode:String,caption:String}],
     presentations:[{
+        parentId:Number,
         mimetype:String,
         url:String,
         posterUrl:String,
@@ -121,12 +130,16 @@ var AssetSchema=new Schema({
 
 });
 
- UserModel=mongoose.model('UserModel',UserSchema);
+var UserModel=mongoose.model('UserModel',UserSchema);
 
- AssetModel=mongoose.model('AssetModel',AssetSchema);
+var AssetModel=mongoose.model('AssetModel',AssetSchema);
 
+var ProjectModel=mongoose.model('ProjectModel',ProjectSchema);
 
- 
+var AssetAssemblyModel=mongoose.model('AssetAssemblyModel',AssetAssemblySchema);
+
+*/
+ //console.log("projectmodel: " + ProjectModel);
 
 //nconf is used globally
 nconf=require('nconf');
@@ -162,7 +175,10 @@ if(path=nconf.get('conf')){
 
 
 
-mongoose.connect(nconf.get('databaseurl'));
+var mongooseConnection=mongoose.connect(nconf.get('databaseurl'));
+autoIncrement.initialize(mongooseConnection);
+
+var models=require('./mongoosemodels');
 
 
 AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey")});
@@ -288,12 +304,14 @@ app.post('/UploadLocalImage',authenticateAPI,uploadLocalImage);
 //RESTful API
 
 //projects
-app.get('/api/v1/projects/',authenticateAPI,projects.getProjects);
+app.get('/api/v1/projects/',projects.getProjects);
+
+
+app.get('/api/v1/projects/:projectid',projects.getProject);
 app.get('/api/v1/projects/:projectid/assetassemblies',projects.getProjectAssetAssemblies);
-app.get('/api/v1/projects/:projectid',authenticateAPI,projects.getProject);
 
 
-app.use('/api/v1/projects/',authenticateAPI,projects.handleError);
+//app.use('/api/v1/projects/',projects.handleError);
 
 
 
@@ -322,7 +340,10 @@ app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
 
 //assetassemblies
 app.get('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.getAssetAssemblies);
-app.get('/api/v1/assetassemblies/:assetassemblyid',authenticateAPI,assetassemblies.getAssetAssembly);
+app.put('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.updateAssetAssembly);
+app.delete('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.deleteAssetAssembly);
+
+app.get('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.getAssetAssembly);
 
 
 app.use('/api/v1/users/',users.handleError);
@@ -360,7 +381,7 @@ console.log("database: " + nconf.get('databaseurl'));
 /*Authentication*/
  
 function check_auth_user(username,password,done,public_id){
-  UserModel.findOne({ userName:username,userPassword:password}, function (err, doc){
+  models.UserModel.findOne({ userName:username,userPassword:password}, function (err, doc){
    // console.log("Err: " + err);
     //console.log("doc: " + doc);
     if(typeof doc =='undefined'){
@@ -397,7 +418,7 @@ function selectImageAP(req,res){
     var assetid=query.assetid;
     var maxwidth=query.maxwidth;
 
-    AssetModel.findOne({_id:assetid},function(err,doc){
+    models.AssetModel.findOne({_id:assetid},function(err,doc){
 
         if(err){
            res.status(404).send('Not found');
