@@ -39,112 +39,16 @@ if(typeof String.prototype.endsWith !== "function") {
     };
 }
 
-var mongoose=require('mongoose');
-var autoIncrement = require('mongoose-auto-increment');
 
-//var ObjectId = require('mongoose').Types.ObjectId; 
-//var models = require('./mongoosemodels')(mongoose);
-
-/*
-
-
-var UserSchema= new Schema({
-    _id: Number,
-    userName: String,
-    screenName: String,
-    userPassword: String,
-    email: String,
-    confimationCode: String,
-    activated: Boolean,
-    useAws: Boolean,
-    awsBucket: Boolean,
-    useMimosaAwsCredentials: Boolean,
-    awsSecurityKey: String,
-    distribution: String,
-    ftpHost: String,
-    ftpDirectory: String,
-    ftpUserName: String,
-    ftpPassword: String,
-    defaultLanguage: String,
-    
-
-});
-
-var ProjectSchema=new Schema({
-      _id:Number,
-       userid: Number,
-      projectTitle: String,
-      description:String,
-      bannerAsset: Number,
-      assetAssemblies:[{assetAssemblyId:Number,visible:Boolean}],
-      styles: Schema.Types.ObjectId,
-
-});
-
-var AssetAssemblySchema=new Schema({
-       _id: Number,
-        assetAssemblyDescription: String,
-        location:[],
-        icon: Number,
-        layarImageUrl: String,
-        imageAsset:Number,
-        assets:[{assetid:Number,index:Number}],
-        textElements:[{
-          languageCode: String,
-          title: String,
-          subtitle: String,
-          summary1: String,
-          summary2: String,
-          summary3: String,
-          summary4: String
-        }]
-
-});
-
-AssetAssemblySchema.index({ loc: '2d' });
-
-
-
-var AssetSchema=new Schema({
-    _id:Number,
-    assetDescription: String,
-    assetTypeId:Number,
-    assetSubtypeId:Number,
-    rating:Number,
-    version: Number,
-    posterAsset: Number,
-    userid: Number,
-    captions:[{languageCode:String,caption:String}],
-    presentations:[{
-        parentId:Number,
-        mimetype:String,
-        url:String,
-        posterUrl:String,
-        quality:String,
-        width:Number,
-        height:Number,
-        languageCode:String,
-        data: Schema.Types.Mixed
-                
-    }]
-
-});
-
-var UserModel=mongoose.model('UserModel',UserSchema);
-
-var AssetModel=mongoose.model('AssetModel',AssetSchema);
-
-var ProjectModel=mongoose.model('ProjectModel',ProjectSchema);
-
-var AssetAssemblyModel=mongoose.model('AssetAssemblyModel',AssetAssemblySchema);
-
-*/
- //console.log("projectmodel: " + ProjectModel);
 
 //nconf is used globally
 nconf=require('nconf');
 
 var AWS = require('aws-sdk'); 
+
+var UAParser=require('ua-parser-js');
+
+var uaParser=new UAParser();
 
 
 
@@ -155,7 +59,7 @@ nconf.env().argv();
 //if 'conf' environment variable or command line argument is provided, load 
 //the configuration JSON file provided as the value
 if(path=nconf.get('conf')){
-  console.log("use file: " + path);
+  //logger.info("use file: " + path);
   nconf.file({file:path});
  
 }
@@ -175,41 +79,113 @@ if(path=nconf.get('conf')){
 
 
 
-var mongooseConnection=mongoose.connect(nconf.get('databaseurl'));
-autoIncrement.initialize(mongooseConnection);
+//var mongooseConnection=mongoose.connect(nconf.get('databaseurl'));
+//autoIncrement.initialize(mongooseConnection);
+
+
+//configure logging
+var winston=require('winston');
+var loggingConfig=nconf.get('logging');
+
+
+var fileAndLine=loggingConfig.fileandline;
+
+
+
+Object.keys(loggingConfig).forEach(function(key){
+   
+    if(key!= "fileandline")winston.loggers.add(key,loggingConfig[key]);
+
+});
+
+//logger is used globally
+
+logger=require('winston').loggers.get('logger');
+logger.exitOnError=false;
+
+if(fileAndLine){
+  var logger_info_old=logger.info;
+  logger.info=function(msg){
+    var fandl=traceCaller(1);
+    return(logger_info_old.call(this,fandl + " " + msg));
+  }
+
+
+  var logger_error_old=logger.error;
+  logger.error=function(msg){
+    var fandl=traceCaller(1);
+    return(logger_error_old.call(this,fandl + " " + msg));
+  }
+ 
+}
+
+function traceCaller(n) {
+    if( isNaN(n) || n<0) n=1;
+    n+=1;
+    var s = (new Error()).stack
+      , a=s.indexOf('\n',5);
+    while(n--) {
+      a=s.indexOf('\n',a+1);
+      if( a<0 ) { a=s.lastIndexOf('\n',s.length); break;}
+    }
+    b=s.indexOf('\n',a+1); if( b<0 ) b=s.length;
+    a=Math.max(s.lastIndexOf(' ',b), s.lastIndexOf('/',b));
+    b=s.lastIndexOf(':',b);
+    s=s.substring(a+1,b);
+    return s;
+  }
+
+//end logging config
 
 var models=require('./mongoosemodels');
 
 
-AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey")});
+
+
+AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey"),region: 'eu-west-1'});
 var s3 = new AWS.S3();
 
 
 
+/*
+
+var elastictranscoder=new AWS.ElasticTranscoder();
+
+var params={
+  Id:'1416055890519-01305a'
+}
+
+elastictranscoder.readPreset(params, function(err, data) {
+  if (err) logger.info(err, err.stack); // an error occurred
+  else     logger.info("PRESET:" + JSON.stringify(data));           // successful response
+});
+
+*/
+
 
 /*Authentication*/
  var authenticateAPI = function(req, res, next){
-  //console.log("authenticate API");
+  //logger.info("authenticate API");
   if (req.isAuthenticated()) { //we're logged in
-     // console.log("We're authenticated");
+     // logger.info("We're authenticated");
       return next(); 
     }
     else{ //see if username/parameters match
 
       
-      //console.log("req: " + JSON.stringify(req.query));
+      //logger.info("req: " + JSON.stringify(req.query));
       var username=req.param('username');
       var apikey=req.param('apikey');
-      console.log("check call username " + username + " api key " + apikey);
+     // logger.info("check call username " + username + " api key " + apikey);
 
-     // console.log("username: " + username + " apikey: " + apikey);
+     // logger.info("username: " + username + " apikey: " + apikey);
 
       if((username !== undefined)&&(users.getUserApiKey(username)===apikey)){
-        console.log("API auth OK");
+       // logger.info("API auth OK");
         return next();
       }
      // else{
-       // console.log("API auth not OK");
+       // logger.info("API auth not OK");
       //  res.send(401,{status:401,message:"Not Authorised",type:"Authorisation Error"});
       //}
 
@@ -220,7 +196,7 @@ var s3 = new AWS.S3();
 
 var authenticate=function(req,res,next){
   if (req.isAuthenticated()) { //we're logged in
-      //console.log("req[user]: " + JSON.stringify(req["user"]));
+      //logger.info("req[user]: " + JSON.stringify(req["user"]));
       res.cookie('dimpleuserid',req["user"]._id,{maxAge:2592000000});
       return next(); 
     }
@@ -246,6 +222,7 @@ var mime=require("mime");
 var util=require('util');
 passport = require('passport'),
 LocalStrategy = require('passport-local').Strategy;
+ var dig = require('./http-digest-client');
 
 var collections = ["counters"]
 db = require("mongojs").connect(nconf.get('databaseurl'), collections);
@@ -254,7 +231,8 @@ var fs = require('fs'),
 request = require('request');
 
 app.set('port', process.env.PORT || 3000);
-
+app.set('views',__dirname + '/views');
+app.set('view engine','jade');
 
 app.use(express.cookieParser("secret"));
 app.use(express.session({
@@ -290,6 +268,7 @@ passport.use(new LocalStrategy(
 app.get('/SelectImageAP',selectImageAP);
 app.get('/GetAllProjectAssemblies',getAllProjectAssemblies);
 app.get('/AssembleAssets', assembleAssets); 
+app.get('/DimpleMap_v1',dimpleMap_v1);
 app.get('/GenerateStylesheet',generateStylesheet);
 
 app.post('/UploadImageFromUrl',authenticateAPI,uploadImageFromUrl);
@@ -308,7 +287,10 @@ app.get('/api/v1/projects/',projects.getProjects);
 
 
 app.get('/api/v1/projects/:projectid',projects.getProject);
+app.put('/api/v1/projects/:projectid',projects.updateProject);
+app.post('/api/v1/projects/',projects.addProject);
 app.get('/api/v1/projects/:projectid/assetassemblies',projects.getProjectAssetAssemblies);
+app.delete('/api/v1/projects/:projectid',projects.deleteProject);
 
 
 //app.use('/api/v1/projects/',projects.handleError);
@@ -340,6 +322,7 @@ app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
 
 //assetassemblies
 app.get('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.getAssetAssemblies);
+app.post('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.addAssetAssembly);
 app.put('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.updateAssetAssembly);
 app.delete('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.deleteAssetAssembly);
 
@@ -369,7 +352,7 @@ app.get('/dimpleconsole.html',authenticate); //must be logged in to go to the co
 app.use(express.static(__dirname + '/public'));
 
 
-console.log("database: " + nconf.get('databaseurl'));
+//logger.info("database: " + nconf.get('databaseurl'));
 
  pool  = mysql.createPool({
     host     : nconf.get('databasehost'),
@@ -382,8 +365,8 @@ console.log("database: " + nconf.get('databaseurl'));
  
 function check_auth_user(username,password,done,public_id){
   models.UserModel.findOne({ userName:username,userPassword:password}, function (err, doc){
-   // console.log("Err: " + err);
-    //console.log("doc: " + doc);
+   // logger.info("Err: " + err);
+    //logger.info("doc: " + doc);
     if(typeof doc =='undefined'){
 
        return done(null, false);
@@ -435,11 +418,11 @@ function selectImageAP(req,res){
             return(b.width - a.width);
         });
 
-       // console.log("sorted presentations: " + presentations);
+       // logger.info("sorted presentations: " + presentations);
 
         var redirectUrl;
         for(var p in presentations){
-          //console.log(" width: " + presentations[p].width + " maxwidth: " + maxwidth);
+          //logger.info(" width: " + presentations[p].width + " maxwidth: " + maxwidth);
           if(presentations[p].width <= maxwidth){
             redirectUrl=presentations[p].url;
             break;
@@ -448,7 +431,7 @@ function selectImageAP(req,res){
         }
 
         if(typeof redirectUrl === 'undefined'){
-         // console.log("no presentation, presentations: " + JSON.stringify(presentations));
+         // logger.info("no presentation, presentations: " + JSON.stringify(presentations));
           if(typeof presentations[0] === 'undefined'){
             redirectUrl='/images/noimage50x50.png';
           }
@@ -465,158 +448,269 @@ function selectImageAP(req,res){
 
 
 /*GenerateStylesheet*/
+
 function generateStylesheet(req,res){
-    var parsedUrl= require('url').parse(req.url,true);
+  var parsedUrl= require('url').parse(req.url,true);
     var pathName=parsedUrl.pathname;
     var query = parsedUrl.query;
 
-    var specis;
-    var rais;
-    var atisPerRule;
+    //var specis;
+    //var rais;
+    //var atisPerRule;
+    //var cssRules=new Object();
 
     var useragent=query.useragent;
     var styleid=query.styleid;
     var isWirelessDevice=query.iswireless;
     var app=query.app;
 
-    var doneAllQueries=function(){
-        //console.log("Done all queries");
-        // res.end(JSON.stringify(atisPerRule));
-        var stylesheetText="";//\n<style type=\"text/css\">\n";
-         for(key in atisPerRule){
-            if((isWirelessDevice=="true")&&(key==".dimple-body")){
-                stylesheetText +=  "body{\n";
-            }
-            else stylesheetText += key + "{\n";
-            var attributes=atisPerRule[key];
-            for(attribute in attributes){
-                var value = attributes[attribute];
-                stylesheetText+= attribute + ":";  
+    var count=0;//number of calls to make
 
-                var type=value.type;
-                if(type=="string"){
-                    stylesheetText+=value.valuestring + ";\n";
-                }
-                else if(type=="integer"){
-                    
-                    var si=specis[key+attribute];
-                    if(si != undefined){
-                        var unit=si.unit;
-                        var valOutput=(value.nincrements * ((si.maxi - si.floori)/si.maxincrements)) + si.floori;
-                        if((useragent=="iphone-ipod")&&(app=="true")&&(attribute=="font-size")&&(key==".dimple-body")){
-                          
-                            valOutput=valOutput/3;
+    models.RuleAttrInstanceModel.findOne({_id:styleid},function(err,raim){
+      if(raim != null){
+          var nRules=0;
+          
+          for(rule in raim.rules){
+            //logger.info("rule: " + rule);
+            nRules++;
+          }
+         // logger.info(nRules + " rules");
+
+          //count how many calls we will need to make
+          for(rule in raim.rules){
+            for(attribute in raim.rules[rule]){
+              var type=raim.rules[rule][attribute].type;
+              if(type != "string") count+=2;//2 calls per attribute
+            }
+          }
+
+
+
+
+          for(rule in raim.rules){
+           // logger.info("rule: " + rule);
+            //cssRules[rule]={};              //create an entry for this rule
+            var attributes=raim.rules[rule];
+            //logger.info("attributes: " + JSON.stringify(attributes));
+            for(attribute in raim.rules[rule]){
+              
+              var type=raim.rules[rule][attribute].type;
+             // logger.info("attribute: " + JSON.stringify(attribute) + JSON.stringify(type) + " " + JSON.stringify(raim.rules[rule][attribute]));
+              if(type=="string"){ //do nothing
+
+              }
+              else{
+               // count++;
+                fn =function(obj,r,a){
+                     models.RuleAttrSpecInstanceModel.findOne({rulename:r},function(err,rasim){
+                        //logger.info("RASIM: " + JSON.stringify(rasim));
+                        var rasimObj=rasim.attributes[a][useragent];
+                        if(typeof rasimObj != 'undefined'){
+
+                              //logger.info("RASIMOBJECT: " + JSON.stringify(rasimObj) + " rule: " + r + "attr: " + a + "useragent: " + useragent);
+                              obj.floorf=rasimObj.floorf;
+                              obj.floori=rasimObj.floorf;
+                              obj.maxf=rasimObj.maxf;
+                              obj.maxi=rasimObj.maxi;
+                             
+                              //logger.info("count now: " + count);
+                          }
+                           count--;
+                        if(count==0){
+                            var outputCSS=formatCss(raim.rules,useragent,app);
+
+                            res.end(outputCSS);
+                        }
+
+                      });
+                   }(raim.rules[rule][attribute],rule,attribute);
+
+
+                    fn2 =function(obj,r,a){
+                     models.RuleAttrSpecModel.findOne({rulename:r},function(err,rasim){
+                        //logger.info("RASIM: " + JSON.stringify(rasim));
+                        var rasimObj=rasim.attributes[a];
+                        if(typeof rasimObj != 'undefined'){
+                            //logger.info("RASIMOBJECT2: " + JSON.stringify(rasimObj) + " rule: " + r + "attr: " + a );
+                            obj.maxincrements=rasimObj.nincrements;
+                          }
                         
-                    }
-                        stylesheetText+=(valOutput + value.unit + ";\n");
-                    }
-                    else{
-                        stylesheetText+=";\n";
-                    }
-                 }
-                 else{
-                     var si=specis[key+attribute];
-                    if(si != undefined){
-                        var unit=si.unit;
-                        var valOutput=(value.nincrements * ((si.maxf - si.floorf)/si.maxincrements)) + si.floorf;
-                       
-                         stylesheetText+=(valOutput + value.unit + ";\n");
-                    }
-                    else{
-                        stylesheetText+=";\n";
-                    }
-                   
-                 }
+                        count--;
+                       // logger.info("count now: " + count);
+                        if(count==0){
+                            var outputCSS=formatCss(raim.rules,useragent,app);
 
-                //stylesheetText+= JSON.stringify(value);
+                            res.end(outputCSS);
+                        }
+
+                      });
+                   }(raim.rules[rule][attribute],rule,attribute);
+
+
+
+
+                //process further
+              }
             }
-             if((key==".dimple-body")&&(isWirelessDevice=="false")&&!(useragent=="sd-emulator-browser"))stylesheetText +="width:800px;";
-            stylesheetText +=  "}\n";
-         }
-        // stylesheetText+="</style>\n";
-         res.end(stylesheetText);
-    };
+          }
 
-    /*Get ruleattrspecinstances for this useragent*/
-    
-        var returnObject=new Object();
-         //specis=new Object();
-         //rais=new Object();
-         var rasiQuery="select ruleattrspecinstance.rulename as rulename,ruleattrspecinstance.attrname as attrname,ruleattrspec.nincrements as maxincrements,useragent,maxi,maxf,floori,floorf from ruleattrspecinstance,ruleattrspec where ruleattrspec.rulename=ruleattrspecinstance.rulename and ruleattrspec.attrname=ruleattrspecinstance.attrname and useragent='" + useragent + "';";
-         var raiQuery="select rulename,attrname,type,valuestring,nincrements,unit from ruleattrinstance  where styleid=" + styleid + ";";
+          //var outputCSS=formatCss(raim.rules);
 
-      pool.getConnection(function(err, connection) {
-             if (err){
-                            console.log("getConnection error: " + err);
-                            //doneAllQueries("Error","Internal Database Connection Error");
-                            returnObject.response="Error";
-                            returnObject.message="Internal Database Connection Error";
-                             res.end(JSON.stringify(returnObject));
-                            return; //we're done
-             }
-             connection.query(rasiQuery,function(err,rows){
-                if(connection !=null)connection.release();
-                 if (err){
-                            console.log("database query error: " + err); 
-                            returnObject.response="Error";
-                            returnObject.message="Internal Database Query Error";
-                            res.end(JSON.stringify(returnObject));
-                            return;
-                  }
-                  var _specis=new Object();
-                  for(rowindex in rows){
-                    row=rows[rowindex];
-                    
-                    _specis[row.rulename + row.attrname]=row;
-                  }
+         // res.end(outputCSS);
+        }
+        else{
+          res.end();
+        }
 
-                  specis=_specis;
+    });
 
-                  if((rais != undefined)&&(specis != undefined)&&(atisPerRule != undefined))doneAllQueries();
-
-                  //res.end(JSON.stringify(rais));
-             });
-           });
-          pool.getConnection(function(err, connection) {
-            connection.query(raiQuery,function(err,rows){
-               if(connection != null)connection.release();
-                  if (err){
-                            console.log("database query error: " + err); 
-                            returnObject.response="Error";
-                            returnObject.message="Internal Database Query Error";
-                            res.end(JSON.stringify(returnObject));
-                            return;
-                  }
-                  var _rais=new Object();
-                  var _atisPerRule=new Object();
-                  for(rowindex in rows){
-                    row=rows[rowindex];
-                    
-                    _rais[row.rulename + row.attrname]=row;
-                    if(_atisPerRule[row.rulename]==undefined){ //create new
-                        _atisPerRule[row.rulename]=new Object();
-                        var apr=_atisPerRule[row.rulename];
-                        apr[row.attrname]=row;                       
-                    }
-                    else{                                       //add to it
-                        var apr=_atisPerRule[row.rulename];
-                        apr[row.attrname]=row;
-                    }
-                  }
-                  rais=_rais;
-                  atisPerRule=_atisPerRule
-                   if((rais != undefined)&&(specis != undefined)&&(atisPerRule != undefined))doneAllQueries();
-
-                  });
-
-
-     });
 
 }
 
 
-/*GetAllProjectAssemblies*/
+//var unit=si.unit;
+//var valOutput=(value.nincrements * ((si.maxi - si.floori)/si.maxincrements)) + si.floori;
+//if((useragent=="iphone-ipod")&&(app=="true")&&(attribute=="font-size")&&(key==".dimple-body")){
+  
+//    valOutput=valOutput/3;
+
+function formatCss(rules,useragent,app){
+  outString="";
+
+  for(rule in rules){
+    outString =outString + rule.replace(/\_/g,".") + "{\n";
+
+    for(attribute in rules[rule]){
+      outString+=attribute + ":";
+      var type=rules[rule][attribute].type;
+      if(type=="string"){
+        outString+=rules[rule][attribute].valuestring + ";\n";
+      }
+      else if(type=="integer"){
+        //outString+=JSON.stringify(rules[rule][attribute]) +"\n";
+        var nincrements=rules[rule][attribute].nincrements;
+        var maxi=rules[rule][attribute].maxi;
+        var floori=rules[rule][attribute].floori;
+        var maxincrements=rules[rule][attribute].maxincrements;
+        var value=(nincrements * ((maxi - floori)/maxincrements)) + floori;
+
+        if((useragent=="iphone-ipod")&&(app=="true")&&(attribute=="font-size")&&(rule=="_dimple-body")){
+                          
+                            value=value/3;
+                        
+        }
+        var unit=rules[rule][attribute].unit;
+
+        outString+=value+unit + ";\n";
+
+      }
+      else if(type=="float"){
+        //outString+=JSON.stringify(rules[rule][attribute]) +"\n";
+        var nincrements=rules[rule][attribute].nincrements;
+        var maxf=rules[rule][attribute].maxf;
+        var floorf=rules[rule][attribute].floorf;
+        var maxincrements=rules[rule][attribute].maxincrements;
+        var value=(nincrements * ((maxf - floorf)/maxincrements)) + floorf;
+        var unit=rules[rule][attribute].unit;
+
+        outString+=value+unit + ";\n";
+
+      }
+
+    }
+
+
+    outString=outString+"}\n";
+  }
+  return(outString);
+
+}
+
+
 function getAllProjectAssemblies(req,res){
+  var parsedUrl= require('url').parse(req.url,true);
+  var pathName=parsedUrl.pathname;
+  var query = parsedUrl.query;
+  var projectid=query.projectid;
+  var language=query.language;
+  var iconsize=query.iconsize
+  var callback=query.callback;
+  if(language==undefined)language="en";
+
+
+  var host=req.headers.host;
+
+  var returnObject=new Object();
+  var assembliesData=new Object();
+
+  //get the project
+  models.ProjectModel.findOne({_id:projectid},function(err,project){ 
+    returnObject.projectid=projectid;
+    returnObject.projecttitle=project.projectTitle;
+    returnObject.ip=host;
+    returnObject.iconsize=iconsize;
+    returnObject.assemblies=[];
+
+
+    var l=Object.keys(project.assetAssemblies).length;
+
+    console.log("Naas: " + l);
+
+
+    for(aaid in project.assetAssemblies){
+      console.log("aaid: " + aaid);
+
+      models.AssetAssemblyModel.findOne({_id:aaid},function(err,assetAssembly){
+        console.log("AA: " + JSON.stringify(assetAssembly));
+        var newAA=new Object();
+        newAA.longitude=assetAssembly.location[0];
+        newAA.latitude=assetAssembly.location[1];
+        newAA.layariconid=assetAssembly.icon;
+        newAA.assetassemblytitle=assetAssembly.textElements[language].title;
+        newAA.assetassemblysubtitle=assetAssembly.textElements[language].subtitle;
+        newAA.summarytext1=assetAssembly.textElements[language].summarytext1;
+        newAA.summarytext2=assetAssembly.textElements[language].summarytext2;
+        newAA.summarytext3=assetAssembly.textElements[language].summarytext3;
+        newAA.summarytext4=assetAssembly.textElements[language].summarytext4;
+
+        newAA.visible=project.assetAssemblies[assetAssembly._id].visible;
+        newAA.layarurl=assetAssembly.layarImageUrl;
+        newAA.assetassemblydescription=assetAssembly.assetAssemblyDescription;
+        newAA.assetassemblyid=assetAssembly._id;
+        returnObject.assemblies.push(newAA);
+
+
+        l--;
+        if(l==0){
+           returnObject.response="OK";
+          res.writeHead(200, {'Content-Type': 'application/json'});
+
+          if(typeof callback != 'undefined'){
+
+
+            res.end(callback + '(' + JSON.stringify(returnObject) + ')');
+          }
+          else {
+             res.end(JSON.stringify(returnObject));
+          }
+        }
+
+      });
+    }
+
+   
+
+
+  });
+
+
+
+}
+
+
+
+/*GetAllProjectAssemblies*/
+/*function getAllProjectAssembliesOld(req,res){
     var parsedUrl= require('url').parse(req.url,true);
     var pathName=parsedUrl.pathname;
     var query = parsedUrl.query;
@@ -634,7 +728,7 @@ function getAllProjectAssemblies(req,res){
     var assembliesCount=-1; //no of assemblies - haven't done them all yet
 
     var doneAllQueries=function(){
-       // console.log("GetAllProjectAssemblies doneAllQueries");
+       // logger.info("GetAllProjectAssemblies doneAllQueries");
         projectData.assemblies=assembliesData;
         
 
@@ -646,7 +740,7 @@ function getAllProjectAssemblies(req,res){
             // var returnObject=new Object();
 
              if (err){
-                            console.log("getConnection error: " + err);
+                            logger.info("getConnection error: " + err);
                            var returnObject=new Object();
                             returnObject.response="Error";
                             returnObject.message="Internal Database Connection Error";
@@ -655,20 +749,14 @@ function getAllProjectAssemblies(req,res){
              }
             
                        
-              /*  var projectTitle=null;
-                var projectDescription=null;
-                var projectStartDate=null;
-                var projectEndDate=null;
-                var projectBannerAssetId=null;
-                var projectStylesId=null;
-                */
+             
                 
                 //get the project details
                 connection.query( 'SELECT projectid,title,description,startdate,enddate,bannerassetid,stylesid from project where projectid=' +projectid, function(err, rows) {
-                   // console.log("In get project query");
+                   // logger.info("In get project query");
 
                      if (err){
-                            console.log("database query error: " + err);
+                            logger.info("database query error: " + err);
                             var returnObject=new Object();
                             returnObject.response="Error";
                             returnObject.message="Internal Database Query Error";
@@ -679,14 +767,8 @@ function getAllProjectAssemblies(req,res){
                   
                     if(rows[0] != null){
                         projectData=rows[0];
-                        //console.log("There are rows");
-                      /*  projectTitle=rows[0].title;
-                        projectDescription=rows[0].description;
-                        projectStartDate=rows[0].startdate;
-                        projectEndDate=rows[0].enddate;
-                        projectBannerAssetId=rows[0].bannerassetid;
-                        projectStylesId=rows[0].stylesid;
-                        */
+                        //logger.info("There are rows");
+                     
                     }
                     
                     if((projectData != undefined) &&(assembliesData != undefined)&&(assembliesCount==0))doneAllQueries();
@@ -699,7 +781,7 @@ function getAllProjectAssemblies(req,res){
 
                 connection.query( sqlQueryString, function(err, assemblyRows) {
                    if (err){
-                            console.log("database query error: " + err);
+                            logger.info("database query error: " + err);
                             returnObject=new Object();
                             returnObject.response="Error";
                             returnObject.message="Internal Database Query Error";
@@ -716,7 +798,7 @@ function getAllProjectAssemblies(req,res){
                             var textElementsQuery="select " + i + " as rowindex, assetassemblytitle,assetassemblysubtitle,summarytext1,summarytext2,summarytext3,summarytext4 from assetassemblytextelements where assetassemblyid=" + row.assetassemblyid + " and languagecode='" +language + "';";
                             connection.query(textElementsQuery,function(err,rows){
                                     if (err){
-                                             console.log("database query error: " + err);
+                                             logger.info("database query error: " + err);
                                              returnObject=new Object();
                                             returnObject.response="Error";
                                             returnObject.message="Internal Database Query Error";
@@ -725,7 +807,7 @@ function getAllProjectAssemblies(req,res){
                                     }
                                 
                                     var textElements=rows[0];
-                                  //  console.log(textElements +" " + JSON.stringify(textElements));
+                                  //  logger.info(textElements +" " + JSON.stringify(textElements));
                                     if(textElements != undefined){
                                         assemblyRows[textElements.rowindex].assetassemblytitle=textElements.assetassemblytitle;
                                         assemblyRows[textElements.rowindex].assetassemblysubtitle=textElements.assetassemblysubtitle;
@@ -735,7 +817,7 @@ function getAllProjectAssemblies(req,res){
                                         assemblyRows[textElements.rowindex].summarytext4=textElements.summarytext4;
                                     }
                                     assembliesCount-=1;
-                                   // console.log("assembliesCount: " + assembliesCount);
+                                   // logger.info("assembliesCount: " + assembliesCount);
                                     
                                       if((projectData != undefined) &&(assembliesData != undefined)&&(assembliesCount==0))doneAllQueries();
 
@@ -747,10 +829,10 @@ function getAllProjectAssemblies(req,res){
 
 
                           var summaryImageQuery="select " + i + " as rowindex, assetpresentationid,assetpresentation.assetid,assettypedescription,mimetype ,url,localurl,posterurl ,localposterurl,quality ,width ,height ,languagecode from asset inner join assetpresentation on asset.assetid=assetpresentation.assetid inner join assettype on asset.assettypeid=assettype.assettypeid and assetpresentation.assetid=" +row.summaryimageassetid + " and width > 0 order by width asc";
-                           //console.log(summaryImageQuery);
+                           //logger.info(summaryImageQuery);
                             connection.query( summaryImageQuery, function(err, saurlRows) {
                             if (err){
-                                    console.log("database query error: " + err);
+                                    logger.info("database query error: " + err);
                                     returnObject=new Object();
                                     returnObject.response="Error";
                                     returnObject.message="Internal Database Query Error";
@@ -766,7 +848,7 @@ function getAllProjectAssemblies(req,res){
                                 else{
                                     //summaryImageUrl="";
                                 }
-                                //console.log("summaryImageUrl: " + summaryImageUrl);
+                                //logger.info("summaryImageUrl: " + summaryImageUrl);
                                 //assemblyRows[saurlRows[0].rowindex].summaryimageurl=summaryImageUrl;
 
                                 assembliesCount-=1;
@@ -782,20 +864,7 @@ function getAllProjectAssemblies(req,res){
                         
                         
                    
-                 /*   returnObject.assemblies=rows;
-                    returnObject.response="OK";
-                    returnObject.projectid=projectid;
-                    returnObject.projecttitle=projectTitle;
-                    returnObject.description=projectDescription;
-                    returnObject.startdate=projectStartDate;
-                    returnObject.enddate=projectEndDate;
-                    returnObject.bannerassetid=projectBannerAssetId;
-                    returnObject.stylesid=projectStylesId;
-                    returnObject.ip=host;
-                    //console.log("Go write stuff");
-                      res.writeHead(200, {'Content-Type': 'application/json'});
-                    res.end(JSON.stringify(returnObject));
-                */
+                
 
                   if((projectData != undefined) &&(assembliesData != undefined)&&(assembliesCount==0))doneAllQueries();
 
@@ -810,7 +879,7 @@ function getAllProjectAssemblies(req,res){
                 
                   // And done with the connection.
                     connection.release();
-                    //console.log("Release the connection");
+                    //logger.info("Release the connection");
                 
           
             
@@ -818,13 +887,737 @@ function getAllProjectAssemblies(req,res){
             
         });
 
+}*/
+
+
+function assembleAssets(req,res){
+
+  getDevice(req,res,renderAssetAssembly);
+
+
 }
 
 
 
+function dimpleMap_v1(req,res){
+  getDevice(req,res,renderWebMap_v1);
+}
+
+
+
+function getDevice(req,res,renderFunction){
+
+   //get the UserAgent
+    var ua=encodeURIComponent(req.headers['user-agent']);
+   
+    //logger.info("ua: " + req.headers['user-agent']);
+
+    //logger.info("digest client: " + dig.createDigestClient);
+
+    digest=dig.createDigestClient("5184b7b9ed","x456ct4K8jXBkYY3");
+
+    digest.request({
+        method:"POST",
+       
+        host:"http://api.handsetdetection.com",
+         path:'/apiv3/site/detect/53622.json',
+         headers: {'content-type' : 'application/json'},
+         json:true,
+        body:    {'user-agent':ua},
+    },function(response){
+
+       // logger.info(response);
+       // res.end(response.message);
+        var device=new Object();
+
+       /* var projectId;
+        var returnType="html";//by default
+        var app;
+        var aaid;
+        var languageCode;
+        var plaintext;
+        var isWirelessDevice;
+        var audio_aac;
+        var audio_amr;
+        var audio_mp3;
+        var audio_wav;
+        var deviceOs;
+        var deviceId;
+        var playback_flv;
+        var playback_mov ;
+        var flash_lite_version;
+        var playback_mp4;
+        var stylesheetType;
+        var max_image_width;*/
+    
+        var parsedUrl= require('url').parse(req.url,true);
+        var query=parsedUrl.query;
+        device.aacallback=query.callback;
+        device.ua=ua;
+
+        //get query paramaters
+         device.projectId=query.projectid;
+
+         //for asset assemblies
+         if(query.return != undefined)device.returnType=query.return;
+         else device.returnType='html';
+
+
+         
+         device.app=query.app;
+         device.aaid=query.assetassemblyid;
+         device.languageCode=query.languagecode;
+         device.plaintext=query.plaintext;
+         if(typeof device.plaintext==='undefined')device.plaintext="false";
+
+
+         //for v1 maps
+
+
+         device.markersurl=query.markersurl;
+         device.iconsize=query.iconsize;
+         device.title=query.title;
+         device.subtitle=query.subtitle;
+
+         
+
+         if(typeof device.languageCode == 'undefined')device.languageCode='en';
+
+
+
+         if(response.message=="OK"){  //device was recognised
+            device.deviceOs=response.hd_specs.general_platform;
+            device.model=response.hd_specs.general_model;
+            if((response.class=='Mobile')||(response.class=="Tablet"))
+              device.isWirelessDevice=true;
+
+              //images
+              device.resolution_width=response.hd_specs.display_x;
+              device.resolution_height=response.hd_specs.display_y;
+              device.max_image_width=response.hd_specs.display_x;
+              device.max_image_height=response.hd_specs.display_y;
+
+              //video
+
+              if(response.hd_specs.media_videoplayback.indexOf("MOV")!=-1)
+                  device.playback_mov=true;
+              if(response.hd_specs.media_videoplayback.indexOf("MPEG4")!=-1)
+                  device.playback_mp4=true;
+
+
+              //audio
+              if(response.hd_specs.media_audio.indexOf("MP3")!=-1)
+                  device.playback_mp3=true;
+              if(response.hd_specs.media_audio.indexOf("WAV")!=-1)
+                  device.playback_wav=true;
+              if(response.hd_specs.media_audio.indexOf("AAC")!=-1)
+                  device.playback_aac=true;
+              if(response.hd_specs.media_audio.indexOf("AMR")!=-1) //need to check this
+                  device.playback_amr=true;
+
+
+
+                //Mobile device Special cases
+
+                //iOS can serve MOV
+
+                if(device.deviceOs=="iOS"){
+                  device.playback_mov=true;
+                }
+
+
+
+
+
+         }
+         else{ //Non mobile devices - special cases
+
+            //parse the ua
+
+            uaParser.setUA(req.headers['user-agent']);
+            var parseUAResult=uaParser.getResult();
+
+            logger.info("parse UA: " + JSON.stringify(parseUAResult));
+
+            device.max_image_width=800;
+            device.isWirelessDevice=false;
+            device.playback_mp3=true;
+
+            //special cases
+
+            logger.info("DEVICE UA: " + device.ua);
+            if(parseUAResult.browser.name == 'Safari'){
+              device.playback_mov=true;
+
+            }
+         }
+
+
+         device.stylesheetType=getStylesheetTypeForUserAgent(device.deviceOs,device.model,device.isWirelessDevice);
+
+
+         models.ProjectModel.findOne({_id:device.projectId},function(err,project){ //get the project
+              logger.info("project: " + JSON.stringify(project.assetAssemblies));
+              var maxWidth=device.max_image_width;
+              /*for(var i=0;i<project.assetAssemblies.length;i++){
+                var aa=project.assetAssemblies[i];
+                logger.info("aaid:" + device.aaid + " aa: " + JSON.stringify(aa));
+                if(aa.assetAssemblyId==device.aaid){
+                  device.visible=aa.visible;
+                }
+              }*/
+              if(typeof device.aaid != 'undefined')device.visible=project.assetAssemblies[device.aaid];
+
+              device.projectData=project;
+
+              device.styleid=project.styles;
+
+              //get the stylestring
+
+              var stylesheetUrl='http://127.0.0.1:' + app.get('port') + '/GenerateStylesheet?styleid=' + device.styleid + "&iswireless=" + device.isWirelessDevice + "&useragent=" + device.stylesheetType + "&app=false";
+
+              //logger.info("stylesheetUrl: " + stylesheetUrl);
+              request.get(stylesheetUrl,function(err,response,body){
+                  //logger.info("err: " + err + " response: " + response);
+                  logger.info("stylesheet body: " + body);
+                  device.stylestring=body;
+              
+                        
+
+                        models.AssetModel.findOne({_id:project.bannerAsset},function(err,bannerasset){ //get the banner asset
+
+
+
+                              var bannerUrl;
+                              if(bannerasset !== null){
+                                     var presentations=bannerasset.presentations;
+
+                                      presentations.sort(function(a,b){
+                                          return(b.width - a.width);
+                                      });
+
+                                     // logger.info("sorted presentations: " + presentations);
+
+                                      
+                                      for(var p in presentations){
+                                        //logger.info(" width: " + presentations[p].width + " maxwidth: " + maxwidth);
+                                        if(presentations[p].width <= maxWidth){
+                                          bannerUrl=presentations[p].url;
+                                          break;
+
+                                        }
+                                      }
+
+                                      if(typeof bannerUrl === 'undefined'){
+                                       // logger.info("no presentation, presentations: " + JSON.stringify(presentations));
+                                        if(typeof presentations[0] === 'undefined'){
+                                          bannerUrl='/images/noimage50x50.png';
+                                        }
+                                        else bannerUrl=presentations[presentations.length -1].url;
+                                      }
+
+                                      device.bannerUrl=bannerUrl;
+                                      //renderAssetAssembly(device,res);
+
+                                     // res.end(JSON.stringify(device));
+
+                              }
+                              else{
+                                //renderAssetAssembly(device,res);
+                                //res.end(JSON.stringify(device));
+                              }
+
+
+                              //get the Asset Assembly asset, if there is one
+
+
+                              if(typeof device.aaid != 'undefined'){
+
+                                      models.AssetAssemblyModel.findOne({_id:device.aaid},function(err,assetAssembly){
+                                        device.assetAssembly=assetAssembly;
+
+
+                                        var summaryImageId=assetAssembly.imageAsset;
+
+                                        //find the summary image
+
+                                        models.AssetModel.findOne({_id:summaryImageId},function(err,imageAsset){
+                                            var summaryImageUrl;
+                                            if(imageAsset !== null){
+                                                var presentations=imageAsset.presentations;
+
+                                                  presentations.sort(function(a,b){
+                                                      return(b.width - a.width);
+                                                  });
+                                                  summaryImageUrl=presentations[0].url;
+                                            }
+                                            device.summaryImageId=summaryImageId;
+                                            device.summaryImageUrl=summaryImageUrl;
+
+                                            renderFunction(device,res);
+
+                                        });
+
+                                      });
+                              }
+                              else{
+                                renderFunction(device,res);
+                              }
+
+                             
+
+                          });
+                });
+
+            
+         });
+
+
+         
+
+
+    });
+
+}
+
+function renderAssetAssembly(device,res){
+
+  var returnObject=new Object();
+        
+  //logger.info("done all queries");
+ // logger.info(projectData);
+  //logger.info(aaIsVisible);
+  //logger.info("AssetAssmblyData: " + assetAssemblyData);
+ // logger.info(assetsData);
+ // logger.info(summaryImageUrl);
+
+ logger.info("renderAssetAssembly " + JSON.stringify(device));
+ 
+  returnObject.response="OK";
+ 
+  returnObject.pagetitle=device.projectData.projectTitle;
+  returnObject.bannerassetid=device.projectData.bannerassetid;
+  returnObject.bannerasseturl=device.bannerUrl;
+  returnObject.stylesid=device.projectData.styles;
+  returnObject.projectid=device.projectId;
+  returnObject.assetassemblyid=device.aaid;
+  returnObject.language=device.languageCode;
+  returnObject.visible=device.visible;
+
+  returnObject.title=device.assetAssembly.textElements[device.languageCode].title;
+  returnObject.subtitle=device.assetAssembly.textElements[device.languageCode].assetassemblysubtitle;
+  returnObject.summarytext1=device.assetAssembly.textElements[device.languageCode].summarytext1;
+  returnObject.summarytext2=device.assetAssembly.textElements[device.languageCode].summarytext2;
+  returnObject.summarytext3=device.assetAssembly.textElements[device.languageCode].summarytext3;
+  returnObject.summarytext4=device.assetAssembly.textElements[device.languageCode].summarytext4;
+
+  returnObject.summaryimageassetid=device.summaryImageId;
+  if(typeof device.summaryImageUrl=='undefined')
+    returnObject.summaryimageurl="";
+  else returnObject.summaryimageurl=device.summaryImageUrl;
+
+
+  returnObject.layariconid=device.assetAssembly.icon;
+
+  returnObject.stylestring=device.stylestring;
+  returnObject.deviceOs==device.deviceOs;
+  returnObject.iswirelessdevice=device.isWirelessDevice
+
+  
+
+  var nAssets=device.assetAssembly.assets.length;
+
+  
+  var sortedAssets=device.assetAssembly.assets.sort(function(a,b){
+            return(a.index - b.index);
+        });
+
+  var count=nAssets; //number of callbacks
+
+  returnObject.assets=new Array(nAssets);
+
+  for(var i=0;i<nAssets;i++){
+
+    logger.info("asset: " + JSON.stringify(sortedAssets[i]));
+     var assetIndex=sortedAssets[i].index;
+
+    //find the asset
+
+    var fn = function(index,assetIndex){
+        models.AssetModel.findOne({_id: sortedAssets[i].assetid},function(err,asset){
+
+
+          //Get the poster asset url
+          logger.info("posterAsset: " + asset.posterAsset);
+          if((typeof asset.posterAsset !== 'undefined')&&(asset.posterAsset != null)&&(asset.posterAsset > 0)) {
+            logger.info("Go Get posterasset posterAsset: " + asset.posterAsset);
+            count++;
+
+            models.AssetModel.findOne({_id:asset.posterAsset},function(err,posterAsset){
+               var selectedPresentation;
+              
+              var presentations=posterAsset.presentations;
+              var nPresentations=presentations.length;
+
+              for(var i=0;i<nPresentations;i++){
+              var thisPresentation=presentations[i];
+
+              if(typeof selectedPresentation=='undefined'){
+                if(thisPresentation.width <= device.max_image_width)
+                    selectedPresentation=thisPresentation;
+              }
+              else if((thisPresentation.width > selectedPresentation.width)&&(thisPresentation.width <= device.max_image_width)){
+                selectedPresentation=thisPresentation;
+
+              }
+              }
+
+               returnObject.assets[index].posterurl=selectedPresentation.url;
+
+              count--;
+
+              console.log("Count= " + count);
+
+              if(count==0){ //we're done
+                  if(device.returnType == 'json'){
+                    returnObject.assemblies=returnObject.assets;
+                    res.json(returnObject);
+                  }
+                  else if(device.returnType=='html'){
+                    //render through a jade template
+                    //logger.info("output html");
+                   // logger.info("stylestring: " + returnObject.stylestring);
+                    res.render('assetassembly',returnObject);
+                  }
+                  else res.end();
+
+              }
+            });
+
+
+          }
+
+
+
+
+          var typeid=asset.assetTypeId;
+          var selectedPresentation;
+           var sp=new Object();
+          var presentations=asset.presentations;
+          var nPresentations=presentations.length;
+          logger.info("Asset: " + JSON.stringify(asset));
+
+          if(typeid==0){//text
+            for(var i=0;i<nPresentations;i++){
+                var thisPresentation=presentations[i];
+                //logger.info("thisPresentation: " + JSON.stringify(thisPresentation));
+                if(thisPresentation.languageCode==device.languageCode){
+                  selectedPresentation=thisPresentation;
+
+                
+
+                  break;
+                }
+            }
+          }
+          else if(typeid==1){ //video
+            var videoPresentations=new Object();
+            for(var i=0;i<nPresentations;i++){
+              var thisPresentation=presentations[i];
+              //logger.info("presentation: " + JSON.stringify(thisPresentation));
+              if(thisPresentation.languageCode==device.languageCode){
+                if((thisPresentation.mimetype=='video/quicktime')&&(device.playback_mov)){
+                  videoPresentations["mov"]=thisPresentation;
+
+                }
+              }
+              if(thisPresentation.languageCode==device.languageCode){
+                //logger.info(JSON.stringify(thisPresentation) + " Language OK");
+                if(thisPresentation.mimetype=='video/mp4'){
+                  //logger.info("Its mp4")
+                  if((thisPresentation.url.indexOf('/web/')!=-1)&&(!device.isWirelessDevice)){ //not amobile device
+                    //logger.info("its web and not mobile");
+                    if(typeof videoPresentations["web"] != 'undefined'){
+                        videoPresentations["web"].push(thisPresentation);
+                    }
+                    else {
+                      videoPresentations["web"] = new Array();
+                      videoPresentations["web"].push(thisPresentation);
+                    }
+
+
+                  }
+                  else{
+                    videoPresentations["mp4"]=thisPresentation;
+                  }
+
+                }
+                else if(thisPresentation.mimetype=="video/webm"){
+                  if((thisPresentation.url.indexOf('/web/')!=-1)&&(!device.isWirelessDevice)){ //not amobile device
+                  //  logger.info("its web and not mobile");
+                    if(typeof videoPresentations["web"] != 'undefined'){
+                        videoPresentations["web"].push(thisPresentation);
+                    }
+                    else {
+                      videoPresentations["web"] = new Array();
+                      videoPresentations["web"].push(thisPresentation);
+                    }
+
+
+                  }
+
+                }
+              }
+
+            }
+           // logger.info("videoPresentations: " + JSON.stringify(videoPresentations));
+
+            if(typeof videoPresentations['mov']!== 'undefined'){
+              selectedPresentation=videoPresentations['mov'];
+              returnObject.serveQuicktime=true;
+            }
+            else if(typeof videoPresentations['web']!=='undefined'){
+              selectedPresentation=videoPresentations["web"];
+            }
+            else if(typeof videoPresentations["mp4"] !== 'undefined'){
+              selectedPresentation=videoPresentations["mp4"];
+            };
+
+          }
+          else if(typeid==2){//audio
+            var audioPresentations=new Object();
+
+            for(var i=0;i<nPresentations;i++){
+                var thisPresentation=presentations[i];
+                if(thisPresentation.languageCode==device.languageCode){
+                  if((thisPresentation.mimetype == 'audio/mpeg')&&(device.playback_mp3))
+                    audioPresentations["mp3"]=thisPresentation;
+                }
+                if(thisPresentation.languageCode==device.languageCode){
+                  if((thisPresentation.mimetype == 'audio/x-aac')&&(device.playback_aac))
+                    audioPresentations["aac"]=thisPresentation;
+                }
+                if(thisPresentation.languageCode==device.languageCode){
+                  if((thisPresentation.mimetype == 'audio/3gpp')&&(device.playback_amr))
+                    audioPresentations["amr"]=thisPresentation;
+                }
+                if(thisPresentation.languageCode==device.languageCode){
+                  if((thisPresentation.mimetype == 'audio/x-wav')&&(device.playback_wav))
+                    audioPresentations["wav"]=thisPresentation;
+                }
+
+
+            }
+
+            if(typeof audioPresentations['aac'] != 'undefined'){
+              selectedPresentation=audioPresentations['aac'];
+            }
+            else if(typeof audioPresentations['mp3']!= 'undefined'){
+              selectedPresentation=audioPresentations['mp3'];
+
+            }
+            else if(typeof audioPresentations["amr"]!= 'undefined'){
+              selectedPresentation=audioPresentations['amr'];
+
+            }
+            else if(typeof audioPresentations["wav"]!= 'undefined'){
+              selectedPresentation=audioPresentations['wav'];
+
+            }
+
+
+          }
+          else if((typeid==3)||(typeid==4)){ //image/webcam
+
+            for(var i=0;i<nPresentations;i++){
+              var thisPresentation=presentations[i];
+
+              if(typeof selectedPresentation=='undefined'){
+                if(thisPresentation.width <= device.max_image_width)
+                    selectedPresentation=thisPresentation;
+              }
+              else if((thisPresentation.width > selectedPresentation.width)&&(thisPresentation.width <= device.max_image_width)){
+                selectedPresentation=thisPresentation;
+
+              }
+            }
+          }
+          else if(typeid==5){ //question
+
+          }
+          else if(typeid==6){ //loginwidget
+
+          }
+          else if(typeid==7){//action
+
+          }
+
+         
+         
+         
+
+          for(var attrname in selectedPresentation){
+            sp[attrname]=selectedPresentation[attrname];
+          }
+            var assetCaption;
+           if(typeof asset.captions !== 'undefined'){
+            assetCaption=asset.captions[device.languageCode];
+            
+          }
+
+          //logger.info("sp now :" + JSON.stringify(sp));
+
+         // logger.info("selectedPresentation: " + JSON.stringify(sp));
+          returnObject.assets[index]=new Object();
+          returnObject.assets[index].assetcaption=assetCaption;
+          //returnObject.assets[index].presentation=selectedPresentation;
+          var assetTypeS;
+          if(typeid==0){
+            assetTypeS='text';
+          }
+          else if(typeid==1){
+            assetTypeS='video';
+          }
+          else if(typeid==2){
+            assetTypeS='audio';
+          }
+          else if(typeid==3){
+            assetTypeS='image';
+          }
+          else if(typeid==4){
+            assetTypeS='webcam';
+          }
+          else if(typeid==5){
+            assetTypeS='question';
+          }
+          else if(typeid==6){
+            assetTypeS='loginwidget';
+          }
+          else if(typeid==7){
+            assetTypeS='action';
+          }
+
+          //asset
+          returnObject.assets[index].assettype=assetTypeS;
+          returnObject.assets[index].assettypeid=typeid;
+
+          returnObject.assets[index].assetindex=assetIndex;
+          returnObject.assets[index].assetid=asset._id;
+          returnObject.assets[index].version=asset.version;
+          returnObject.assets[index].posterassetid=asset.posterAsset;
+          returnObject.assets[index].assetdescription=asset.assetDescription;
+
+
+          //presentation
+
+          if(typeof selectedPresentation !== 'undefined'){
+              returnObject.assets[index].mimetype=selectedPresentation.mimetype;
+              returnObject.assets[index].url=selectedPresentation.url;
+              returnObject.assets[index].quality=selectedPresentation.quality
+              returnObject.assets[index].width=selectedPresentation.width;
+              returnObject.assets[index].height=selectedPresentation.height;
+              returnObject.assets[index].language=selectedPresentation.languageCode;
+              returnObject.assets[index].data=selectedPresentation.data;
+
+              if(typeof selectedPresentation[0] !== 'undefined'){
+                returnObject.assets[index].urls=selectedPresentation;
+              }
+          }
+
+
+
+          count--;
+          logger.info("count: " + count);
+          if(count==0){
+              if(device.returnType == 'json'){
+                returnObject.assemblies=returnObject.assets;
+                res.json(returnObject);
+              }
+              else if(device.returnType=='html'){
+                //render through a jade template
+                //logger.info("output html");
+                //logger.info("stylestring: " + returnObject.stylestring);
+                //res.render('assetassembly',returnObject);
+                res.render('assetassembly',returnObject);
+              }
+              else res.end();
+
+          }
+
+
+
+        });
+  }(i,assetIndex);
+  }
+
+
+ 
+ // returnObject.visible=(aaIsVisible ==1) ?"true":"false";
+  //returnObject.summaryimageurl=summaryImageUrl;
+  
+ /* if(assetAssemblyData != undefined){
+     returnObject.title=assetAssemblyData[0].assetassemblytitle;
+     returnObject.subtitle=assetAssemblyData[0].assetassemblysubtitle;
+     returnObject.summarytext1=assetAssemblyData[0].summarytext1;
+     returnObject.summarytext2=assetAssemblyData[0].summarytext2;
+     returnObject.summarytext3=assetAssemblyData[0].summarytext3;
+     returnObject.summarytext4=assetAssemblyData[0].summarytext4;
+     returnObject.summaryimageassetid=assetAssemblyData[0].summaryimageassetid;
+     returnObject.layariconid=assetAssemblyData[0].layariconid;
+
+          
+
+         
+          //logger.info("AssetAssemblydata: " + JSON.stringify(assetAssemblyData));
+          //logger.info("AssetsData: " + JSON.stringify(assetsData));
+          
+         // returnObject.assets=new Array(assetAssemblyData.length);
+    returnObject.assets=new Array();
+
+    //res.json(device);
+  }*/
+
+  //if(device.returnType == 'json'){
+ //   res.json(returnObject);
+  //}
+  //else res.end();
+  
+
+}
+
+function renderWebMap_v1(device,res){
+  logger.info("device: " + JSON.stringify(device));
+  res.render('dimplewebmap',device);
+}
+
+
+
+
+
+function getStylesheetTypeForUserAgent(deviceOs,  model, isWirelessDevice) {
+        //logger.info("getStylesheetTypeForUserAgent " + deviceOs + " " + deviceId + " " + isWirelessDevice);
+        if(isWirelessDevice=="false") return("generic-desktop");
+        if(typeof deviceOs=='undefined')return("generic-desktop");
+      
+        if(deviceOs.indexOf("Android")!= -1){
+            return("iphone-ipod");
+           
+        }
+        if(model.indexOf("iPhone")!= -1){
+            return("iphone-ipod");
+        }
+        if(model.indexOf("iPod")!= -1){
+            return("iphone-ipod");
+        }
+        if(model.indexOf("iPad")!= -1){
+            return("iphone-ipod");
+        }
+        return("generic-mobile");
+}
+
 /*AssembleAssets */
 
-function assembleAssets(req,res){
+function assembleAssetsOld(req,res){
    
    var projectData;
    var aaIsVisible;
@@ -847,7 +1640,7 @@ function assembleAssets(req,res){
 
    var allQueriesDone= function(){
 
-      //console.log("bannerAssetUrl: " + bannerAssetUrl + " summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssemblyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+      //logger.info("bannerAssetUrl: " + bannerAssetUrl + " summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssemblyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
         if((bannerAssetUrl != undefined)&&(summaryImageUrl != undefined)&&(aaIsVisible != undefined)&&(projectData != undefined)&&(assetAssemblyData != undefined)&&(noOfAssets==0)){
                 return(true);
             }
@@ -855,7 +1648,7 @@ function assembleAssets(req,res){
    }
    
    var getStylesheetTypeForUserAgent=function(deviceOs,  deviceId, isWirelessDevice) {
-        //console.log("getStylesheetTypeForUserAgent " + deviceOs + " " + deviceId + " " + isWirelessDevice);
+        //logger.info("getStylesheetTypeForUserAgent " + deviceOs + " " + deviceId + " " + isWirelessDevice);
         if(isWirelessDevice=="false") return("generic-desktop");
       
         if(deviceOs.indexOf("Android")!= -1){
@@ -876,12 +1669,12 @@ function assembleAssets(req,res){
    var doneAllQueries=function(response,message){
      var returnObject=new Object();
         if(response=="OK"){
-        //console.log("done all queries");
-       // console.log(projectData);
-        //console.log(aaIsVisible);
-        //console.log("AssetAssmblyData: " + assetAssemblyData);
-       // console.log(assetsData);
-       // console.log(summaryImageUrl);
+        //logger.info("done all queries");
+       // logger.info(projectData);
+        //logger.info(aaIsVisible);
+        //logger.info("AssetAssmblyData: " + assetAssemblyData);
+       // logger.info(assetsData);
+       // logger.info(summaryImageUrl);
        
         returnObject.response="OK";
        
@@ -909,8 +1702,8 @@ function assembleAssets(req,res){
         
 
        
-        //console.log("AssetAssemblydata: " + JSON.stringify(assetAssemblyData));
-        //console.log("AssetsData: " + JSON.stringify(assetsData));
+        //logger.info("AssetAssemblydata: " + JSON.stringify(assetAssemblyData));
+        //logger.info("AssetsData: " + JSON.stringify(assetsData));
         
        // returnObject.assets=new Array(assetAssemblyData.length);
         returnObject.assets=new Array();
@@ -971,7 +1764,7 @@ function assembleAssets(req,res){
             returnObject.message=message;
         }
         
-      //console.log("return Object: " + JSON.stringify(returnObject) + " END");
+      //logger.info("return Object: " + JSON.stringify(returnObject) + " END");
         
         if(returnType==="json"){
           
@@ -983,7 +1776,7 @@ function assembleAssets(req,res){
         else if(returnType==="html"){
             
             //get the stylesheet
-            //console.log('/GenerateStylesheet?styleid=' +returnObject.stylesid +'&iswireless=' + isWirelessDevice + '&useragent=' +stylesheetType +'&app=false');
+            //logger.info('/GenerateStylesheet?styleid=' +returnObject.stylesid +'&iswireless=' + isWirelessDevice + '&useragent=' +stylesheetType +'&app=false');
             
             var getStylesheetOptions={
                 host:'localhost',
@@ -994,7 +1787,7 @@ function assembleAssets(req,res){
             
             
             var getStylesheetCallback=function(response){
-               // console.log("in getStylesheetCallback");
+               // logger.info("in getStylesheetCallback");
                  var stylestring = '';
 
                         response.on('data', function (chunk) {
@@ -1002,7 +1795,7 @@ function assembleAssets(req,res){
                 });
                 
                  response.on('end', function() {
-                     //console.log("in getStylesheetCallback end")
+                     //logger.info("in getStylesheetCallback end")
                      var textAssetsCount=0;
                      //get text assets
                      for(var i in returnObject.assets){
@@ -1020,8 +1813,8 @@ function assembleAssets(req,res){
                           var textAssetRequest=http.request(nextAsset.url,function(response){
                               var textString='';
                               
-                             // console.log('STATUS: ' + response.statusCode);
-                             // console.log('HEADERS: ' + JSON.stringify(response.headers));
+                             // logger.info('STATUS: ' + response.statusCode);
+                             // logger.info('HEADERS: ' + JSON.stringify(response.headers));
                               response.on('data',function(chunk){
                                   
                                   textString+=chunk;
@@ -1040,15 +1833,15 @@ function assembleAssets(req,res){
                                        nextAsset.assetTextObject=eval("(" + nextAsset.assetText + ")"); //eval the JSON content
                                   }
 
-                                  //console.log("nextAsset.assetText: " + nextAsset.assetText);
+                                  //logger.info("nextAsset.assetText: " + nextAsset.assetText);
                                   if(textAssetsCount===0){
-                                     // console.log("Done all text Assets");
+                                     // logger.info("Done all text Assets");
                                       outputHTMLPage(stylestring);
                                   }
                               });
                           });
                           textAssetRequest.on('error', function(e) {
-                                console.log('problem with textAsset http request: ' + e.message);
+                                logger.info('problem with textAsset http request: ' + e.message);
                                 
                              });
                             textAssetRequest.end();
@@ -1059,7 +1852,7 @@ function assembleAssets(req,res){
                     }
                     
                     if(textAssetsCount==0){
-                        console.log("Done all text Assets - there weren't any");
+                        logger.info("Done all text Assets - there weren't any");
                          outputHTMLPage(stylestring);
                      }
                  
@@ -1068,7 +1861,7 @@ function assembleAssets(req,res){
             }
             
             var outputHTMLPage=function(stylestring){
-                   //console.log(str);
+                   //logger.info(str);
                     
                     res.writeHead(200, {'Content-Type': 'text/html'});
                     res.write("<html>");
@@ -1231,7 +2024,7 @@ function assembleAssets(req,res){
                                 //nextAsset.assetTextObject=eval("(" + nextAsset.assetText + ")");
 
                                 if(nextAsset.assetTextObject.anonymous){
-                                  //console.log("Anonymous login");
+                                  //logger.info("Anonymous login");
                                 }
 
                                 else res.write("<div id='dimple-signup-login-widget-div'>");
@@ -1253,7 +2046,7 @@ function assembleAssets(req,res){
                             if(nextAsset.subtypeid===6){ //it's a login widget
                                 
                                 if(nextAsset.assetTextObject.anonymous){
-                                  //console.log("Anonymous login");
+                                  //logger.info("Anonymous login");
                                   res.write("<div id='dimple-remaining-content-div' style='display:none'>" );
                                 }
                                 else{
@@ -1293,7 +2086,7 @@ function assembleAssets(req,res){
                               var caUrl="/SelectImageAP?assetid=" + correctAnswerId + "&maxwidth=130";  //correct answer image url
                               var badgeUrl="/SelectImageAP?assetid=" + badgeId + "&maxwidth=130";
                               var iaUrl="/SelectImageAP?assetid=" + incorrectAnswerId + "&maxwidth=130";
-                              //console.log("Question Text: " + questionText);
+                              //logger.info("Question Text: " + questionText);
 
 
                               res.write("<div class='dimple-question'>");
@@ -1344,7 +2137,7 @@ function assembleAssets(req,res){
                                 res.write("</div>");
                             }
                             else{
-                                console.log("No asset text: " + JSON.stringify(nextAsset));
+                                logger.info("No asset text: " + JSON.stringify(nextAsset));
                             }
                            
                       }
@@ -1495,7 +2288,7 @@ function assembleAssets(req,res){
             var styleHttpRequest=http.request(getStylesheetOptions, getStylesheetCallback);
          
             styleHttpRequest.on('error', function(e) {
-                console.log('problem with http request: ' + e.message);
+                logger.info('problem with http request: ' + e.message);
                 doneAllQueries("Error","stylesheeterror");
                 });
             styleHttpRequest.end();
@@ -1512,9 +2305,9 @@ function assembleAssets(req,res){
     var projectId;
     var returnType="html";//by default
     var app;
-     var aaid;
-     var languageCode;
-     var plaintext;
+    var aaid;
+    var languageCode;
+    var plaintext;
     var isWirelessDevice;
     var audio_aac;
     var audio_amr;
@@ -1541,7 +2334,7 @@ function assembleAssets(req,res){
   //  var ua="Mozilla/5.0 (Macintosh; U; Safari/525";
   //  var ua="fee fa foo";
     
-   // console.log('useragent: ' + encodeURIComponent(ua));
+   // logger.info('useragent: ' + encodeURIComponent(ua));
     
     //   var device=new Device(wurflserviceurl);
     
@@ -1551,7 +2344,7 @@ function assembleAssets(req,res){
         path: '/Tera-Wurfl/webservice.php?ua=' + ua
     };
     
-    //console.log('www.tera-wurfl.com//Tera-Wurfl/webservice.php?ua=' + ua);
+    //logger.info('www.tera-wurfl.com//Tera-Wurfl/webservice.php?ua=' + ua);
     callback = function(response) {
         var str = '';
 
@@ -1564,7 +2357,7 @@ function assembleAssets(req,res){
         
        
         response.on('end', function () {
-            // console.log(str);
+            // logger.info(str);
             
             var parseString = require('xml2js').parseString;
             
@@ -1586,7 +2379,7 @@ function assembleAssets(req,res){
                  if(plaintext===undefined)plaintext="false";
                  if(languageCode == undefined)languageCode='en';
                 
-             //   console.log("projectid: " + projectId + "returnType: " + returnType + " app= " + app + " aaid= " + aaid);
+             //   logger.info("projectid: " + projectId + "returnType: " + returnType + " app= " + app + " aaid= " + aaid);
               
                 
                 //res.write(JSON.stringify(result.TeraWURFLQuery.device.capability));
@@ -1594,7 +2387,7 @@ function assembleAssets(req,res){
                
                  deviceOs = getCapability(result,"device_os");
                  deviceId = getCapability(result,"id");
-               //  console.log("deviceID: " + deviceId);
+               //  logger.info("deviceID: " + deviceId);
                  isWirelessDevice = getCapability(result,"is_wireless_device");
               //  res.write("deviceOs: "  +deviceOs +  " deviceId: " + deviceId + "isWirelessDevice: " +isWirelessDevice);
                 var resolution_width = getCapability(result,"resolution_width");
@@ -1624,7 +2417,7 @@ function assembleAssets(req,res){
                     
                     
                 }
-              //   console.log("Playback_flv: " + playback_flv + " playback_mov: " + playback_mov + " playback_mp4: " + playback_mp4) ;
+              //   logger.info("Playback_flv: " + playback_flv + " playback_mov: " + playback_mov + " playback_mp4: " + playback_mp4) ;
                 // out.print("playback_mp4: " + playback_mp4);
                 //audio
                  audio_aac = getCapability(result,"aac");
@@ -1666,7 +2459,7 @@ function assembleAssets(req,res){
               //  var assetQuery = "select mimetype, url,localurl,posterurl,localposterurl,quality,width,height,languagecode from assetpresentation where assetid=" + assetid;
             
                if (err){
-                            console.log("getConnection error: " + err);
+                            logger.info("getConnection error: " + err);
                             doneAllQueries("Error","Internal Database Connection Error");
                             return; //we're done
                         }
@@ -1674,10 +2467,10 @@ function assembleAssets(req,res){
                 connection.query(projectQuery, 
                     function(err, rows) {
 
-                        //console.log("project query rows: " + JSON.stringify(rows));
-                        //console.log("In get project query");
+                        //logger.info("project query rows: " + JSON.stringify(rows));
+                        //logger.info("In get project query");
                         if (err){
-                            console.log("query error: " + err);
+                            logger.info("query error: " + err);
                             
                             
                             doneAllQueries("Error","Internal Database Query Error");
@@ -1694,14 +2487,14 @@ function assembleAssets(req,res){
                                   connection.query(bannerAssetQuery, 
                                          function(err, rows) {
                                             if (err){
-                                                console.log("query error: " + err);
+                                                logger.info("query error: " + err);
                             
                             
                                                  doneAllQueries("Error","Internal Database Query Error");
                                             return;
                                             }
                                           var selectedPresentation;//=rows[0];
-                                         //console.log(rows);
+                                         //logger.info(rows);
                                       
                                          for(var rowIndex in rows){
                                                 var thisAssetData=rows[rowIndex]; 
@@ -1732,7 +2525,7 @@ function assembleAssets(req,res){
                             }
                          
                              projectData=rows[0];
-                            // console.log(projectData);
+                            // logger.info(projectData);
                              
                              if(allQueriesDone()){
                                  doneAllQueries("OK");
@@ -1741,9 +2534,9 @@ function assembleAssets(req,res){
                         }
                         else{
                             bannerAssetUrl="";
-                            //console.log("project rows is null");
+                            //logger.info("project rows is null");
                             projectData=new Object();
-                           // console.log("summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                           // logger.info("summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
                                if(allQueriesDone()){  
                                    doneAllQueries("OK");
                                 }
@@ -1752,10 +2545,10 @@ function assembleAssets(req,res){
                     
                      connection.query(visibleQuery, 
                     function(err, rows) {
-                        //console.log("In get project query");
+                        //logger.info("In get project query");
                         if (err){
                            if (err){
-                            console.log("query error: " + err);
+                            logger.info("query error: " + err);
                             
                             
                             doneAllQueries("Error","Internal Database Query Error");
@@ -1766,7 +2559,7 @@ function assembleAssets(req,res){
                         if(rows[0] != null){
                          
                              aaIsVisible=rows[0].visible;
-                           //  console.log(rows[0]);
+                           //  logger.info(rows[0]);
                              
                                 if(allQueriesDone()){
                                     doneAllQueries("OK");
@@ -1775,7 +2568,7 @@ function assembleAssets(req,res){
                         }
                         else{
                             aaIsVisible=false;
-                         //   console.log("summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                         //   logger.info("summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
 
                               if(allQueriesDone()){
                                   doneAllQueries("OK");
@@ -1790,11 +2583,11 @@ function assembleAssets(req,res){
                          
                          
                          
-                        // console.log("noOfAssets: " + noOfAssets);
-                        //console.log("In get project query");
+                        // logger.info("noOfAssets: " + noOfAssets);
+                        //logger.info("In get project query");
                       
                             if (err){
-                            console.log("query error: " + err);
+                            logger.info("query error: " + err);
                             
                             
                             doneAllQueries("Error","Internal Database Query Error");
@@ -1832,21 +2625,21 @@ function assembleAssets(req,res){
                                               serveMp4 = true;
                                  }
                                 }
-                               // console.log("serve flash: " + serveFlash + " ServeQuicktime: " + serveQuicktime + " serveMP4: " + serveMp4);
+                               // logger.info("serve flash: " + serveFlash + " ServeQuicktime: " + serveQuicktime + " serveMP4: " + serveMp4);
                        
                      if(rows[0]==null){ //no asssets or assembly
                             doneAllQueries("OK");
                       }
                      else if(rows[0] != null){
                          
-                           // console.log("summaryassetid: " + rows[0].summaryimageassetid);
+                           // logger.info("summaryassetid: " + rows[0].summaryimageassetid);
                             var siaid=rows[0].summaryimageassetid;
                             if(siaid != 0){ //get the url of the summary image
                                 var summaryImageQuery="select assetpresentationid,assetpresentation.assetid,assettypedescription,mimetype ,url,localurl,posterurl ,localposterurl,quality ,width ,height ,languagecode,version from asset inner join assetpresentation on asset.assetid=assetpresentation.assetid inner join assettype on asset.assettypeid=assettype.assettypeid and assetpresentation.assetid=" +siaid + " and width > 0 order by width asc"
                                 connection.query(summaryImageQuery, 
                                          function(err, rows) {
                                          if (err){
-                                            console.log("query error: " + err);
+                                            logger.info("query error: " + err);
                             
                             
                                             doneAllQueries("Error","Internal Database Query Error");
@@ -1854,7 +2647,7 @@ function assembleAssets(req,res){
                                            }
                                          
                                             if((rows !== undefined)&&(rows[0] !== undefined))summaryImageUrl=rows[0].url;
-                                           // console.log("summaryImageQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                                           // logger.info("summaryImageQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
 
                                               if(allQueriesDone()){
                                                   doneAllQueries("OK");
@@ -1865,7 +2658,7 @@ function assembleAssets(req,res){
                             }
                             else{
                                 summaryImageUrl="";
-                               // console.log("summaryImageQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                               // logger.info("summaryImageQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
 
                                               if(allQueriesDone()){
                                                   doneAllQueries("OK");
@@ -1873,7 +2666,7 @@ function assembleAssets(req,res){
                             }
 
                              assetAssemblyData=rows;
-                            // console.log(assetAssemblyData);
+                            // logger.info(assetAssemblyData);
                            
                              for(var i in assetAssemblyData){
                              //now get the assets
@@ -1884,17 +2677,17 @@ function assembleAssets(req,res){
                                     var assetTypeId=assetData.assettypeid;
                                     var assetTypeDescription=assetData.assettypedescription;
                                      var assetQuery = "select "+ i + " as assetindex, " + max_image_width + " as maxwidth, '"+ assetTypeDescription + "' as assettypedescription, mimetype, url,localurl,posterurl,localposterurl,quality,width,height,languagecode from assetpresentation where assetid=" + assetId;
-                                  //   console.log("Asset Query: " + assetQuery + " " + assetTypeDescription);
+                                  //   logger.info("Asset Query: " + assetQuery + " " + assetTypeDescription);
                                       
 
                                   if(posterAssetId > 0){
-                                    //console.log("Get poster for: " + posterAssetId);
+                                    //logger.info("Get poster for: " + posterAssetId);
                                     var posterAssetQuery = "select "+ i + " as theindex,"  + max_image_width + " as maxwidth, mimetype, url,localurl,posterurl,localposterurl,quality,width,height,languagecode,version from assetpresentation,asset where assetpresentation.assetid=" + posterAssetId + " and asset.assetid=" + posterAssetId + " order by width desc;";
-                                   // console.log("posterAssetQuery: " + posterAssetQuery);
+                                   // logger.info("posterAssetQuery: " + posterAssetQuery);
                                     var selectedPosterAsset;
                                     connection.query(posterAssetQuery,function(err,rows){
                                     if (err){
-                                            console.log("query error: " + err);
+                                            logger.info("query error: " + err);
                             
                             
                                             doneAllQueries("Error","Internal Database Query Error");
@@ -1909,11 +2702,11 @@ function assembleAssets(req,res){
                                             }
                                         }
                                         if(selectedPosterAsset != undefined){
-                                            //console.log("posterAssetUrl=" + selectedPosterAsset.url);
+                                            //logger.info("posterAssetUrl=" + selectedPosterAsset.url);
                                             posterUrls[selectedPosterAsset.theindex]=selectedPosterAsset.url;
                                         }
                                         noOfAssets-=1;
-                                        //console.log("posterassetquery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                                        //logger.info("posterassetquery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
 
                                               if(allQueriesDone()){
                                                   doneAllQueries("OK");
@@ -1922,9 +2715,9 @@ function assembleAssets(req,res){
                                     
                                   }
                                   else{
-                                    //console.log("No Poster");
+                                    //logger.info("No Poster");
                                         noOfAssets-=1;
-                                       // console.log("posterassetquery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                                       // logger.info("posterassetquery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
 
                                              if(allQueriesDone()){
                                                  doneAllQueries("OK");
@@ -1935,33 +2728,33 @@ function assembleAssets(req,res){
 
 
                                      connection.query(assetQuery,function(err,rows){
-                                        //console.log("Asset Query: " + assetQuery + " " + assetTypeDescription);
+                                        //logger.info("Asset Query: " + assetQuery + " " + assetTypeDescription);
                                          if (err){
-                                            console.log("query error: " + err);
+                                            logger.info("query error: " + err);
                             
                             
                                             doneAllQueries("Error","Internal Database Query Error");
                                             return;
                                            }
                                           var selectedPresentation;//=rows[0];
-                                         //console.log(rows);
+                                         //logger.info(rows);
                                       
                                          for(var rowIndex in rows){
                                                 var thisAssetData=rows[rowIndex];
-                                                // console.log("thisAssetdata: " + JSON.stringify(thisAssetData));
-                                             //console.log("languageCode:" + languageCode + " plaintext:" + plaintext);
+                                                // logger.info("thisAssetdata: " + JSON.stringify(thisAssetData));
+                                             //logger.info("languageCode:" + languageCode + " plaintext:" + plaintext);
                                              if(thisAssetData.assettypedescription=="text"){
-                                                 //console.log("Its text");
-                                                // console.log("thisAssetdata: " + JSON.stringify(thisAssetData));
+                                                 //logger.info("Its text");
+                                                // logger.info("thisAssetdata: " + JSON.stringify(thisAssetData));
                                                  if(plaintext=='false'){
-                                                     //console.log("plaintext is false");
+                                                     //logger.info("plaintext is false");
                                                      
                                                      if((thisAssetData.mimetype=="text/html")&&(thisAssetData.languagecode==languageCode)){
                                                         selectedPresentation=thisAssetData;
                                                         break;
                                                     }
                                                     //else {
-                                                   //    console.log("mimetype: " + thisAssetData.mimetype + " languagecode: " + thisAssetData.languagecode + "tested against: " + languageCode);
+                                                   //    logger.info("mimetype: " + thisAssetData.mimetype + " languagecode: " + thisAssetData.languagecode + "tested against: " + languageCode);
                                                     //}
                                                  }
                                                  else{
@@ -1973,8 +2766,8 @@ function assembleAssets(req,res){
                                                  }
                                              }
                                              else if((thisAssetData.assettypedescription=="image")||(thisAssetData.assettypedescription=="webcam")){
-                                                 //console.log("its image");
-                                                // console.log("current image Presentation: " + JSON.stringify(thisAssetData));
+                                                 //logger.info("its image");
+                                                // logger.info("current image Presentation: " + JSON.stringify(thisAssetData));
                                              if(selectedPresentation==undefined){
                                                  if(thisAssetData.width < thisAssetData.maxwidth){
                                                     selectedPresentation=thisAssetData;
@@ -2104,7 +2897,7 @@ function assembleAssets(req,res){
 
                                              
                                          }
-                                       // console.log("Selected Presentation: " + JSON.stringify(selectedPresentation));
+                                       // logger.info("Selected Presentation: " + JSON.stringify(selectedPresentation));
                                          if(selectedPresentation !== undefined){
                                                 assetsData[selectedPresentation.assetindex]=selectedPresentation;
                                                 if (selectedPresentation.mimetype==="application/x-shockwave-flash")
@@ -2120,8 +2913,8 @@ function assembleAssets(req,res){
 
                                          }
                                            noOfAssets-=1;
-                                           //console.log("noOfAssets: " + noOfAssets);
-                                          // console.log("AssetQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
+                                           //logger.info("noOfAssets: " + noOfAssets);
+                                          // logger.info("AssetQuery summaryImageUrl: " + summaryImageUrl + " aaIsVisible: " + aaIsVisible + " projectData: " + projectData + " assetAssembyData: " + assetAssemblyData + " noOfAssets: " + noOfAssets);
                                
 
 
@@ -2138,7 +2931,7 @@ function assembleAssets(req,res){
 
                                  if(allQueriesDone()){
                                     
-                                   // console.log("done all queries");
+                                   // logger.info("done all queries");
                                   doneAllQueries("OK");
                                 }
                          
@@ -2152,7 +2945,7 @@ function assembleAssets(req,res){
                     
                     // And done with the connection.
                     connection.release();
-                   // console.log("Release the connection");
+                   // logger.info("Release the connection");
                     
                     // });
                     
@@ -2170,7 +2963,7 @@ function assembleAssets(req,res){
         var httpRequest=http.request(wurfloptions, callback);
          
         httpRequest.on('error', function(e) {
-            console.log('problem with http request: ' + e.message);
+            logger.info('problem with http request: ' + e.message);
         doneAllQueries("Error","wurflerror");
          });
         httpRequest.end();
@@ -2180,18 +2973,18 @@ function assembleAssets(req,res){
     
     
     function getCapability(parsedObject,capability){
-        //console.log('getCapability ' + capability );
+        //logger.info('getCapability ' + capability );
         
         var obj=parsedObject.TeraWURFLQuery.device[0].capability;
         for(var k in obj){
-            //console.log("KEY: " + k + "VALUE:"  +  obj[k]);
+            //logger.info("KEY: " + k + "VALUE:"  +  obj[k]);
             var cap=obj[k];
-            // console.log(JSON.stringify(cap["$"]));
+            // logger.info(JSON.stringify(cap["$"]));
             var name=cap["$"].name;
             var value=cap["$"].value;
-           // console.log("KEY: " + k + "VALUE:"  +  obj[k] + " capacity: " + name + " capacity value: " + value);
+           // logger.info("KEY: " + k + "VALUE:"  +  obj[k] + " capacity: " + name + " capacity value: " + value);
             if(name==capability) {
-           // console.log('getCapability ' + capability + " = " + value);
+           // logger.info('getCapability ' + capability + " = " + value);
                 return(value);
             }
             
@@ -2205,6 +2998,7 @@ function assembleAssets(req,res){
     function uploadLocalImage(req, res){
       // the uploaded file can be found as `req.files.image` and the
       // title field as `req.body.title`
+      logger.info("req.files: " + JSON.stringify(req.files));
        var fname= randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
       var extension=fileExtension(req.files.afile.originalFilename);
       var assetdescription=req.body.assetDescription;
@@ -2215,17 +3009,17 @@ function assembleAssets(req,res){
     var  ous = fs.createWriteStream(pathToUpload);
           util.pump(ins, ous, function(err) {
             if(err) {
-              console.log("error:" + err);
+              logger.info("error:" + err);
             } else {
 
               //create the asset
 
 
         //at this point we need to create the asset
-          console.log("assetdescription: " + assetdescription + " userid: " + req["user"]);
-         console.log(JSON.stringify(req["user"]));
+          logger.info("assetdescription: " + assetdescription + " userid: " + req["user"]);
+         logger.info(JSON.stringify(req["user"]));
           var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
-          console.log("uri: " + uri);
+          logger.info("uri: " + uri);
           //create the asset
           request({
               uri:uri,
@@ -2245,22 +3039,23 @@ function assembleAssets(req,res){
              },
               function(error,response,body){
                 if(error){
-                  console.log("error " + error);
+                  logger.info("error " + error);
                 }
-                  console.log("add asset response body:" + body);
+                  logger.info("add asset response body:" + body);
                   var returnedObject= eval('(' + body + ')');
 
                   var newAssetId= returnedObject._id;
 
                   //upload original image to cloudfront
                   var key="user" + req["user"]._id + "/asset" + newAssetId +"/" + fname + '.' + extension;
-                  uploadToAWS(pathToUpload,key,"image",newAssetId,userid);
+                  var resReturns="{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}";
+                  uploadToAWS(pathToUpload,key,"image",newAssetId,userid,res,resReturns);
 
 
                  
 
 
-                  res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
+                  //res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
 
               }
                 );
@@ -2274,8 +3069,8 @@ function assembleAssets(req,res){
           });
 
 
-     // console.log("path:" + JSON.stringify(req.files.afile.path));
-      // console.log("filename:" + JSON.stringify(req.files.afile.originalFilename));
+     // logger.info("path:" + JSON.stringify(req.files.afile.path));
+      // logger.info("filename:" + JSON.stringify(req.files.afile.originalFilename));
       /*res.send(format('\nuploaded %s (%d Kb) to %s as %s'
        , req.files.image.name
         , req.files.image.size / 1024 | 0 
@@ -2291,8 +3086,8 @@ function assembleAssets(req,res){
       var host=parsedUrl.host;
 
       
-      console.log("parsed url: " + JSON.stringify(parsedUrl));
-      console.log("pathname: " + pathName);
+      logger.info("parsed url: " + JSON.stringify(parsedUrl));
+      logger.info("pathname: " + pathName);
 
       var url=req.body.url;
       var assetdescription=req.body.description;
@@ -2304,15 +3099,15 @@ function assembleAssets(req,res){
 
       var pathToUpload=__dirname +"/public/uploads/" + fname +'.' + extension;
 
-       console.log("upload to " + pathToUpload + " from: " + url);
+       logger.info("upload to " + pathToUpload + " from: " + url);
 
        download(url,pathToUpload,function(){
 
         //at this point we need to create the asset
-          console.log("assetdescription: " + assetdescription + " userid: " + userid);
-          //console.log(JSON.stringify(req["user"]));
+          logger.info("assetdescription: " + assetdescription + " userid: " + userid);
+          //logger.info(JSON.stringify(req["user"]));
           var uri="http://127.0.0.1:" + app.get('port') + "/api/v1/assets";
-          console.log("uri: " + uri);
+          logger.info("uri: " + uri);
           //create the asset
           request({
               uri:uri,
@@ -2332,22 +3127,24 @@ function assembleAssets(req,res){
           },
           function(error,response,body){
             if(error){
-              console.log("error " + error);
+              logger.info("error " + error);
             }
-              console.log("add asset response body:" + body);
+              logger.info("add asset response body:" + body);
               var returnedObject= eval('(' + body + ')');
 
               var newAssetId= returnedObject._id;
 
               //upload original image to cloudfront
               var key="user" + userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
-              uploadToAWS(pathToUpload,key,"image",newAssetId,userid);
+
+              var resReturns="{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}"
+              uploadToAWS(pathToUpload,key,"image",newAssetId,userid,res,resReturns);
 
 
              
 
 
-              res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
+             // res.end("{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}");
 
           }
             );
@@ -2359,8 +3156,8 @@ function assembleAssets(req,res){
 
     function download(uri, filename, callback){
           request.head(uri, function(err, res, body){
-              console.log('content-type:', res.headers['content-type']);
-              console.log('content-length:', res.headers['content-length']);
+              logger.info('content-type:', res.headers['content-type']);
+              logger.info('content-length:', res.headers['content-length']);
 
           request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
           });
@@ -2382,7 +3179,7 @@ function assembleAssets(req,res){
 
 /*Upload a file to AWS*/
 
-  function uploadToAWS(path,key,type,newAssetId,userId){
+  function uploadToAWS(path,key,type,newAssetId,userId,res,resReturns){
 
 
         fs.readFile(path, function(err, file_buffer){
@@ -2395,12 +3192,23 @@ function assembleAssets(req,res){
 
               s3.putObject(params, function (perr, pres) {
               if (perr) {
-                  console.log("Error uploading data: ", perr);
+                  logger.info("Error uploading data: ", perr);
               } else {
-                  console.log("Successfully uploaded data to " + params.Bucket + "/" + key);
+                  logger.info("Successfully uploaded data to " + params.Bucket + "/" + key);
                    //create and queue a new job
                    //image conversion
                    if(type ==="image"){
+                    var job={
+                          jobtype:'imageconversion',
+                          url: "http://" + nconf.get("awsdistribution") + "/" + key,
+                          assetid: newAssetId,
+                          userid: userId  
+                        }
+
+                      queue.add(job,function(err,id){
+
+                      });
+                    /*
                         queue.create('imageconversion', {
                           url: "http://" + nconf.get("awsdistribution") + "/" + key,
                           assetid: newAssetId,
@@ -2408,10 +3216,11 @@ function assembleAssets(req,res){
 
                    
                         }).save();
+*/
 
                          gm(path).size(function(err,value){
                                  if(!err){
-                                      console.log("size returns: " + JSON.stringify(value));
+                                      logger.info("size returns: " + JSON.stringify(value));
                                       var width=value.width;
                                       var height=value.height;
                                       var mimeType=mime.lookup(path);
@@ -2431,13 +3240,15 @@ function assembleAssets(req,res){
                                         languageCode:null
                                       }
 
-                                      AssetModel.update(
-                                        {$push:{'presentstions':presentationObject}},
+                                      models.AssetModel.update(
+                                        {_id:newAssetId},
+                                        {$push:{'presentations':presentationObject}},
                                         {upsert:true},
                                         function(err,data){
-                                          if(err)console.log("uploadToAWS error: " + err);
+                                          if(err)logger.info("uploadToAWS error: " + err);
                                           else{
-                                            console.log("uploadtoAws data: " + data);
+                                            logger.info("uploadtoAws data: " + data);
+                                            res.end(resReturns);
                                           }
 
                                         }
@@ -2445,7 +3256,7 @@ function assembleAssets(req,res){
 
 
                                     //  var insertQuery="insert into assetpresentation values(null," + newAssetId + ",'" + mimeType + "','" + awsUrl + "',null,null," + width + "," + height + ",null,null,null);";
-                                     // console.log("insertQuery: " + insertQuery);
+                                     // logger.info("insertQuery: " + insertQuery);
 
                                       //now create the asset presentation
                                  /*    pool.getConnection(function(err, connection) {
@@ -2453,7 +3264,7 @@ function assembleAssets(req,res){
                                                   var error=new Error("Database Connection Error");
                                                   error.http_code=500;
                                                   error.error_type='Internal Server Error';
-                                                  console.log("error: " + err);
+                                                  logger.info("error: " + err);
                                                   connection.release();
                                                 throw(error);
                   
@@ -2465,7 +3276,7 @@ function assembleAssets(req,res){
                                                         var error=new Error("Database Query Error");
                                                        error.http_code=500;
                                                        error.error_type='Internal Server Error';
-                                                       console.log("error: " + err);
+                                                       logger.info("error: " + err);
                                                       
                                                        throw(error);
                                  
@@ -2473,11 +3284,11 @@ function assembleAssets(req,res){
                                                  if(rows.length > 0){
                                    
                                                         var res=rows[0]; 
-                                                        console.log("insert returns: " + JSON.stringify(res));
+                                                        logger.info("insert returns: " + JSON.stringify(res));
                                                        
                                                     }else{
                                                         
-                                                        console.log("insert returns nothing");
+                                                        logger.info("insert returns nothing");
                                                     }
 
                                             });//connection.query
@@ -2529,11 +3340,140 @@ function assembleAssets(req,res){
 
 //Set up the job queue for image resizing and audio/video transcoding
 
-var kue = require('kue');
-var queue = kue.createQueue({
-    redis: nconf.get("redis")
+//var kue = require('kue');
+//var queue = kue.createQueue({
+ //   redis: nconf.get("redis")
     
-  });
+//  });
+
+var mongoDbQueue = require('mongodb-queue');
+var queue;
+
+require("mongodb").MongoClient.connect(nconf.get('databaseurl'), function(err, db2) {
+
+       queue = mongoDbQueue(db2, 'my-queue');
+
+     
+});
+
 
 
 app.listen(app.get('port'));
+
+
+
+
+/*var dig = require('./http-digest-client');
+
+//logger.info("digest client: " + dig.createDigestClient);
+
+digest=dig.createDigestClient("5184b7b9ed","x456ct4K8jXBkYY3");
+
+digest.request({
+    method:"POST",
+   
+    host:"http://api.handsetdetection.com",
+     path:'/apiv3/site/detect/53622.json',
+     headers: {'content-type' : 'application/json'},
+     json:true,
+    body:    {'user-agent':'NokiaN95'},
+},function(res){
+
+   
+    logger.info(res.hd_specs.display_x);
+  
+
+});
+*/
+
+
+
+
+
+
+
+/*request({
+    method:"POST",
+    
+    uri:"http://api.handsetdetection.com/apiv3/site/detect/53622.json",
+    headers: {'content-type' : 'application/json'},
+    body:"user-agent=NokiaN95",
+  },
+    function(error,response,body){
+
+      logger.info("error: " + error);
+      logger.info("response:" + JSON.stringify(response.headers));
+      logger.info("body: " + body);
+    }
+
+
+);
+*/
+/*
+request({"method":"POST","uri":"http://api.handsetdetection.com/apiv3/site/detect/53622.json",
+    "headers":{"content-type":"application/json","Authorization":"Digest username=\"5184b7b9ed\",realm=\"APIv3\",nonce=\"APIv3\",uri=\"undefined\",qop=\"auth\",response=\"ea081c47223ec47b16499c802a2afa20\",opaque=\"APIv3\",nc=\"00000001\",cnonce=\"7525dca4\""},"body":"user-agent=NokiaN95"},
+function(error,response,body){
+
+      logger.info("error: " + error);
+      logger.info("response:" + JSON.stringify(response.headers));
+      logger.info("body: " + body);
+    }
+
+
+);
+*/
+
+
+
+/*var request = require('request');
+request.post({
+  headers: {'content-type' : 'application/json'},
+  auth:{
+      'user':"5184b7b9ed",
+      'pass':'x456ct4K8jXBkYY3',
+      'sendImmediately':false
+
+    },
+  url:     'http://api.handsetdetection.com/apiv3/site/detect/53622.json',
+  //form:    {'user-agent':'NokiaN95'}
+}, function(error, response, body){
+  logger.info(body);
+});*/
+
+
+
+ /*var request = require('request')
+  request(
+    { method: 'GET'
+    , uri: 'http://www.google.com'
+    , gzip: true
+    }
+  , function (error, response, body) {
+      // body is the decompressed response body
+      logger.info('server encoded the data as: ' + (response.headers['content-encoding'] || 'identity'))
+      logger.info('the decoded data is: ' + body)
+    }
+  ).on('data', function(data) {
+    // decompressed data as it is received
+    logger.info('decoded chunk: ' + data)
+  })
+  .on('response', function(response) {
+    // unmodified http.IncomingMessage object
+    response.on('data', function(data) {
+      // compressed data as it is received
+      logger.info('received ' + data.length + ' bytes of compressed data')
+    })
+  })*/
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -28,7 +28,11 @@ dimpleConsoleApp.EnterImageUrlView=Backbone.View.extend({
         },
 
         uploadFromUrl: function(ev){
-          var frm=$('#uploadbannerimageform');
+          var targetModel=this.options.targetModel;
+          var targetAttribute=this.options.targetAttribute;
+          var targetView=this.options.targetView;
+          var frm=$(this.el).parent();
+          console.log("frm: " + frm)
           var model=this.model;
           console.log("serialize: " + frm.serialize());
           $.ajax({
@@ -39,11 +43,39 @@ dimpleConsoleApp.EnterImageUrlView=Backbone.View.extend({
                 console.log("uploaded from url: " + data);
                 
                 var rval = eval('(' + data + ')');
+
+
+
+                targetModel.set(targetAttribute,rval.assetid);
+
+                console.log(JSON.stringify(targetModel) + ' ' + targetAttribute + ' is now set to : ' + targetModel.get(targetAttribute));
+
+
+                //set the model of the target view, and tell it to render itself
+
+                if(targetView){
+
+                  var newImageAsset=new dimpleConsoleApp.Asset({"_id": rval.assetid}); //get the newly created asset
+    
+                  newImageAsset.fetch().done(function(){
+
+
+
+                    targetView.model=newImageAsset; 
+                    targetView.resetImageDisplay();
+                  });
+                }
+
+
+
+
+
+
                //console.log("url now: " + rval.url);
-               $('#dlgcurrentbannerimg').attr('src',rval.url);
+               //$('#dlgcurrentbannerimg').attr('src',rval.url);
               // model.bannerassetid=rval.bannerassetid;
-               model.set({bannerAsset:rval.assetid});
-               model.save();
+               //model.set({bannerAsset:rval.assetid});
+               //model.save();
                 //alert('ok');
             }
         });

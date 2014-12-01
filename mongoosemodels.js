@@ -2,11 +2,15 @@ var mongoose=require('mongoose');
 
 var ObjectId = require('mongoose').Types.ObjectId; 
 
+var autoIncrement = require('mongoose-auto-increment');
+
+var mongooseConnection=mongoose.connect(nconf.get('databaseurl'));
+autoIncrement.initialize(mongooseConnection);
+
 var Schema=mongoose.Schema;
 
 
 var UserSchema= new Schema({
-    _id: Number,
     userName: String,
     screenName: String,
     userPassword: String,
@@ -27,38 +31,58 @@ var UserSchema= new Schema({
 
 });
 
+
+
+UserSchema.plugin(autoIncrement.plugin, {
+    model: 'UserModel',
+    startAt: 100,
+});
+
 var ProjectSchema=new Schema({
-      _id:Number,
        userid: Number,
       projectTitle: String,
       description:String,
       bannerAsset: Number,
-      assetAssemblies:[{assetAssemblyId:Number,visible:Boolean}],
-      styles: Schema.Types.ObjectId,
+      assetAssemblies:Object,//[{assetAssemblyId:Number,visible:Boolean}],
+      styles: Number
 
 });
 
+
+
+ProjectSchema.plugin(autoIncrement.plugin, {
+    model: 'ProjectModel',
+    startAt: 100,
+});
+
+
+
 var AssetAssemblySchema=new Schema({
-       _id: Number,
         assetAssemblyDescription: String,
         location:[],
         icon: Number,
         layarImageUrl: String,
         imageAsset:Number,
         assets:[{assetid:Number,index:Number}],
-        textElements:[{
+        textElements:Object
+        /*[{
           languageCode: String,
           title: String,
           subtitle: String,
-          summary1: String,
-          summary2: String,
-          summary3: String,
-          summary4: String
-        }]
+          summarytext1: String,
+          summarytext2: String,
+          summarytext3: String,
+          summarytext4: String
+        }]*/
 
 });
 
 AssetAssemblySchema.index({ loc: '2d' });
+
+AssetAssemblySchema.plugin(autoIncrement.plugin, {
+    model: 'AssetAssemblyModel',
+    startAt: 1000,
+});
 
 
 
@@ -71,7 +95,7 @@ var AssetSchema=new Schema({
     version: Number,
     posterAsset: Number,
     userid: Number,
-    captions:[{languageCode:String,caption:String}],
+    captions:Object,//Associative array
     presentations:[{
         parentId:Number,
         mimetype:String,
@@ -87,13 +111,62 @@ var AssetSchema=new Schema({
 
 });
 
-var UserModel=mongoose.model('UserModel',UserSchema);
+AssetSchema.plugin(autoIncrement.plugin, {
+    model: 'AssetModel',
+    startAt: 10000,
+});
 
-var AssetModel=mongoose.model('AssetModel',AssetSchema);
 
-var ProjectModel=mongoose.model('ProjectModel',ProjectSchema);
+var RuleAttrInstanceSchema=new Schema({
+    _id:Number, //styleid
+    rules:Object
 
-var AssetAssemblyModel=mongoose.model('AssetAssemblyModel',AssetAssemblySchema);
+});
+
+RuleAttrInstanceSchema.plugin(autoIncrement.plugin, {
+    model: 'RuleAttrInstanceModel',
+    startAt: 1000,
+});
+
+var RuleAttrSpecSchema=new Schema({
+  _id:Number,
+  rulename:String,
+  attributes:Object
+
+});
+
+RuleAttrSpecSchema.plugin(autoIncrement.plugin, {
+    model: 'RuleAttrSpecModel',
+    startAt: 1000,
+});
+
+var RuleAttrSpecInstanceSchema=new Schema({
+  _id:Number,
+  rulename:String,
+  attributes:Object
+
+});
+
+RuleAttrSpecInstanceSchema.plugin(autoIncrement.plugin, {
+    model: 'RuleAttrSpecInstanceModel',
+    startAt: 1000,
+});
+
+
+
+var UserModel=mongooseConnection.model('UserModel',UserSchema);
+
+var AssetModel=mongooseConnection.model('AssetModel',AssetSchema);
+
+var ProjectModel=mongooseConnection.model('ProjectModel',ProjectSchema);
+
+var AssetAssemblyModel=mongooseConnection.model('AssetAssemblyModel',AssetAssemblySchema);
+
+var RuleAttrInstanceModel=mongoose.model('RuleAttrInstanceModel',RuleAttrInstanceSchema);
+
+var RuleAttrSpecModel=mongoose.model('RuleAttrSpecModel',RuleAttrSpecSchema);
+
+var RuleAttrSpecInstanceModel=mongoose.model('RuleAttrSpecInstanceModel',RuleAttrSpecInstanceSchema);
 
  module.exports.UserModel=UserModel;
 
@@ -102,3 +175,11 @@ var AssetAssemblyModel=mongoose.model('AssetAssemblyModel',AssetAssemblySchema);
  module.exports.ProjectModel=ProjectModel;
 
  module.exports.AssetAssemblyModel=AssetAssemblyModel;
+
+ module.exports.RuleAttrInstanceModel=RuleAttrInstanceModel;
+
+ module.exports.RuleAttrSpecModel=RuleAttrSpecModel;
+ 
+ module.exports.RuleAttrSpecInstanceModel=RuleAttrSpecInstanceModel;
+
+

@@ -28,7 +28,7 @@ dimpleConsoleApp.ProjectsView = Backbone.View.extend({
                         dimpleConsoleApp.projectIndex++
                         if(dimpleConsoleApp.anchorclass==='projanchoreven')dimpleConsoleApp.anchorclass='projanchorodd';
                         else dimpleConsoleApp.anchorclass='projanchoreven';
-                            var newel=view.render().el;
+                            var newel=view.render().$el;
                              $('#projlist').append(newel);
                         });
                  this.model.bind("destroy",function(project){
@@ -49,7 +49,7 @@ dimpleConsoleApp.ProjectsView = Backbone.View.extend({
 
     newProject: function(event) {
     	console.log("Add a new project");
-    	 dimpleConsoleApp.projectDetailsView=new dimpleConsoleApp.ProjectDetailsView({model:new dimpleConsoleApp.Project(),el:$('#projectdialog')});
+    	 dimpleConsoleApp.projectDetailsView=new dimpleConsoleApp.ProjectDetailsView({model:new dimpleConsoleApp.Project({userid:$.cookie("dimpleuserid")}),el:$('#projectdialog')});
     	$('#projectdialog').show();
 		//if (app.wineView) app.wineView.close();
 		//app.wineView = new WineView({model: new Wine()});

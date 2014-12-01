@@ -23,19 +23,21 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
 
         var startIndex=(this.options.pageNo -1)*this.options.imagesPerPage;
         var endIndex=startIndex+this.options.imagesPerPage;
-        var target=this.options.target;
+        var targetModel=this.options.targetModel;
         var targetAttribute=this.options.targetAttribute;
-        var targetEl=this.options.targetEl;
+        var targetView=this.options.targetView;
 
         console.log("render images " + startIndex + " to " + endIndex);
        	var subCollection=this.model.slice(startIndex,endIndex);
        	//console.log(JSON.stringify(subCollection));
-        var listid='#' + this.options.listid;
-       	$(this.options.imageListElementId).empty();
-       	_.each(subCollection,function(model){
-       		console.log("Go render: " + JSON.stringify(model) + "target: " + target + " targetAttribute: " + targetAttribute);
+        //var listid='#' + this.options.listid;
 
-       		var imageView= new dimpleConsoleApp.SelectImageView({model:model,target:target,targetAttribute:targetAttribute,targetEl:targetEl});
+        var listid=this.$el.find('.imagelist');
+//       	$(this.options.imageListElementId).empty();
+       	_.each(subCollection,function(model){
+       		console.log("Go render: " + JSON.stringify(model) + "targetModel: " + targetModel + " targetAttribute: " + targetAttribute);
+
+       		var imageView= new dimpleConsoleApp.SelectImageView({model:model,targetModel:targetModel,targetAttribute:targetAttribute,targetView:targetView});
 
        		var newel=imageView.render().el;
      		 //console.log("new el: " + JSON.stringify(newel));

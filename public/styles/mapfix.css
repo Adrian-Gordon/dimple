@@ -1,0 +1,14 @@
+#poitable div{
+   display:table;
+ overflow:hidden;
+ background:inherit;
+ }
+#poitable div a{
+    display:table-cell;
+     vertical-align:middle;
+    text-align:left;
+ background:inherit;
+ padding-top:10px;
+ padding-bottom:10px;
+    width:70px;
+ }

@@ -18,21 +18,42 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
         //console.log("render EnterImageUrlView: " + this.template(this.model.toJSON()));
         //console.log("el contents: " + $(this.el).html());
         console.log(" ImageAndDescriptionView el: " + this.el);
-        $(this.el).html(this.template(this.model.toJSON()));
+        $(this.el).html(this.template( this.model != null? this.model.toJSON(): null));
+
+        var enterImageEl=$(this.el).find('.enterimageurldiv');
+
+        var enterImageUrlView=new dimpleConsoleApp.EnterImageUrlView({el:enterImageEl,model:this.model,targetModel:this.options.targetModel,targetAttribute:this.options.targetAttribute,targetView:this});
 
 
+        var uploadImageEl=$(this.el).find('.uploadlocalimagediv');
+        var uploadLocalImageView=new dimpleConsoleApp.UploadLocalImageView({el:uploadImageEl,model:this.model,targetModel:this.options.targetModel,targetAttribute:this.options.targetAttribute,targetView:this});
 
-        
+        var setImageEl=$(this.el).find('.setimgiddiv');
+        var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:setImageEl,pageNo:1,imagesPerPage:5,targetModel:this.options.targetModel,targetAttribute:this.options.targetAttribute,targetView:this});
 
-        $( "#banneraccordion" ).accordion({
+
+        var accordionEl=$(this.el).find('.imgaccordion');
+
+        //$( "#banneraccordion" ).accordion({
+       $( accordionEl ).accordion({ 
           collapsible: true,
           heightStyle: "content"
         });
+
         //this.$el.html(this.template(this.model));
          //console.log("el contents: " + $(this.el).html());
 
         //$('#enterimageurldiv').html("<h2>Here</h2>");
         
+      },
+
+      resetImageDisplay: function(){
+
+          //get the image
+          $(this.el).find('.dlgimg').attr("src",'/SelectImageAP?assetid=' + this.model.get('_id'));
+          //and its description
+          $(this.el).find('.dlglabel').attr("value",this.model.get('assetDescription'));
+
       },
 
 
@@ -52,7 +73,7 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
         },
 
         save: function(event){
-          console.log("ImageAndDescriptionView go save");
+         // console.log("ImageAndDescriptionView go save " + JSON.stringify(this.options.targetModel));
          // this.model.save();
           this.model.save({
               success: function (model, response) {
@@ -63,16 +84,18 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
              }
           });
 
-          this.options.project.save({
+          this.options.targetModel.save({
             success: function(model,response){
-                console.log("image and descitpiom project save success" + JSON.stringify(model) + " " + JSON.stringify(response));
+                console.log("image and descitpiom targetModel save success" + JSON.stringify(model) + " " + JSON.stringify(response));
             },
 
             error: function(model, response){
-               console.log("image and descitpiom project save error " + JSON.stringify(model) + " " + JSON.stringify(response));
+               console.log("image and description targetModel save error " + JSON.stringify(model) + " " + JSON.stringify(response));
 
             }
           });
+
+          this.options.targetView.resetImageDisplay();
         }
     
 

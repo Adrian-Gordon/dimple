@@ -12,6 +12,7 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
     },
 
     render: function(eventName) {
+    	var that=this;
     	//console.log("template: " + this.template());//(this.model.toJSON()));
 		//$(this.el).html(this.template());//(this.model.toJSON()));
 		//this.$el.html(this.template());
@@ -23,14 +24,53 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 
 		//imageAndDescriptionView gets the Asset that is the image as its model
 
-		//get the banner asset
+		//get the banner asset, if any
 
 		console.log("Project Details model: " + JSON.stringify(this.model));
-		var bannerAsset=new dimpleConsoleApp.Asset({"_id": this.model.get('bannerAsset')});
+
+		var bannerAssetId=this.model.get('bannerAsset');
+
 		var model=this.model;
-		bannerAsset.fetch().done(function(){
+		var targetView=this;
+		if(bannerAssetId != null){
+			var bannerAsset=new dimpleConsoleApp.Asset({"_id": this.model.get('bannerAsset')});
+		
+			bannerAsset.fetch().done(function(){
+				console.log("banner Asset: " + JSON.stringify(bannerAsset));
+				var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#bannerimageanddescriptiondiv',model:bannerAsset,targetModel:model,targetAttribute:'bannerAsset',targetView:targetView});//targetModel is a project here,targetAttribute is it's bannerAsset, targetView: this - the view on which resetImageDisplay is to be called when the image is changed
+
+
+		
+
+				//var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:this.model});
+
+				
+				//create the new enterimageurl view
+
+				//var enterImageUrlView=new dimpleConsoleApp.EnterImageUrlView({el:'#enterimageurldiv',model:model});
+
+				//create the new uploadImageView
+				//var uploadLocalImageView=new dimpleConsoleApp.UploadLocalImageView({el:'#uploadlocalimagediv',model:model});
+
+				//create the new paginated image view
+				//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
+				//var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerAsset',targetEl:'dlgcurrentbannerimg',targetView:imageAndDescriptionView});
+
+				return(that);
+			});
+
+		}
+		else{
+
+		
+
+			//create a new bannerAsset model
+
+			var bannerAssetModel = new dimpleConsoleApp.Asset();
+		
+		
 			console.log("banner Asset: " + JSON.stringify(bannerAsset));
-			var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#imageanddescriptiondiv',model:bannerAsset,project:model});
+			var imageAndDescriptionView = new dimpleConsoleApp.ImageAndDescriptionView({el:'#bannerimageanddescriptiondiv',model:bannerAssetModel,project:model});
 
 
 		
@@ -47,12 +87,13 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 
 			//create the new paginated image view
 			//this.setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:$('#setbanneriddiv')});
-			var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerAsset',targetEl:'dlgcurrentbannerimg'});
+			var setImageView=new dimpleConsoleApp.SetImageView({model:dimpleConsoleApp.allUserImageAssets,el:'#setbanneriddiv',pageNo:1,imagesPerPage:5,listid:'setprojectbannerlist',target:model,targetAttribute:'bannerAsset',targetEl:'dlgcurrentbannerimg',targetView:imageAndDescriptionView});
 
-		});
+			return (this);
+		}
 		
 
-		return (this);
+		
     },
 
     events: {
@@ -62,6 +103,10 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
                 "click .smallcrossbutton":"close",
                 "click .setbanner":"setBanner"
 	//	"click .delete": "deleteWine"
+    },
+    resetImageDisplay: function(){
+    	$('#projectbannerimg').attr('src','/SelectImageAP?assetid=' + this.model.get('bannerAsset'));
+
     },
 
     change: function(event) {
@@ -84,9 +129,11 @@ dimpleConsoleApp.ProjectDetailsView = Backbone.View.extend({
 		
 		 if (this.model.isNew()) {
 		 	dimpleConsoleApp.allUserProjects.create(this.model);
+
 		 } else {
 			this.model.save();
 		}
+			dimpleConsoleApp.renderAllUserProjectsView();
                 this.close(); 
 		return false;
 	},

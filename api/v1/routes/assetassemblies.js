@@ -39,6 +39,31 @@ module.exports.getAssetAssemblies=function(req,res,next){
 }
 
 
+module.exports.addAssetAssembly=function(req,res){
+
+
+  //create the new AssetAssembly
+
+        var newAssetAssembly=new models.AssetAssemblyModel({
+              assetAssemblyDescription:req.param('assetAssemblyDescription'),
+              icon:req.param('icon'),
+              layarImageUrl:req.param('layarImageUrl'),
+              imageAsset:req.param('imageAsset'),
+              textElements:req.param('textElements'),
+              assets:[],
+              location:req.param('location')
+
+
+            });
+
+           newAssetAssembly.save(function (err) {
+                 if (err) console.log("Add AssetAssembly error:" + err);
+                 console.log("Saved new AssetAssembly: " + JSON.stringify(newAssetAssembly));
+                 res.end(JSON.stringify(newAssetAssembly));
+           });
+}
+
+
 module.exports.getAssetAssembly=function(req,res){
   var aaid=req.params.assetassemblyid;
 
@@ -72,8 +97,9 @@ module.exports.updateAssetAssembly=function(req,res){
       var textElements= req.body.textElements;
       var assets =req.body.assets;
       var location =req.body.location;
+      var imageAsset=req.body.imageAsset;
       
-
+      console.log("update AA textElement:" + JSON.stringify(textElements));
      // AssetModel.update({_id:id},
       //       {$set:{"assetSubtypeId":assetsubtypeid,"assetTypeId":assettypeid,"assetDescription":assetdescription,"posterAsset":posterassetid,"rating":rating,"userid":userid,"version":version,"captions":captions,"presentations":presentations}});
 
@@ -84,6 +110,7 @@ module.exports.updateAssetAssembly=function(req,res){
         assetAssembly.textElements=textElements;
         assetAssembly.assets=assets;
         assetAssembly.location=location;
+        assetAssembly.imageAsset=imageAsset;
 
         assetAssembly.save();
         res.end(JSON.stringify(assetAssembly));

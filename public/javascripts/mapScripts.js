@@ -187,7 +187,7 @@ function addSimplePOI(assetAssembly,projectid,userid,index){
         
         if(showPOIs) {
          //   console.log("addSimplePOI Visible: " + assetassembly.visible + "label: " + label);
-            google.maps.event.addListener(styleMarker2,'click',new Function("populateEmulatorContentDivDialog(this,currentProject,'" + assetAssembly.get('_id') + "');"));
+            google.maps.event.addListener(styleMarker2,'click',new Function("showAssetAssembly("+projectid + "," + assetAssembly.get('_id') + ");"));
             google.maps.event.addListener(styleMarker2, 'dragend', function() {
                 ///console.log("Add simple poi dragend POIs");
                 
@@ -199,6 +199,8 @@ function addSimplePOI(assetAssembly,projectid,userid,index){
 
                 var newLocation=[newLon,newLat];
                 styleMarker2.assetassembly.set('location',newLocation);//[1]=newLat;
+
+                console.log("assembly isNew?: " + styleMarker2.assetassembly.isNew());
                 styleMarker2.assetassembly.save();
                // styleMarker2.assetassembly.location[0]=newLon;
                 styleMarker2.action="move";

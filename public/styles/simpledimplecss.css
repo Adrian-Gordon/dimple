@@ -311,6 +311,23 @@ background-color:#66cc33;
 }
 
 
+.strowinvisible{
+  display:none;
+}
+
+.strowvisible:{
+  display:block;
+}
+
+.sirowinvisible{
+  display:none;
+}
+
+.sirowvisible:{
+  display:block;
+}
+
+
 /*pagination controllers*/
 /*start*/
 
@@ -707,3 +724,5 @@ UL#publish-nav LI A:hover {
 /* Pagination Controllers*/
 
 /*Start*/
+
+

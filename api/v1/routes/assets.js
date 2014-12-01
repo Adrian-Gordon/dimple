@@ -1,4 +1,5 @@
 var models = require('../../../mongoosemodels');
+var ObjectId = require('mongoose').Types.ObjectId; 
 
 
 module.exports.getAssets=function(req,res,next){
@@ -90,60 +91,41 @@ module.exports.getAsset=function(req,res,next){
 
 
 
+module.exports.addAsset=function(req,res){
 
 
+  //create the new AssetAssembly
 
-module.exports.addAsset=function(req,res,next){
-  var assetDescription=req.param('assetDescription');
-  var assetTypeId=req.param('assetTypeId');
-  var rating=req.param('rating');
-  var posterAsset=req.param('posterAsset');
-  var userid=req.param('userid');
-  var assetSubtypeId=req.param('assetSubtypeId');
-  var version=req.param('version');
+        var newAsset=new models.AssetModel({
+              
 
+               assetDescription:req.param('assetDescription'),
+               assetTypeId:req.param('assetTypeId'),
+               rating:req.param('rating'),
+               posterAsset:req.param('posterAsset'),
+               userid:req.param('userid'),
+               assetSubtypeId:req.param('assetSubtypeId'),
+               version:req.param('version')
 
-
-  createNewAsset(res,assetDescription,assetTypeId,assetSubtypeId,rating,posterAsset,userid,version,[],[]);
-
- 
-}
-
-
-function createNewAsset(res,assetDescription,assetTypeId,assetSubtypeId,rating,posterAsset,userid,version,captions,presentations) {
-   db.counters.findAndModify(
-          {
-            query: { _id: "assetid" },
-            update: { $inc: { seq: 1 } },
-            new: true
-          },
-          function(err,obj){
-            console.log("getNextAssetId err: " + err + " obj: " + JSON.stringify(obj));
-            
-
-            var newAsset=new models.AssetModel({
-                _id:obj.seq,
-                assetDescription: assetDescription,
-                assetTypeId:assetTypeId,
-                assetSubtypeId:assetSubtypeId,
-                rating:rating,
-                posterAsset: posterAsset,
-                userid: userid,
-                version: version,
-                captions:[],
-                presentations:[]
 
 
             });
+
            newAsset.save(function (err) {
                  if (err) console.log("Add Asset error:" + err);
-                 console.log("Saved new Asset: " + JSON.stringify(newAsset));
+                 console.log("Saved new Asset " + JSON.stringify(newAsset));
                  res.end(JSON.stringify(newAsset));
            });
-     });
-
-  
 }
+
+
+
+
+
+
+
+
+
 
 
 module.exports.updateAsset=function(req,res,next){

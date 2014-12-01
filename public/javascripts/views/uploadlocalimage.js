@@ -55,14 +55,37 @@ dimpleConsoleApp.UploadLocalImageView=Backbone.View.extend({
             //var file = this.files[0];
             //alert('file: ' + file);
              var model=this.model;
-            var file=document.getElementById('bannerfile').files[0];
-            var userid=$('#uploadimageuserid').val();
-            var description=$('#uploadimagedescription').val();
+
+             var fileEl=$(this.el).find('.uploadlocalimagefile')[0];
+            
+
+             console.log("file el: " + fileEl );
+
+              var file=fileEl.files[0];
+              console.log("file: " + JSON.stringify(file) + " files: " + JSON.stringify(fileEl.files));
+
+             //var file=$(this.el).find('.uploadimagefile').files[0];
+
+            //var file=document.getElementById('bannerfile').files[0];
+
+            var userid=$(this.el).find('.uploadimageuserid').val();
+            console.log("userid: " + userid);
+          //  var userid=$('#uploadimageuserid').val();
+
+            var description=$(this.el).find('.uploadlocalimagedescription').val();
+            console.log("description: " + description);
+            //var description=$('#uploadimagedescription').val();
+
+
+            var targetModel=this.options.targetModel;
+            var targetAttribute=this.options.targetAttribute;
+            var targetView=this.options.targetView;
 
             var fd = new FormData();
             fd.append("afile", file);
             fd.append("userid",userid);
             fd.append("assetDescription",description);
+            console.log("FormData: " + JSON.stringify(fd));
             var xhr = new XMLHttpRequest();
             xhr.file = file; // not necessary if you create scopes like this
             xhr.addEventListener('progress', function(e) {
@@ -82,17 +105,24 @@ dimpleConsoleApp.UploadLocalImageView=Backbone.View.extend({
 
 
                   var rval = eval('(' + xhr.responseText + ')');
-                  //console.log("url now: " + rval.url);
-                  $('#dlgcurrentbannerimg').attr('src',rval.url);
-                  // model.bannerassetid=rval.bannerassetid;
-                  model.set({bannerAsset:rval.assetid});
-                  model.save();
 
-                    //set the banner image
-                   // console.log("retruned url=" + responseJson.url);
-                   // $('#bannerimage').attr("src", responseJson.url);
-                   // $('#bannerimage').load(function(){ $('#bannerimagediv').width(320);$('#bannerimage').width(320); });
-                   // $('#emulatorbannerimage').attr("src", responseJson.url);
+
+                targetModel.set(targetAttribute,rval.assetid);
+
+                console.log(JSON.stringify(targetModel) + ' ' + targetAttribute + ' is now set to : ' + targetModel.get(targetAttribute));
+
+                  if(targetView){
+
+                  var newImageAsset=new dimpleConsoleApp.Asset({"_id": rval.assetid}); //get the newly created asset
+    
+                  newImageAsset.fetch().done(function(){
+
+
+
+                    targetView.model=newImageAsset; 
+                    targetView.resetImageDisplay();
+                  });
+                }
                    
 
                 }

@@ -1,0 +1,38 @@
+html
+	head
+		title 
+			| #{title}
+		style
+			| #{stylestring}
+		link(REL="SHORTCUT ICON" HREF="favico.ico")
+		- if(deviceOs =='iOS'){
+		script(src='/javascripts/iosfns.js')
+		- }
+		- else{
+		script(src='/javascripts/genericfns.js' style="text-align:center")
+		-}
+		- if(serveQuicktime){
+		script(src='http://www.apple.com/library/quicktime/scripts/ac_quicktime.js')
+		script(src='http://www.apple.com/library/quicktime/scripts/qtp_library.js')
+		link(rel='stylesheet',href='http://www.apple.com/library/quicktime/stylesheets/qtp_library.css')
+		- }
+		- else if(!iswirelessdevice){
+		link(rel='stylesheet' href='/styles/video-js.css')
+		script(src='/javascripts/video.js')
+		script.
+			videojs.options.flash.swf="/javascripts/video-js.swf"
+		-}
+
+	body
+		-if(!iswirelessdevice){
+			div(id="nwrapper" class='dimple-body' style='margin:0 auto;width:800px;text-align:center')
+				include header
+				include body
+		-}
+		- else{
+			include header
+			include body
+		- }
+		
+			
+		

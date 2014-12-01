@@ -1,0 +1,47 @@
+html
+	head
+		script(type='text/javascript' src="http://maps.google.com/maps/api/js?sensor=false")
+		script.
+			var badgeurls=null;
+		script(type='text/javascript' src="/javascripts/dimpleMapScripts_v1.js")
+		script(type='text/javascript' src="" + markersurl)
+		link(REL="SHORTCUT ICON" HREF="favico.ico")
+		style
+			| #{stylestring}
+		style
+			| #poitable div{
+			| display:table;
+			| overflow:hidden;
+			| background:inherit;
+			| }
+			| #poitable div a{
+			| display:table-cell;
+			| vertical-align:middle;
+			| text-align:left;
+			| background:inherit;
+			| padding-top:10px;
+			| padding-bottom:10px;
+			| width:70px;
+			| }
+	body(style="text-align:center" onload="getAllDimplePOIs(#{projectId},#{iconsize});setDeviceId('generic_web_browser');")
+		div(id="nwwrapper" style="width:800px;margin: 0 auto;text-align:center")
+			div(id="dimple-map-body")
+				div(id="header")
+					div(id="headerimage")
+						img(src="" + bannerUrl style='margin-bottom:0px' width='100%')
+					- if(title){
+						div(id='title')
+							h1
+								| #{title}
+
+					- }
+					- if(subtitle){
+						div(id='subtitle')
+							h3
+								| #{subtitle}
+
+					- }
+				div(id="dimple-map-content" style="margin-left:  auto;margin-right:auto")
+					div(id="dimple_map_canvas" style="height:600px;margin-left:auto;margin-right:auto;text-align:center")
+					div(id="dimple-map-poilist" style="text-align:left")
+						div(id="poitable")

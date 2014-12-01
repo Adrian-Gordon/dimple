@@ -83,6 +83,9 @@
 <script src="javascripts/jquery.cookie.js"></script>
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.paginator/0.8/backbone.paginator.min.js"></script>
+<script src="javascripts/jquery-te-1.4.0.min.js"></script>
+
+
 
 <!-- Templates -->
 
@@ -100,7 +103,7 @@
     <td><a class='<%= oddoreven %> showproject'> <%= projectTitle %></a></td>
 
     <td><a class='edit'  title="Edit this Project"></td>
-    <td></a><a class="smallcrossbuttonred" title="Delete this Project" </a></td>
+    <td><a class="smallcrossbuttonred" title="Delete this Project" </a></td>
 
 
 </script>
@@ -121,12 +124,12 @@
 
 <script type="text/template" id="set-image-template">
                 <div>
-                    <div style="float:left"><input style="" type="text"  size="15" id="search" title="Search for image"></input></div>
+                    <div style="float:left"><input style="" type="text"  size="15" class="imagesearch" title="Search for image"></input></div>
                     <div style="float:left"><a class="searchbutton"></a></div>
                 </div>
 
-                <div class="setbannercontentdiv">
-                    <div id='<%=listid%>'></div>
+                <div class="setimagecontentdiv">
+                    <div class='imagelist'></div>
                 </div>
                 <div class="setbannercontrolsdiv" style="margin:0 auto;width:80%">
                   <div style="float:left;width:50px">
@@ -170,7 +173,7 @@
 
 
 
-              <input type="button" class="setbanner" value="Set Banner" name="setbanner" />
+             <!-- <input type="button" class="setbanner" value="Set Banner" name="setbanner" />-->
   
             <!--  <div id="setbanneriddiv" style="border-style:solid;border-color:grey;border-width:1px">
                   
@@ -257,25 +260,25 @@
 
 
 <script type="text/template" id='image-and-description-template'>
-        <img id='dlgcurrentbannerimg' src="<%= (_id==0) || (_id==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + _id + '&maxwidth=800>'%>"style="width:250px"></img>
-        <label>description:</label><input name="assetDescription" value="<%=assetDescription%>" type="text" size="35"></input>
-        <div id="banneraccordion">
+        <img class='dlgimg' src="<%= (typeof _id == 'undefined')||(_id==0) || (_id==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + _id + '&maxwidth=800>'%>"style="width:250px"></img>
+        <label class='dlglabel'>description:</label><input name="assetDescription" value="<%=typeof assetDescription !='undefined'?assetDescription:''%>" type="text" size="35"></input>
+        <div class="imgaccordion">
      
-        <h3>Enter Banner URL</h3>
-         <form   id="uploadbannerimageform"  name="uploadbannerimageform" method="post" action="UploadImageFromUrl">
-            <div id="enterimageurldiv">
+        <h3>Enter Image URL</h3>
+         <form   class="uploadimageform"  name="uploadimageform" method="post" action="UploadImageFromUrl">
+            <div class="enterimageurldiv">
           </div>
         </form>
-      <h3>Upload Banner Image</h3>
+      <h3>Upload Image</h3>
       <div>
-        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data" action="UploadLocalImage">
-          <div id="uploadlocalimagediv">
+        <form class='chooseimageuploadform' method="post" enctype="multipart/form-data" action="UploadLocalImage">
+          <div class="uploadlocalimagediv">
           
         </div>
         </form>
       </div>
       <h3>Choose Existing Image</h3>
-      <div id="setbanneriddiv" style="border-style:solid;border-color:grey;border-width:1px">
+      <div class="setimgiddiv" style="border-style:solid;border-color:grey;border-width:1px">
                   
                  
       </div>
@@ -294,14 +297,133 @@
 </script>
 
 <script type="text/template" id='upload-local-image-template'>
-<input type="file" name="image" id='bannerfile'/>
+<input type="file" name="image" class='uploadlocalimagefile'/>
 <p>
-<label>description:</label><input id='uploadimagedescription' name="description" type="text"></input>
-<input type="hidden" id='uploadimageuserid' name="userid" value="<%=userid%>"></input>
-    <image id="bannerimagetarget"></image>
+<label>description:</label><input class='uploadlocalimagedescription' name="description" type="text"></input>
+<input type="hidden" class='uploadimageuserid' name="userid" value="<%=userid%>"></input>
+    <image class="imagetarget"></image>
 </p>
 <button type="button" >OK</button>
 </script>
+
+<!-- Asset Assembly Templates-->
+<script type="text/template" id='current-asset-assembly-template'>
+
+<div class="caatemplate">
+    <a style="float:right;" class="smallcrossbuttonred" title="Delete this POI" onclick="simpleDeletePOI();"></a>
+    <h1><%=textElements[0].title%></h1>
+    <a  class="button black bigrounded">Save Changes</a> 
+  
+    <table>
+        <tbody>
+          <tr>
+              <td><label labelfor='cptitle'><b>Title:</b></label></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cptitle" value="<%=((textElements[0].title==null)||(textElements[0].title=='null'))?'':textElements[0].title%>"  /></td>
+          </tr>
+          <tr>
+              <td>    <label labelfor='cpsubtitle'><b>Subtitle:</b></label></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cpsubtitle" value="<%=((textElements[0].subtitle==null)|(textElements[0].subtitle=='null'))?'':textElements[0].subtitle%>"  /></td>
+          </tr>
+          <tr>
+              <td>  <label labelfor='cpisvisible'><b>Visible:</b></label></td>
+              <td><input type="checkbox" <%=(typeof visible =='undefined') || visible?'checked':''%> id="cpisvisible"  /><%=visible%></td>
+              
+          </tr>
+          
+           <tr>
+              <td>    <label labelfor='cpiconid'><b>Icon Id:</b></label></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cpiconid" value="<%=icon%>"   /></td>
+          </tr>
+          <tr><td>Summary Text:</td>
+              <td><div title="show/hide summary text" id="showsummarytext" class="stdiv usermenudownarrow" ></div></td>
+          </tr>
+          <tr  class="strow strowinvisible" >
+            <td><label labelfor="cpst1"><b>line 1</b></label></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst1" value="<%=textElements[0].summarytext1%>" ></td>
+          </tr>
+          <tr class="strow strowinvisible">
+            <td><label labelfor="cpst2"><b>line 2</b></label></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst2" value="<%=textElements[0].summarytext2%>" ></td>
+          </tr>
+          <tr class="strow strowinvisible">
+            <td><label labelfor="cpst3"><b>line 3</b></label></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst3" value="<%=textElements[0].summarytext3%>" ></td>
+          </tr>
+          <tr class="strow strowinvisible">
+            <td><label labelfor="cpst4"><b>line 4</b>&nbsp;<span style="font-size:0.6em">(Layar only)</span></label></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst4" value="<%=textElements[0].summarytext4%>"></td>
+          </tr>
+          <tr><td>Summary Image:</td>
+              <td><div title="show/hide summary image" id="showsummaryimage" class="sidiv usermenudownarrow" ></div></td>
+          </tr>
+          <tr class="sirow sirowinvisible">
+              <td colspan="2">
+                <img title="click to set" class="summaryimage" src="<%= (typeof imageAsset == 'undefined')||(imageAsset==0) || (imageAsset==null)? 'images/noimage.png' :'/SelectImageAP?assetid=' + imageAsset + '&maxwidth=800>'%>" style="width:40%" />
+              <td>
+          </tr>
+
+      </tbody>
+    </table>
+    <div class='setsummaryimagediv'></div>
+    <div class='assetsaccordion'>
+
+      
+    </div>
+</div>
+
+
+
+</script>
+
+
+
+
+<!-- Asset Template -->
+
+<script type="text/template" id='asset-template'>
+<h2 style="padding-left:25px;font-size:14px;color:#66cc33;text-align:left"><b> Type:
+    <%if(assetTypeId===0){%>
+          <%='text'%>
+      <%}%>
+    <% if(assetTypeId===1){%>
+          <%='video'%>
+      <%}%>
+      <% if(assetTypeId===2){%>
+          <%='audio'%>
+      <%}%>
+      <% if(assetTypeId===3){%>
+          <%='image'%>
+      <%}%>
+      <% if(assetTypeId===4){%>
+          <%='webcam'%>
+      <%}%>
+      <% if(assetTypeId===5){%>
+          <%='question'%>
+      <%}%>
+      <% if(assetTypeId===6){%>
+          <%='login'%>
+      <%}%>
+      <%if(assetTypeId===7){%>
+          <%=action%>
+      <%}%>
+      </b>
+         <span>[asset caption here]</span>
+    <a class='smallcrossbuttonred' title="Delete this content" style="padding-top:0;padding-bottom:0;padding-left:0;padding-right:0;float:right;"></a>
+    <br>
+    <span style='font-size:12px'><b> description:</b><%= assetDescription%></span>
+</h2>
+<div class='assetaccordioncontents'></div>
+
+</script>
+
+<!-- Text Asset Template -->
+
+<script type="text/template" id='text-asset-template'>
+
+<textarea id="htmledit-textarea-<%=_id%>" name="htmledit-textarea-<%=_id%>"><%=presentations[0].data%></textarea>
+
+</script>
+
 
 <!-- end Templates -->
 <!-- models -->
@@ -322,6 +444,14 @@
 <script src="javascripts/views/enterimageurl.js"></script>
 <script src="javascripts/views/uploadlocalimage.js"></script>
 <script src="javascripts/views/imageanddescription.js"></script>
+<script src="javascripts/views/assetassembly.js"></script>
+<script src="javascripts/views/assetassembly.js"></script>
+<script src="javascripts/views/assemblyaccordion.js"></script>
+<script src="javascripts/views/textasset.js"></script>
+
+
+<!-- Map scripts -->
+
 <script type="text/javascript" src="javascripts/mapScripts.js"></script>
 <script type="text/javascript" src="javascripts/StyledMarker.js"></script>
 
@@ -383,6 +513,9 @@
 
      
  <link type="text/css" rel="stylesheet" href="styles/simpledimplecss.css" />
+ <link type="text/css" rel="stylesheet" href="styles/jquery-te-1.4.0.css" />
+ 
+ 
     
   <style type="text/css">
 .ui-widget-overlay {
@@ -486,10 +619,10 @@
     }
     ]*/
     });
-    // $( "#banneraccordion" ).accordion({
-     //     collapsible: true,
-    //      heightStyle: "content"
-    //  });
+
+
+    
+   
 
 
         $("#draggable").draggable({cancel: "#emulator-dimple-content-div,#emulatorclosebutton"});
@@ -610,6 +743,13 @@
            */            
 
     $( "#tabs" ).tabs();
+    $( "#choosesummaryimage").dialog({
+      autoOpen: false,
+      height: 800,
+      width:400,
+      modal: true,
+    
+    });
   });
         </script>
 </HEAD>
@@ -621,76 +761,25 @@
 -->
 <div id="choosebanner" title="choose a banner image">
 
-  <div id='imageanddescriptiondiv'>
+  <div id='bannerimageanddescriptiondiv'>
         <!--<img style="width:250px" id='dlgcurrentbannerimg'></img>
         <label>description:</label><input name="description" type="text"></input>
       -->
+  </div>
+
+
+
+   
+  </div>
+
+  <div id="choosesummaryimage" title="choose a summary image">
+
+      <div id='summaryimageanddescriptiondiv'>
+        <!--<img style="width:250px" id='dlgcurrentbannerimg'></img>
+        <label>description:</label><input name="description" type="text"></input>
+      -->
+    </div>
 </div>
-   <!-- <div id="banneraccordion">
-     
-        <h3>Enter Banner URL</h3>
-         <form   id="uploadbannerimageform"  name="uploadbannerimageform" method="post" action="UploadImageFromUrl">
-            <div id="enterimageurldiv">
-          </div>
-        </form>
-      <h3>Upload Banner Image</h3>
-      <div>
-        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data" action="UploadLocalImage">
-          <div id="uploadlocalimagediv">
-          
-        </div>
-        </form>
-      </div>
-      <h3>Choose Existing Image</h3>
-      <div id="setbanneriddiv" style="border-style:solid;border-color:grey;border-width:1px">
-                  
-                 
-      </div>
-    </div>
-  -->
-  
-
-  <!--<div style="display:table">
-    <div style="display:table-row">
-      <div style="display:table-cell">enter url</div>
-      <div style="display:table-cell" title="show/hide banner url"  class="setbannerdownarrow" id="bannerseturl" onclick="toggleShowSetBannerOptions('#bannerseturl','#setbannerwithurl')"></div>
-    </div>
-    <div style="display:table-row">
-      <div style="display:table-cell"></div>
-      <div style="display:table-cell"></div>
-      <div id='setbannerwithurl'  class="choosebannerhide">
-        <label>url:</label><input type="text"></input>
-      </div>
-    </div>
-    <div style="display:table-row">
-      <div style="display:table-cell">upload image</div>
-      <div style="display:table-cell" title="show/hide banner upload"  class="setbannerdownarrow" id="banneruploadfile" onclick="toggleShowSetBannerOptions('#banneruploadfile','#setbannerchoose')"></div>
-    </div>
-    <div style="display:table-row">
-      <div style="display:table-cell">choose existing</div>
-      <div style="display:table-cell" title="show/hide banner choose"  class="setbannerdownarrow" id="bannerchooseexisting" onclick="toggleShowSetBannerOptions('#bannerchooseexisting','#setbannerchooseexisting')"></div>
-    </div>
-  </div>-->
-
-
-
-
-   <!--   <div style="text-align:center">
-        <p><label>enter a banner image url:</label><input type="text"></input></p>
-        <p>or</p>
-        <form id='choosebanneruploadform' method="post" enctype="multipart/form-data">
-          <input type="file" name="image" id='bannerfile'/>
-          <p><image id="bannerimagetarget"></image></p>
-        </form>
-        <div id="setbanneriddiv" style="border-style:solid;border-color:grey;border-width:1px">
-                  
-                 
-              </div>
-          <script>
-            document.getElementById('bannerfile').addEventListener('change', function(evt){handleFileSelect(evt,'#bannerimagetarget',null);}, false);
-          </script>
-        </div>-->
-    </div>
 
 
    <div id="draggable" style="display:none;" >
@@ -3183,7 +3272,7 @@ var markerImages;
 </div>
 
 <div id="ui-east" class="ui-layout-east">
-      <table style="display:none;text-align:center" border="0">
+      <table style="display:block;text-align:center" border="0">
 <thead>
 <tr>
     <th colspan="4"><span style="color:66cc33">ADD</span></th>
@@ -3210,7 +3299,7 @@ var markerImages;
     </td>
 </tr>
 <tr style="padding-top:5px"></tr>
-<tr>
+<!--<tr>
     <td colspan="3"><a onclick="clearSimpleUploadsDisplay('processClearSimpleUploadsResponseAndSave');" class="button black bigrounded">Save Changes</a></td>
     <td><div id="save-all-spinner" class="saving" ></div></td>
      <td><div id="showsaveprogress" title="show/hide Save progress"class="usermenudownarrow" onclick="toggleShowSaveProgress();" style="display:none"></div></td> 
@@ -3228,10 +3317,10 @@ var markerImages;
                  <div id="saveallprogress" style="width:50%">
                  </div></div>
             </fieldset>
-            -->
+            
         </div>
     </td>
-</tr>
+</tr>-->
 </tbody>
 </table>
 
@@ -3256,7 +3345,14 @@ var markerImages;
  <input title='Upload Image' type="button"   value="upload" onclick='submitUploadForm(false)' />
   </label>    -->
 
-<div id="currentprojectassets" style="display:none;">
+  <div id="currentprojectassets">
+
+
+  </div>
+
+
+<!--
+<div id="currentprojectassetsold" style="display:none;">
     <a style="float:right;" class="smallcrossbuttonred" title="Delete this POI" onclick="simpleDeletePOI();"></a>
     <h1>Current POI</h1>
     <table>
@@ -3303,7 +3399,7 @@ var markerImages;
    </tbody>
     </table>
     <div id ="setsummaryimageouterdiv" style="display:none">
-    <!--   <input type="button" value="Set Summary Image" onclick="toggleSetSummaryImageDiv();"name="setsummaryimage" />-->
+  
   <div id="setsummaryimagediv" style="display:block;">
       
       <form target="upload_iframe" enctype="multipart/form-data" id="uploadsummaryimageform"  name="uploadsummaryimageform" method="post" action="UploadSingleFile"> 
@@ -3323,7 +3419,7 @@ var markerImages;
             <tr><td><b>Upload:</b></td><td><input type="file" id="browsesummaryimage" onclick="changedSummaryImageType='new';clearSummaryImageUrl();currentSummaryImageAssetId=null" onchange="currentSimpleCMSAssemblies.summaryimagechange=true; if(currentSimpleCMSAssemblies.action!='add') currentSimpleCMSAssemblies.action='edit';unsavedSimpleEdits=true;currentSummaryImageAssetId=null;showSummaryImageSpinner();document.forms['uploadsummaryimageform'].submit();monitorUploadSummaryImageProgress();useNewAssetAsSummaryImage=false;clearSetSummaryImageCheckboxes();"    name="usefile1" value="" width="30" /></td></tr>
           
       <tr><td><label labelfor="setsummaryimageurl"><b>OR Enter url:</b></label></td><td><input type="text" id="setsummaryimageurl" value="" size="30" name="fileurl" onchange="changedSummaryImageType='new';currentSimpleCMSAssemblies.summaryimagechange=true; if(currentSimpleCMSAssemblies.action!='add') currentSimpleCMSAssemblies.action='edit';unsavedSimpleEdits=true;clearSummaryImageBrowse();currentSummaryImageAssetId=null;document.getElementById('summaryimage').src=document.getElementById('setsummaryimageurl').value;useNewAssetAsSummaryImage=false;clearSetSummaryImageCheckboxes();"/></td></tr>
-     <!-- <tr><td></td><td>   <input type="button" value="OK" onclick="changeSummaryImage();"/></td></tr>-->
+    
      <tr><td></td>
      <td>
       
@@ -3343,8 +3439,7 @@ var markerImages;
   </td><td><div  id="upload-summaryimage-spinner" style="float:right;background:url('images/ajax-loader.gif') #fff center no-repeat;width:32px;height:32px;display:none;"></div></td>
 </tr>
 <tr><td><label labelfor="selectsummaryimage"><b><span id="orchoosemsg3">OR </span><a class="loggedinusername-2" style="color:#66cc33;text-decoration:underline"onclick="toggleChooseExistingSummaryImagesDiv();"><span id="orchoosemsg4"> Choose existing</span><span id="hidemsg2" style="display:none;">Hide</span></a></b></label></td>
-   <!-- <td><ul id="selectbannerimage" style="height:200px;overflow-y:auto;list-style-type:none"></ul></td></tr>-->
-   <td><div id="chooseexistingsummaryimagesdiv" style="display:none;">
+    <td><div id="chooseexistingsummaryimagesdiv" style="display:none;">
        <a id="allimagesupbuttonsia" class="usermenuuparrow" onclick=" populateImageAssetsTable('up','sia','addToSummaryImageTable');" style="margin-left:auto;margin-right:auto;display:block;visibility:hidden"></a>
         <table style="margin-left:auto;margin-right:auto;height:200px;" border="1">
             <tbody id="selectsummaryimage">
@@ -3381,24 +3476,12 @@ var markerImages;
 
   
 <div id="accordion">
-<!--   <div>
-    <h2 style="padding-left:25px">Section 1</h2>
-    <div>Section 1 stuff here</div>
-</div>
-      <div >
-      <h2 <span style="padding-left:25px">Section 2</h2>
-    <div>Section 2 stuff here</div>
-</div>
-      <div >
-      <h2 <span style="padding-left:25px">Section 3</h2>
-    <div>Section 3 stuff here</div>
-</div>
--->
-    
-    
-</div> <!-- accordion -->
-</div> <!-- currentproject assets -->
 
+    
+    
+</div> 
+</div> 
+-->
 
 
 
@@ -3407,6 +3490,8 @@ var markerImages;
 </div><!-- east -->
 
 </div> <!-- Container -->
+
+<textarea id='test' name='test'>SOME STUFF</textarea>
 
 
 <!--<iframe name="upload_iframe" style="width:400px;height:100px;display:none" onload="uploadDone();"></iframe>-->
