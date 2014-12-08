@@ -1330,6 +1330,12 @@ function renderAssetAssembly(device,res){
               }
 
                returnObject.assets[index].posterurl=selectedPresentation.url;
+               if(typeof device.app !== 'undefined'){
+                if((typeof returnObject.assets[index].posterurl == 'undefined')||(returnObject.assets[index].posterurl == null)){
+                  returnObject.assets[index].posterurl='null';
+                }
+
+               }
 
               count--;
 
@@ -1337,6 +1343,10 @@ function renderAssetAssembly(device,res){
 
               if(count==0){ //we're done
                   if(device.returnType == 'json'){
+
+                    if((typeof returnObject.assets[index].posterurl == 'undefined')||(returnObject.assets[index].posterurl == null)){
+                      returnObject.assets[index].posterurl='null';
+                    }
                     returnObject.assemblies=returnObject.assets;
 
                     if(typeof device.aacallback == 'undefined')
@@ -1584,12 +1594,15 @@ function renderAssetAssembly(device,res){
               }
           }
 
-
+          if((typeof returnObject.assets[index].posterurl == 'undefined')||(returnObject.assets[index].posterurl == null)){
+                  returnObject.assets[index].posterurl='null';
+          }
 
           count--;
           logger.info("count: " + count);
           if(count==0){
               if(device.returnType == 'json'){
+
                 returnObject.assemblies=returnObject.assets;
                 if(typeof device.aacallback == 'undefined')
                       res.json(returnObject);
