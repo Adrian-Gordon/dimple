@@ -1255,7 +1255,14 @@ function renderAssetAssembly(device,res){
   returnObject.visible=device.visible;
 
   returnObject.title=device.assetAssembly.textElements[device.languageCode].title;
+
+  if(typeof returnObject.title=='undefined'){
+    returnObject.title=null;
+  }
   returnObject.subtitle=device.assetAssembly.textElements[device.languageCode].assetassemblysubtitle;
+  if(typeof returnObject.subtitle == 'undefined'){
+    returnObject.subtitle=null;
+  }
   returnObject.summarytext1=device.assetAssembly.textElements[device.languageCode].summarytext1;
   returnObject.summarytext2=device.assetAssembly.textElements[device.languageCode].summarytext2;
   returnObject.summarytext3=device.assetAssembly.textElements[device.languageCode].summarytext3;
