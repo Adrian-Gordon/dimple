@@ -1331,7 +1331,10 @@ function renderAssetAssembly(device,res){
               if(count==0){ //we're done
                   if(device.returnType == 'json'){
                     returnObject.assemblies=returnObject.assets;
-                    res.json(returnObject);
+
+                    if(typeof device.aacallback == 'undefined')
+                      res.json(returnObject);
+                    else res.end(device.aacallback + '(' + JSON.stringify(returnObject) + ')');
                   }
                   else if(device.returnType=='html'){
                     //render through a jade template
@@ -1581,7 +1584,10 @@ function renderAssetAssembly(device,res){
           if(count==0){
               if(device.returnType == 'json'){
                 returnObject.assemblies=returnObject.assets;
-                res.json(returnObject);
+                if(typeof device.aacallback == 'undefined')
+                      res.json(returnObject);
+                    else res.end(device.aacallback + '(' + JSON.stringify(returnObject) + ')');
+                
               }
               else if(device.returnType=='html'){
                 //render through a jade template
