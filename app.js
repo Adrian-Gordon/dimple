@@ -267,9 +267,11 @@ passport.use(new LocalStrategy(
 
 app.get('/SelectImageAP',selectImageAP);
 app.get('/GetAllProjectAssemblies',getAllProjectAssemblies);
+app.get('/GetProjectDetails',getProjectDetails);
 app.get('/AssembleAssets', assembleAssets); 
 app.get('/DimpleMap_v1',dimpleMap_v1);
 app.get('/GenerateStylesheet',generateStylesheet);
+
 
 app.post('/UploadImageFromUrl',authenticateAPI,uploadImageFromUrl);
 
@@ -623,6 +625,54 @@ function formatCss(rules,useragent,app){
     outString=outString+"}\n";
   }
   return(outString);
+
+}
+
+
+function getProjectDetails(req,res){
+  var parsedUrl= require('url').parse(req.url,true);
+  var pathName=parsedUrl.pathname;
+  var query = parsedUrl.query;
+
+  var projectid=query.projectid;
+  var callback=query.callback;
+   var returnObject=new Object();
+
+   //get the project
+  models.ProjectModel.findOne({_id:projectid},function(err,project){ 
+    if(err){
+      returnObject.status="ERROR";
+      if(typeof callback != 'undefined'){
+        res.end(callback + '(' + JSON.stringify(returnObject) + ')');
+      }
+      else res.end(JSON.stringify(returnObject));
+
+    }
+    else if(project != null){
+      returnObject.status='OK';
+
+      returnObject.projectid=project._id;
+      returnObject.title=project.title=project.projectTitle;
+      returnObject.description=project.description;
+      returnObject.bannerassetid=project.bannerAsset;
+      returnObject.stylesid=project.styles;
+
+
+      if(typeof callback != 'undefined'){
+        res.end(callback + '(' + JSON.stringify(returnObject) + ')');
+      }
+      else res.end(JSON.stringify(returnObject));
+
+    }
+    else{
+      returnObject.status="ERROR";
+      if(typeof callback != 'undefined'){
+        res.end(callback + '(' + JSON.stringify(returnObject) + ')');
+      }
+      else res.end(JSON.stringify(returnObject));
+    }
+
+  });
 
 }
 
