@@ -704,14 +704,14 @@ function getAllProjectAssemblies(req,res){
 
     var l=Object.keys(project.assetAssemblies).length;
 
-    console.log("Naas: " + l);
+    //console.log("Naas: " + l);
 
 
     for(aaid in project.assetAssemblies){
-      console.log("aaid: " + aaid);
+      //console.log("aaid: " + aaid);
 
       models.AssetAssemblyModel.findOne({_id:aaid},function(err,assetAssembly){
-        console.log("AA: " + JSON.stringify(assetAssembly));
+        //console.log("AA: " + JSON.stringify(assetAssembly));
         var newAA=new Object();
         newAA.longitude=assetAssembly.location[0];
         newAA.latitude=assetAssembly.location[1];
@@ -727,7 +727,53 @@ function getAllProjectAssemblies(req,res){
         newAA.layarurl=assetAssembly.layarImageUrl;
         newAA.assetassemblydescription=assetAssembly.assetAssemblyDescription;
         newAA.assetassemblyid=assetAssembly._id;
-        returnObject.assemblies.push(newAA);
+
+        var imageAssetid=assetAssembly.imageAsset;
+
+        if((typeof imageAssetid != 'undefined')&&(imageAssetid != null)){
+          logger.info("imageassetid: " + imageAssetid);
+          l++;
+          var x=function(aa){
+            models.AssetModel.findOne({_id:imageAssetid},function(err,imageAsset){
+                logger.info("Found summary asset: " + JSON.stringify(imageAsset));
+                var summaryImageUrl;
+                if(imageAsset !== null){
+                    var presentations=imageAsset.presentations;
+
+                      presentations.sort(function(a,b){
+                          return(b.width - a.width);
+                      });
+                      summaryImageUrl=presentations[0].url;
+                }
+                aa.summaryimageurl=summaryImageUrl;
+
+                returnObject.assemblies.push(aa);
+                l--;
+
+                if(l==0){
+                   returnObject.response="OK";
+                  res.writeHead(200, {'Content-Type': 'application/json'});
+
+                  if(typeof callback != 'undefined'){
+
+
+                    res.end(callback + '(' + JSON.stringify(returnObject) + ')');
+                  }
+                  else {
+                     res.end(JSON.stringify(returnObject));
+                  }
+                }
+
+                //see if we are done
+
+
+            });
+          }(newAA);
+        }
+
+
+
+        else returnObject.assemblies.push(newAA);
 
 
         l--;
