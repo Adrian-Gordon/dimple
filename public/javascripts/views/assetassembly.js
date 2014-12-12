@@ -17,9 +17,12 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
         //get the 'visible' property of this asset assembly in this project
         this.project.fetch({success: function(model,response,options){
                     console.log("AAs:" + JSON.stringify(model.get('assetAssemblies')));
-                    var results = model.get('assetAssemblies').filter(function (entry) { return entry.assetAssemblyId === that.model.get("_id"); });
-                    console.log("results: " + JSON.stringify(results));
-                    if(results[0])that.visible=results[0].visible;
+                   // var results = model.get('assetAssemblies').filter(function (entry) { return entry.assetAssemblyId === that.model.get("_id"); });
+                   // console.log("results: " + JSON.stringify(results));
+
+                    var visible=model.get('assetAssemblies')[that.model.get("_id")];
+                    //if(results[0])that.visible=results[0].visible;
+                    that.visible=visible;
                     that.render();
                     }});
   
@@ -101,42 +104,42 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
            
 
             var textElements=this.model.get('textElements');
-            textElements[0].subtitle=target.value;
+            textElements['en'].subtitle=target.value;
 
             this.model.set('textElements',textElements);
 
         }
         else if(target.id=='cptitle'){
             var textElements=this.model.get('textElements');
-            textElements[0].title=target.value;
+            textElements['en'].title=target.value;
 
             this.model.set('textElements',textElements);
 
         }
         else if(target.id=='cpst1'){
           var textElements=this.model.get('textElements');
-            textElements[0].summarytext1=target.value;
+            textElements['en'].summarytext1=target.value;
 
             this.model.set('textElements',textElements);
 
         }
         else if(target.id=='cpst2'){
           var textElements=this.model.get('textElements');
-            textElements[0].summarytext2=target.value;
+            textElements['en'].summarytext2=target.value;
 
             this.model.set('textElements',textElements);
 
         }
         else if(target.id=='cpst3'){
           var textElements=this.model.get('textElements');
-            textElements[0].summarytext3=target.value;
+            textElements['en'].summarytext3=target.value;
 
             this.model.set('textElements',textElements);
 
         }
         else if(target.id=='cpst4'){
           var textElements=this.model.get('textElements');
-            textElements[0].summarytext4=target.value;
+            textElements['en'].summarytext4=target.value;
 
             this.model.set('textElements',textElements);
 
@@ -200,6 +203,7 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
        console.log("v: " + JSON.stringify(v));
       _.extend(extended,this.model.toJSON(),p,v);
       console.log("extended: " + JSON.stringify(extended));
+      console.log("TITLE:" + extended.textElements['en'].title);
        
        //var templatehtml=this.template(_.extend({},this.model.toJSON(),{projectid:this.project._id},{visible:this.visible}));
        var templatehtml=this.template(extended);

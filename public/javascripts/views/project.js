@@ -64,14 +64,17 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
               success:function(model,response){
 
                      var assemblies=model.get("assetAssemblies");
-                      var n =assemblies.length;
-                      for(i in assemblies){
-                        
-                        var assetAssembly=assemblies[i];
-                        console.log('go render ' + JSON.stringify(assetAssembly));
+                     console.log("assemblies: " + JSON.stringify(assemblies));
+                      var n =Object.keys(assemblies).length;
+                      var count=0;
+                      for(aaid in assemblies){
+                        count++;
+                        //console.log("i: " + i);
+                       // var assetAssembly=assemblies[i];
+                        //console.log('go render ' + JSON.stringify(assetAssembly));
                         var userid=model.get("userid");
                         var projectid=model.get("_id")
-                        var aaid=assetAssembly.assetAssemblyId;
+                        //var aaid=assetAssembly.assetAssemblyId;
 
                         var aaModel=new dimpleConsoleApp.AssetAssembly({_id:aaid});
 
@@ -84,8 +87,9 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
                                 showSimpleMarker(marker);
                                 n--;
                                 if(n==0)setSimpleBounds();
+                                
                               });
-                        }(aaModel,projectid,userid,i);
+                        }(aaModel,projectid,userid,count);
 
                         //var marker=addSimplePOI(aaModel,this.model.get("_id"),this.model.get('userid'),i);//.assetAssemblyDescription,assetAssembly.location[1],assetAssembly.location[0],assetAssembly._id,this.model.get("_id"));
                         //  marker.listimageid=i;

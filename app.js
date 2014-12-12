@@ -323,7 +323,8 @@ app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
 
 
 //assetassemblies
-app.get('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.getAssetAssemblies);
+//app.get('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.getAssetAssemblies);
+app.get('/api/v1/assetassemblies/:assetassemblyid',authenticateAPI,assetassemblies.getAssetAssembly);
 app.post('/api/v1/assetassemblies/',authenticateAPI,assetassemblies.addAssetAssembly);
 app.put('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.updateAssetAssembly);
 app.delete('/api/v1/assetassemblies/:assetassemblyid',assetassemblies.deleteAssetAssembly);
@@ -1121,6 +1122,10 @@ function getDevice(req,res,renderFunction){
                   device.playback_mov=true;
                 }
 
+                if(device.app=='ios'){
+                  device.playback_mov=true;
+                }
+
 
 
 
@@ -1486,7 +1491,7 @@ function renderAssetAssembly(device,res){
               }
 
             }
-           // logger.info("videoPresentations: " + JSON.stringify(videoPresentations));
+            logger.info("videoPresentations: " + JSON.stringify(videoPresentations));
 
             if(typeof videoPresentations['mov']!== 'undefined'){
               selectedPresentation=videoPresentations['mov'];

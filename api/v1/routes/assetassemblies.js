@@ -1,7 +1,7 @@
 var models = require('../../../mongoosemodels')
 var ObjectId = require('mongoose').Types.ObjectId; 
 
-module.exports.getAssetAssemblies=function(req,res,next){
+module.exports.getAssetAssembliesSQL=function(req,res,next){
 
 	
 
@@ -39,6 +39,8 @@ module.exports.getAssetAssemblies=function(req,res,next){
 }
 
 
+
+
 module.exports.addAssetAssembly=function(req,res){
 
 
@@ -66,6 +68,7 @@ module.exports.addAssetAssembly=function(req,res){
 
 module.exports.getAssetAssembly=function(req,res){
   var aaid=req.params.assetassemblyid;
+  logger.info("getAssetAssembly " + aaid);
 
   models.AssetAssemblyModel.findOne({"_id":aaid}, function (err, assetAssembly){
   //UserModel.findOne({"projects.assetAssemblies":{$elemMatch:{_id:aaid}}}, function (err, user){

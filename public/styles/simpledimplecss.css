@@ -161,7 +161,7 @@ background-color:#66cc33;
    
 }*/
 
-.projanchorodd{
+.projanchorodd .showproject{
     display:block;
     width:100%;
       color:white;
@@ -174,7 +174,7 @@ background-color:#66cc33;
     padding-left:5px;
 }
 
-.projanchoreven{
+.projanchoreven .showproject{
     display:block;
     width:100%;
       color:#222222;

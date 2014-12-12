@@ -154,7 +154,7 @@ function addSimplePOI(assetAssembly,projectid,userid,index){
     
 
 
-    var iconUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + assetAssembly.get('textElements')[0].title + "  |" + colour + "|000000";
+    var iconUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + assetAssembly.get('textElements')['en'].title + "  |" + colour + "|000000";
     //  var imgUrl="http://chart.apis.google.com/chart?chst=d_bubble_text_small&chld=bb|" + assembly.assetassemblytitle + "   |66cc33|000000";
     
       console.log("iconUrl: " + iconUrl);

@@ -24,27 +24,7 @@ $(function(){
     dimpleConsoleApp.allUserImageAssets.fetch();
         
         
-/*
-        var newProjectModel=new dimpleConsoleApp.Project({_id:1});
-     newProjectModel.fetch({
-                  error:function(model,response){
-                      console.log("newProjectModel.fetch error: " + response);
-                  },
-                  success: function(model,response){
-                    console.log("newProjectModel.fetch success, response: " + JSON.stringify(response) + " model: " + JSON.stringify(model));
-                    var view= new dimpleConsoleApp.ProjectView({model:model});
-                    view.options={index: index,oddoreven:anchorclass};
-                    index++;
-                    if(anchorclass==='projanchoreven')anchorclass='projanchorodd';
-                    else anchorclass='projanchoreven';
-                    var newel=view.render().el;
-                   console.log("About to append new el: " + JSON.stringify(newel));
-                    $('#projlist').append(newel);
-                  }
 
-              }
-      );
-*/
     
 
 });

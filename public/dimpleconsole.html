@@ -100,7 +100,7 @@
   
 
 
-    <td><a class='<%= oddoreven %> showproject'> <%= projectTitle %></a></td>
+    <td><a class='showproject'> <%= projectTitle %></a></td>
 
     <td><a class='edit'  title="Edit this Project"></td>
     <td><a class="smallcrossbuttonred" title="Delete this Project" </a></td>
@@ -306,23 +306,29 @@
 <button type="button" >OK</button>
 </script>
 
+
 <!-- Asset Assembly Templates-->
+
+<!-- TEST -->
+
+
+
 <script type="text/template" id='current-asset-assembly-template'>
 
 <div class="caatemplate">
     <a style="float:right;" class="smallcrossbuttonred" title="Delete this POI" onclick="simpleDeletePOI();"></a>
-    <h1><%=textElements[0].title%></h1>
+    <h1><%=textElements['en'].title%></h1>
     <a  class="button black bigrounded">Save Changes</a> 
   
     <table>
         <tbody>
           <tr>
               <td><label labelfor='cptitle'><b>Title:</b></label></td>
-              <td><input style="font-size:12px;width:100%;"  type="text" id="cptitle" value="<%=((textElements[0].title==null)||(textElements[0].title=='null'))?'':textElements[0].title%>"  /></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cptitle" value="<%=((textElements['en'].title==null)||(textElements['en'].title=='null'))?'':textElements['en'].title%>"  /></td>
           </tr>
           <tr>
               <td>    <label labelfor='cpsubtitle'><b>Subtitle:</b></label></td>
-              <td><input style="font-size:12px;width:100%;"  type="text" id="cpsubtitle" value="<%=((textElements[0].subtitle==null)|(textElements[0].subtitle=='null'))?'':textElements[0].subtitle%>"  /></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cpsubtitle" value="<%=((textElements['en'].subtitle==null)|(textElements['en'].subtitle=='null'))?'':textElements['en'].subtitle%>"  /></td>
           </tr>
           <tr>
               <td>  <label labelfor='cpisvisible'><b>Visible:</b></label></td>
@@ -339,19 +345,19 @@
           </tr>
           <tr  class="strow strowinvisible" >
             <td><label labelfor="cpst1"><b>line 1</b></label></td>
-            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst1" value="<%=textElements[0].summarytext1%>" ></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst1" value="<%=textElements['en'].summarytext1%>" ></td>
           </tr>
           <tr class="strow strowinvisible">
             <td><label labelfor="cpst2"><b>line 2</b></label></td>
-            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst2" value="<%=textElements[0].summarytext2%>" ></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst2" value="<%=textElements['en'].summarytext2%>" ></td>
           </tr>
           <tr class="strow strowinvisible">
             <td><label labelfor="cpst3"><b>line 3</b></label></td>
-            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst3" value="<%=textElements[0].summarytext3%>" ></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst3" value="<%=textElements['en'].summarytext3%>" ></td>
           </tr>
           <tr class="strow strowinvisible">
             <td><label labelfor="cpst4"><b>line 4</b>&nbsp;<span style="font-size:0.6em">(Layar only)</span></label></td>
-            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst4" value="<%=textElements[0].summarytext4%>"></td>
+            <td><input maxlength="20" style="font-size:12px;width:100%;" type="text" id="cpst4" value="<%=textElements['en'].summarytext4%>"></td>
           </tr>
           <tr><td>Summary Image:</td>
               <td><div title="show/hide summary image" id="showsummaryimage" class="sidiv usermenudownarrow" ></div></td>
