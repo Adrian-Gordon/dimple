@@ -6,12 +6,12 @@ dimpleConsoleApp.SelectImageView=Backbone.View.extend({
 
 		 
       initialize: function(){
-      	console.log("SelectImageView model: " + JSON.stringify(this.model));
+      	//console.log("SelectImageView model: " + JSON.stringify(this.model));
         this.render();
       },
       render: function(){
        
-        console.log("SelectImageView model: " + JSON.stringify(this.model));
+        //console.log("SelectImageView model: " + JSON.stringify(this.model));
         this.$el.html(this.template(this.model.toJSON()));
 
         return(this);
@@ -35,11 +35,11 @@ dimpleConsoleApp.SelectImageView=Backbone.View.extend({
 
 
 
-          console.log("imageChosen " + this.model.get('_id'));
+          //console.log("imageChosen " + this.model.get('_id'));
         
           this.options.targetModel.set(this.options.targetAttribute,this.model.get('_id'));
 
-          console.log(JSON.stringify(this.options.targetModel) + ' ' + this.options.targetAttribute + ' is now set to : ' + this.options.targetModel.get(this.options.targetAttribute));
+          //console.log(JSON.stringify(this.options.targetModel) + ' ' + this.options.targetAttribute + ' is now set to : ' + this.options.targetModel.get(this.options.targetAttribute));
 
 
           //set the model of the target view, and tell it to render itself

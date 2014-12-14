@@ -48,9 +48,10 @@ dimpleConsoleApp.ProjectsView = Backbone.View.extend({
     },
 
     newProject: function(event) {
-    	console.log("Add a new project");
+    	console.log("Add a new project, userid: " + $.cookie("dimpleuserid"));
     	 dimpleConsoleApp.projectDetailsView=new dimpleConsoleApp.ProjectDetailsView({model:new dimpleConsoleApp.Project({userid:$.cookie("dimpleuserid")}),el:$('#projectdialog')});
-    	$('#projectdialog').show();
+    	 console.log("go show projectdialog");
+      $('#projectdialog').show();
 		//if (app.wineView) app.wineView.close();
 		//app.wineView = new WineView({model: new Wine()});
 		//app.wineView.render();

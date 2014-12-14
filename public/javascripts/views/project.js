@@ -68,6 +68,7 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
                       var n =Object.keys(assemblies).length;
                       var count=0;
                       for(aaid in assemblies){
+
                         count++;
                         //console.log("i: " + i);
                        // var assetAssembly=assemblies[i];
@@ -110,14 +111,14 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
           //setSimpleBounds();
       },
       render: function(){
-        console.log("options: " + JSON.stringify(this.options));
+        //console.log("options: " + JSON.stringify(this.options));
        var extendedObj=this.model.toJSON();
        extendedObj.index=this.options.index;
        extendedObj.oddoreven=this.options.oddoreven;
-       console.log("render project view, model: " + JSON.stringify(extendedObj));
+      // console.log("render project view, model: " + JSON.stringify(extendedObj));
        
        var templatehtml=this.template(extendedObj);
-       console.log('templatehtml: '+templatehtml);
+       //console.log('templatehtml: '+templatehtml);
         this.$el.html(templatehtml);
         //console.log("this.$el=" + this.$el.html());
         return(this);
@@ -156,7 +157,7 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
         assetAssembly.imageAsset=null;
         assetAssembly.visible=visible;
         assetAssembly.assets=[];
-        assetAssembly.textElements=[{languageCode:'en',title:'New POI',subtitle:''}];
+        assetAssembly.textElements={'en':{'title':'New POI','subtitle':''}};
         //assetAssembly.assetAssemblyDescription="New POI";
         assetAssembly.location=[longitude,latitude];
 
@@ -172,13 +173,25 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
                               var project= new dimpleConsoleApp.Project({_id:projectid});
                               project.fetch({success: function(model,response,options){
 
-                                  var i=project.get('assetAssemblies').length +1; //index of next one
+                                  var projectAssemblies=project.get('assetAssemblies');
+                                  console.log("Project assemblies start: " + JSON.stringify(projectAssemblies));
+                                  projectAssemblies[''+ newAaId]=visible;//cast to string
+                                  console.log("Project assemblies now: " + JSON.stringify(projectAssemblies));
+                                  project.set({'assetAssemblies':projectAssemblies});
+                                  var userid=project.get('userid');
+                                  var i=Object.keys(project.get('assetAssemblies')).length ;
+
+                                 /* var i=project.get('assetAssemblies').length +1; //index of next one
                                   var userid=project.get('userid');
                                    var newAssembly={
                                         assetAssemblyId:newAaId,
                                         visible:visible
                                     };
+
                                     project.set({ 'assetAssemblies' : project.get('assetAssemblies').concat(newAssembly)});
+                                  */
+
+
                                     project.save();
 
                                     //now show the new POI

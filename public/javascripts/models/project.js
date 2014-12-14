@@ -10,7 +10,7 @@ dimpleConsoleApp.Project=Backbone.Model.extend({
 			description: "A New dimple Project",
 			bannerAsset:null,
 			userid:0,
-			assetAssemblies:[]
+			assetAssemblies:{}
 		}
 		/*urlRoot: function(){
 				console.log("urlRoot fn: " + JSON.stringify(this) + "id: " + this.get('id'));

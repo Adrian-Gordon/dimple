@@ -338,7 +338,7 @@
           
            <tr>
               <td>    <label labelfor='cpiconid'><b>Icon Id:</b></label></td>
-              <td><input style="font-size:12px;width:100%;"  type="text" id="cpiconid" value="<%=icon%>"   /></td>
+              <td><input style="font-size:12px;width:100%;"  type="text" id="cpiconid" value="<%=(typeof icon != 'undefined')?icon:''%>"   /></td>
           </tr>
           <tr><td>Summary Text:</td>
               <td><div title="show/hide summary text" id="showsummarytext" class="stdiv usermenudownarrow" ></div></td>
@@ -3497,7 +3497,7 @@ var markerImages;
 
 </div> <!-- Container -->
 
-<textarea id='test' name='test'>SOME STUFF</textarea>
+<textarea style="display:none" id='test' name='test'>SOME STUFF</textarea>
 
 
 <!--<iframe name="upload_iframe" style="width:400px;height:100px;display:none" onload="uploadDone();"></iframe>-->

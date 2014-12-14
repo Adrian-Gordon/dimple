@@ -18,7 +18,7 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
         this.render();
       },
       render: function(){
-        console.log("pageNo: " + this.options.pageNo +" imagesPerPage: " + this.options.imagesPerPage + " length:" + this.model.length + "pages: " + this.options.pages);
+        //console.log("pageNo: " + this.options.pageNo +" imagesPerPage: " + this.options.imagesPerPage + " length:" + this.model.length + "pages: " + this.options.pages);
         this.$el.html(this.template(this.options));
 
         var startIndex=(this.options.pageNo -1)*this.options.imagesPerPage;
@@ -27,7 +27,7 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
         var targetAttribute=this.options.targetAttribute;
         var targetView=this.options.targetView;
 
-        console.log("render images " + startIndex + " to " + endIndex);
+        //console.log("render images " + startIndex + " to " + endIndex);
        	var subCollection=this.model.slice(startIndex,endIndex);
        	//console.log(JSON.stringify(subCollection));
         //var listid='#' + this.options.listid;
@@ -35,7 +35,7 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
         var listid=this.$el.find('.imagelist');
 //       	$(this.options.imageListElementId).empty();
        	_.each(subCollection,function(model){
-       		console.log("Go render: " + JSON.stringify(model) + "targetModel: " + targetModel + " targetAttribute: " + targetAttribute);
+       		//console.log("Go render: " + JSON.stringify(model) + "targetModel: " + targetModel + " targetAttribute: " + targetAttribute);
 
        		var imageView= new dimpleConsoleApp.SelectImageView({model:model,targetModel:targetModel,targetAttribute:targetAttribute,targetView:targetView});
 
@@ -63,7 +63,7 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
         changeSearchCriteria: function(event){
           var target = event.target;
           this.searchCriteria=target.value;
-          console.log("search crieteria: " + this.searchCriteria);
+          //console.log("search crieteria: " + this.searchCriteria);
 
         },
 
@@ -73,10 +73,10 @@ dimpleConsoleApp.SetImageView=Backbone.View.extend({
           var found=this.originalModel.filter(function(aModel){
               var rExp=new RegExp(searchExp,"i");
               var description=aModel.get('assetDescription');
-              console.log("testing " + description + " against " + rExp + " returns: " + rExp.test(description));
+             // console.log("testing " + description + " against " + rExp + " returns: " + rExp.test(description));
               return rExp.test(aModel.get('assetDescription'));
           });
-          console.log("found: " + JSON.stringify(found));
+         // console.log("found: " + JSON.stringify(found));
 
           this.model=found;
           this.options.pages=Math.ceil(this.model.length / this.options.imagesPerPage);
