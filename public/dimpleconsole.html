@@ -300,7 +300,7 @@
 <input type="file" name="image" class='uploadlocalimagefile'/>
 <p>
 <label>description:</label><input class='uploadlocalimagedescription' name="description" type="text"></input>
-<input type="hidden" class='uploadimageuserid' name="userid" value="<%=userid%>"></input>
+<input type="hidden" class='uploadimageuserid' name="userid" value="<%=$.cookie('dimpleuserid')%>"></input>
     <image class="imagetarget"></image>
 </p>
 <button type="button" >OK</button>

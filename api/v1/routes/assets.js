@@ -113,7 +113,7 @@ module.exports.addAsset=function(req,res){
 
            newAsset.save(function (err) {
                  if (err) console.log("Add Asset error:" + err);
-                 console.log("Saved new Asset " + JSON.stringify(newAsset));
+                 logger.info("Saved new Asset " + JSON.stringify(newAsset));
                  res.end(JSON.stringify(newAsset));
            });
 }

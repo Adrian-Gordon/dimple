@@ -142,7 +142,7 @@ var models=require('./mongoosemodels');
 
 
 
-AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey"),region: 'eu-west-1'});
+AWS.config.update({accessKeyId: nconf.get("awsaccessKeyId"), secretAccessKey: nconf.get("awssecretAccessKey")});//,region: 'eu-west-1'});
 var s3 = new AWS.S3();
 
 
@@ -3308,6 +3308,13 @@ function assembleAssetsOld(req,res){
 
   function uploadToAWS(path,key,type,newAssetId,userId,res,resReturns){
 
+        logger.info("uploadToAWS path: " + path);
+        logger.info("uploadToAWS key: " + key);
+        logger.info("uploadToAWS type: " + type);
+        logger.info("uploadToAWS newAssetId: " + newAssetId);
+        logger.info("uploadToAWS userId: " + userId);
+        logger.info("uploadToAWS resReturns: " + resReturns);
+
 
         fs.readFile(path, function(err, file_buffer){
             var params = {
@@ -3318,8 +3325,10 @@ function assembleAssetsOld(req,res){
               };
 
               s3.putObject(params, function (perr, pres) {
-              if (perr) {
-                  logger.info("Error uploading data: ", perr);
+              if (perr != null) {
+                  logger.info("Error uploading data: ", JSON.stringify(perr));
+                  logger.info(perr.stack);
+                  res.end(resReturns);
               } else {
                   logger.info("Successfully uploaded data to " + params.Bucket + "/" + key);
                    //create and queue a new job
