@@ -1197,7 +1197,7 @@ function getDevice(req,res,renderFunction){
                                           return(b.width - a.width);
                                       });
 
-                                     // logger.info("sorted presentations: " + presentations);
+                                     logger.info("sorted presentations: " + JSON.stringify(presentations));
 
                                       
                                       for(var p in presentations){
@@ -1344,7 +1344,12 @@ function renderAssetAssembly(device,res){
 
   returnObject.assets=new Array(nAssets);
 
-  for(var i=0;i<nAssets;i++){
+  if(nAssets==0){
+      res.render('assetassembly',returnObject);
+  }
+
+  else{
+    for(var i=0;i<nAssets;i++){
 
     logger.info("asset: " + JSON.stringify(sortedAssets[i]));
      var assetIndex=sortedAssets[i].index;
@@ -1676,6 +1681,7 @@ function renderAssetAssembly(device,res){
         });
   }(i,assetIndex);
   }
+}
 
 
  
