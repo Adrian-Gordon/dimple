@@ -24,26 +24,12 @@ html
 			| width:70px;
 			| }
 	body(style="text-align:center" onload="getAllDimplePOIs(#{projectId},#{iconsize});setDeviceId('generic_web_browser');")
-		-if(!iswirelessdevice){
+		-if(isWirelessDevice==false){
+
 			div(id="nwwrapper" style="width:800px;margin: 0 auto;text-align:center")
+				include mapbody
 		-}
-			div(id="dimple-map-body")
-				div(id="header")
-					div(id="headerimage")
-						img(src="" + bannerUrl style='margin-bottom:0px' width='100%')
-					- if(title){
-						div(id='title')
-							h1
-								| #{title}
-
-					- }
-					- if(subtitle){
-						div(id='subtitle')
-							h3
-								| #{subtitle}
-
-					- }
-				div(id="dimple-map-content" style="margin-left:  auto;margin-right:auto")
-					div(id="dimple_map_canvas" style="height:600px;margin-left:auto;margin-right:auto;text-align:center")
-					div(id="dimple-map-poilist" style="text-align:left")
-						div(id="poitable")
+		-else{
+			include mapbody
+		-}
+				
