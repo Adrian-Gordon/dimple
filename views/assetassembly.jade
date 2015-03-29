@@ -4,7 +4,8 @@ html
 			| #{title}
 		style
 			| #{stylestring}
-		link(REL="SHORTCUT ICON" HREF="favico.ico")
+		link(REL="SHORTCUT ICON" HREF="/favico.ico")
+		script(src="/javascripts/jquery-1.11.2.min.js")
 		- if(deviceOs =='iOS'){
 		script(src='/javascripts/iosfns.js')
 		- }

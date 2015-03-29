@@ -1,6 +1,6 @@
 
 <!--
-<!DOCTYPE html>
+<!DOCTYPE html
 <html>
 <head>
   <meta charset="UTF-8">
@@ -315,7 +315,7 @@
 
 <script type="text/template" id='current-asset-assembly-template'>
 
-<div class="caatemplate">
+<div class="caatemplate" id="caa<%=_id%>">
     <a style="float:right;" class="smallcrossbuttonred" title="Delete this POI" onclick="simpleDeletePOI();"></a>
     <h1><%=textElements['en'].title%></h1>
     <a  class="button black bigrounded">Save Changes</a> 
@@ -387,7 +387,7 @@
 <!-- Asset Template -->
 
 <script type="text/template" id='asset-template'>
-<h2 style="padding-left:25px;font-size:14px;color:#66cc33;text-align:left"><b> Type:
+<h2 class='acasset' id="<%='acasset' + _id%>"style="padding-left:25px;font-size:14px;color:#66cc33;text-align:left"><b> Type:
     <%if(assetTypeId===0){%>
           <%='text'%>
       <%}%>
@@ -413,7 +413,7 @@
           <%=action%>
       <%}%>
       </b>
-         <span>[asset caption here]</span>
+         <span><%=typeof captions !== 'undefined'?captions['en']:''%></span>
     <a class='smallcrossbuttonred' title="Delete this content" style="padding-top:0;padding-bottom:0;padding-left:0;padding-right:0;float:right;"></a>
     <br>
     <span style='font-size:12px'><b> description:</b><%= assetDescription%></span>
@@ -425,6 +425,8 @@
 <!-- Text Asset Template -->
 
 <script type="text/template" id='text-asset-template'>
+<span>caption:</span>
+<input type="text" size=10 value="<%=typeof captions !== 'undefined'?captions['en']:''%>" />
 
 <textarea id="htmledit-textarea-<%=_id%>" name="htmledit-textarea-<%=_id%>"><%=presentations[0].data%></textarea>
 
@@ -3288,7 +3290,7 @@ var markerImages;
 <tr>
 <td><img src="images/images1.png" width="60"  alt="images1" title="Add an Image" onclick="createNewSimpleAsset('image',getNextSimpleIndex());"/>
 </td>
-<td><img src="images/text.png" width="60"  title="Add Text" onclick="createNewSimpleAsset('text',getNextSimpleIndex());"/>
+<td><img src="images/text.png" width="60"  title="Add Text" onclick="createNewSimpleAsset('text','text/html');"/>
 </td>
 
 <td><img src="images/audio.png" width="60"   title="Add Audio" onclick="createNewSimpleAsset('audio',getNextSimpleIndex());"/>
@@ -3296,7 +3298,8 @@ var markerImages;
 <td><img src="images/video.png" width="60"  title="Add Video" onclick="createNewSimpleAsset('video',getNextSimpleIndex());"/>
 </td>
 </tr>
-<tr>
+<tr><td><img src="images/json.png" width="60"  title="Add a Json Text Object" onclick="createNewSimpleAsset('text','text/json');"/>
+    </td>
       <td><img src="images/loginwidget.png" width="60"  title="Add a Login Widget" onclick="createNewSimpleAsset('loginwidget',getNextSimpleIndex());"/>
     </td>
     <td><img src="images/question-mark.png" width="60"  title="Add a Question Task" onclick="createNewSimpleAsset('question',getNextSimpleIndex());"/>

@@ -17,43 +17,55 @@ if (currentUser) {
 	} 
 }
 
-function checkLoginAnonymous(){
-	//console.log("call checkLoginAnonymous");
-	var remainingContentDiv=document.getElementById('dimple-remaining-content-div');
-	var currentUser = Parse.User.current(); 
-	if (currentUser) {//already logged in
-						//show the content
-		//console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
-		remainingContentDiv.style.display='block';
-	}
-	else{ //create a new dummy user
+function checkLoginAnonymous(asset,assetassemblyid,projectid){
+	data=asset.data;
 
-		var user = new Parse.User();
-		user.set("username", makeid(15));
-		user.set("password", "pwanonymous");
- 
-		user.signUp(null, {
-  			success: function(user) {
-    		// Hooray! Let them use the app now.
-    			
-    			remainingContentDiv.style.display='block';
-    			//loginDiv.style.display='none';
+	$.getScript("http://www.parsecdn.com/js/parse-1.2.13.min.js",function(){
 
-  			},
-  			error: function(user, error) {
-    			// Show the error message somewhere and let the user try again.
-    			//if(error.code==202){
-    				//msgspan.innerText=error.message;
-    				//msgspan.style.display='block';
-					
-				//}
- 		 	}
-		});
+		Parse.initialize("UBibVG5WBbXwa658BS1yVfCONmw3YKCRvpjx3wqy", "c7Ks1BrdmgWylo6wIP526DO67ne2E0HgD7TiYGPa");
+		//console.log("call checkLoginAnonymous");
+			//var remainingContentDiv=document.getElementById('dimple-remaining-content-div');
+			var currentUser = Parse.User.current(); 
+			if (currentUser) {//already logged in
+								//show the content
+				console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
+				//remainingContentDiv.style.display='block';
+			}
+			else{ //create a new dummy user
+
+				var user = new Parse.User();
+				user.set("username", makeid(15));
+				user.set("password", "pwanonymous");
+		 
+				user.signUp(null, {
+		  			success: function(user) {
+		    		// Hooray! Let them use the app now.
+		    			
+		    			//remainingContentDiv.style.display='block';
+		    			//loginDiv.style.display='none';
+		    			console.log("created new anon user : " + user.getUsername() + " " + JSON.stringify(user));
+
+		  			},
+		  			error: function(user, error) {
+		    			// Show the error message somewhere and let the user try again.
+		    			//if(error.code==202){
+		    				//msgspan.innerText=error.message;
+		    				//msgspan.style.display='block';
+							
+						//}
+						console.log("error: " + JSON.stringify(error))
+		 		 	}
+				});
 
 
-		
+				
 
-	}
+			}
+
+
+	});
+
+	
 }
 
 function parseLogin(){

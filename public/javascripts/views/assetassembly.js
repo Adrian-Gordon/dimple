@@ -56,8 +56,23 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
 
           });
 
+          var assets=this.model.get('assets');
+         
 
-          this.model.save(null,
+          $(this.el).find('.acasset').each(function(index){
+            var assetid=$(this).attr('id').replace('acasset','');
+            console.log("Asset ID: " + assetid + " index: " + index);
+
+            for(var i=0;i<assets.length;i++){
+              if(assets[i].assetid==assetid){
+                assets[i].index=index;
+                break;
+              }
+            }
+
+          });
+
+           this.model.save(null,
             {sucess:function(model,response){
 
                     },
@@ -68,6 +83,8 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
 
           });
         },
+
+        //save the asset indexes
 
 
       deleteAssetAssembly: function() {
@@ -228,54 +245,62 @@ var dimpleConsoleApp = dimpleConsoleApp || {};
 
         var count=assets.length;
 
-        for(var i=0;i<assets.length;i++){
-          var asset=assets[i];
+        if(assets.length > 0){
 
-          var assetid=asset.assetid;
+          for(var i=0;i<assets.length;i++){
+            var asset=assets[i];
 
-          //get the asset
+            var assetid=asset.assetid;
 
-        
-           var theAsset= new dimpleConsoleApp.Asset({_id:assetid});
+            //get the asset
 
-           theAsset.fetch({success: function(asset,response,options){
-              //console.log("found asset: " + JSON.stringify(asset));
-              //create a new div
-              //var newDiv=document.createElement('div');
-              //var newHeader=$("<h3> a header</h3>");
-              //var newDiv=$("<div>some content</div>");
+          
+             var theAsset= new dimpleConsoleApp.Asset({_id:assetid});
 
-              //create a new asset assembly accordion view
+             theAsset.fetch({success: function(asset,response,options){
+                //console.log("found asset: " + JSON.stringify(asset));
+                //create a new div
+                //var newDiv=document.createElement('div');
+                //var newHeader=$("<h3> a header</h3>");
+                //var newDiv=$("<div>some content</div>");
 
-              var newDiv=$("<div></div>");
+                //create a new asset assembly accordion view
 
-              var assemblyAccordionView =new dimpleConsoleApp.AssemblyAccordionView({model:asset,el:newDiv});
+                var newDiv=$("<div></div>");
 
-              //add the new div to this template
-              //var accEl=$(that.el).find('.accordion');
-              //console.log("Accel: " + accEl.html());
-              //$(this.el).find('.accordion').append(newDiv);
+                var assemblyAccordionView =new dimpleConsoleApp.AssemblyAccordionView({model:asset,el:newDiv});
 
-              var newHeader=$(newDiv).find("h2");
-              var newContentsDiv=$(newDiv).find('.assetaccordioncontents');
-              $(accEl).append(newHeader);
-              $(accEl).append(newContentsDiv);
-              //console.log("Accel now: " + accEl.html());
-              count--;
-              if(count==0){
-                $(accEl).accordion({header:'h2',active:false,collapsible:true, clearStyle:true,heightStyle:"content"}).sortable({axis:"y",handle:"h2",stop:function(event,ui){accordionSort(event,ui)}}); 
-              }
+                //add the new div to this template
+                //var accEl=$(that.el).find('.accordion');
+                //console.log("Accel: " + accEl.html());
+                //$(this.el).find('.accordion').append(newDiv);
 
-
-           }});
-          //create a new div element
-
-         
+                var newHeader=$(newDiv).find("h2");
+                var newContentsDiv=$(newDiv).find('.assetaccordioncontents');
+                $(accEl).append(newHeader);
+                $(accEl).append(newContentsDiv);
+                //console.log("Accel now: " + accEl.html());
+                count--;
+                if(count==0){
+                  $(accEl).accordion({header:'h2',active:false,collapsible:true, clearStyle:true,heightStyle:"content"}).sortable({axis:"y",handle:"h2",stop:function(event,ui){accordionSort(event,ui)}}); 
+                }
 
 
+             }});
+            //create a new div element
+
+           
 
 
+
+
+          }
         }
+        else{//no assets yet
+          $(accEl).accordion({header:'h2',active:false,collapsible:true, clearStyle:true,heightStyle:"content"}).sortable({axis:"y",handle:"h2",stop:function(event,ui){accordionSort(event,ui)}}); 
+          console.log("No assets here yet, but create the accordion");
+        }
+
         //$(accEl).accordion();
          //$(accEl).accordion({header:'h2',active:false,collapsible:true, clearStyle:true}).sortable({axis:"y",handle:"h2",stop:function(event,ui){accordionSort(event,ui)}}); 
 

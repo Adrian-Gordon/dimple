@@ -2,16 +2,30 @@
 -  var nextVideoAssetIndex=0;
 - for(var i=0;i<assets.length;i++){
 	- var asset=assets[i];
+	- console.log("assetdata: " + JSON.stringify(asset.data))
 	- var assettype=asset.assettypeid;
 	- if(assettype==0){
 		- if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null')){
 			div(class='text-item-title')
 				| !{asset.assetcaption}
 		- }
-		- if((asset.data !== 'undefined')&&(asset.data !== "")){
+		- if(asset.mimetype=='text/html'){
+			- if((asset.data !== 'undefined')&&(asset.data !== "")){
 			div(class='text-item')
 				| !{asset.data}
-		- }
+			- }
+		-}
+		- else if(asset.mimetype=='text/json'){
+			- if((asset.data !== 'undefined')&&(asset.data !== "")){
+			div(id='' + asset.data.divid class='' + asset.data.divclass)
+				- if(typeof asset.data.stylesurl !== 'undefined'){
+				link(rel='stylesheet',href='' +asset.data.stylesurl)
+				-}
+				script(src="" + asset.data.scriptsrc)
+				script.
+					 !{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
+			- }
+		-}
 
 	- }
 	- else if(assettype==1){

@@ -96,6 +96,8 @@ module.exports.addAsset=function(req,res){
 
   //create the new AssetAssembly
 
+      logger.info("ADD ASSET");
+
         var newAsset=new models.AssetModel({
               
 
@@ -105,17 +107,22 @@ module.exports.addAsset=function(req,res){
                posterAsset:req.param('posterAsset'),
                userid:req.param('userid'),
                assetSubtypeId:req.param('assetSubtypeId'),
-               version:req.param('version')
+               version:req.param('version'),
+               presentations:req.param('presentations')
 
 
 
             });
+
+
 
            newAsset.save(function (err) {
                  if (err) console.log("Add Asset error:" + err);
                  logger.info("Saved new Asset " + JSON.stringify(newAsset));
                  res.end(JSON.stringify(newAsset));
            });
+         
+    
 }
 
 
@@ -129,12 +136,18 @@ module.exports.addAsset=function(req,res){
 
 
 module.exports.updateAsset=function(req,res,next){
-  
+            var id;
             
             var asset=req.body;
+            logger.info("Asset before update: " + JSON.stringify(asset));
 
-    
-            var id= req.body._id;
+            if(typeof req.body._id == 'undefined'){
+              id=req.params.assetid;
+            }
+            else{
+              id= req.body._id;
+            }
+           // var id= req.body._id;
             var assetsubtypeid= req.body.assetSubtypeId;
             var assettypeid= req.body.assetTypeId;
             var assetdescription= req.body.assetDescription;
@@ -158,7 +171,8 @@ module.exports.updateAsset=function(req,res,next){
               asset.version=version;
               asset.captions=captions;
               asset.presentations=presentations;
-              asset.save();
+              logger.info("Asset after update: " + JSON.stringify(asset));
+              //asset.save();
               res.end(JSON.stringify(asset));
             });
             

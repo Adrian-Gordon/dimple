@@ -317,7 +317,7 @@ app.put('/api/v1/users/:userid/projects/:projectid',authenticateAPI,users.update
 //assets
 
 app.get('/api/v1/assets/',assets.getAssets);
-app.get('/api/v1/assets/:assetid',authenticateAPI,assets.getAsset);
+app.get('/api/v1/assets/:assetid',assets.getAsset);
 app.post('/api/v1/assets',authenticateAPI,assets.addAsset);
 app.put('/api/v1/assets/:assetid',authenticateAPI,assets.updateAsset);
 
@@ -1595,6 +1595,7 @@ function renderAssetAssembly(device,res){
 
          // logger.info("selectedPresentation: " + JSON.stringify(sp));
           returnObject.assets[index]=new Object();
+          returnObject.assets[index].asset=asset;
           returnObject.assets[index].assetcaption=assetCaption;
           //returnObject.assets[index].presentation=selectedPresentation;
           var assetTypeS;
@@ -1670,6 +1671,7 @@ function renderAssetAssembly(device,res){
                 //logger.info("output html");
                 //logger.info("stylestring: " + returnObject.stylestring);
                 //res.render('assetassembly',returnObject);
+                logger.info("returnObject: " + JSON.stringify(returnObject));
                 res.render('assetassembly',returnObject);
               }
               else res.end();
@@ -2007,7 +2009,7 @@ function assembleAssetsOld(req,res){
                    
                    
                     
-                     res.write("<link REL=\"SHORTCUT ICON\" HREF=\"favico.ico\">");
+                     res.write("<link REL=\"SHORTCUT ICON\" HREF=\"/favico.ico\">");
                      /*
                      if(!noStyleSheetS.equals("true")){
                      // out.print("<link href=\"" + stylesheetUrl + "\" type=text/css rel=stylesheet>");
@@ -3165,8 +3167,8 @@ function assembleAssetsOld(req,res){
                 "rating": 0,
                 "posterAsset":0,
                 "version":1.0,
-                "username":req["user"].username,
-                "apikey": users.getUserApiKey(req["user"].username)
+                "username":typeof req.param('username') !='undefined'?req.param('username'):req["user"].username,
+                "apikey": typeof req.param('apikey') !='undefined'?req.param('apikey'):users.getUserApiKey(req["user"].username)
               }
 
              },
@@ -3180,7 +3182,8 @@ function assembleAssetsOld(req,res){
                   var newAssetId= returnedObject._id;
 
                   //upload original image to cloudfront
-                  var key="user" + req["user"]._id + "/asset" + newAssetId +"/" + fname + '.' + extension;
+                 // var key="user" + req["user"]._id + "/asset" + newAssetId +"/" + fname + '.' + extension;
+                  var key="user" + userid + "/asset" + newAssetId +"/" + fname + '.' + extension;
                   var resReturns="{url:'" +"/uploads/" + fname +'.' + extension +"',assetid:" + newAssetId + "}";
                   uploadToAWS(pathToUpload,key,"image",newAssetId,userid,res,resReturns);
 
