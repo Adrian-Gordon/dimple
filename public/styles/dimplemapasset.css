@@ -25,7 +25,8 @@
 	  margin-top:-23px;
 	 /* position: absolute; 
 	  bottom: 65px; */
-	  z-index: -999; }
+	  z-index: -999; 
+  }
 
 .comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
 
@@ -95,6 +96,13 @@
 	position:absolute;
 	top:63px;
 	left:260px;
+  cursor:pointer;
+  z-index: 100000000000;
+}
+
+.disclosure-button-img{
+  cursor:pointer;
+  z-index: 100000000000;
 }
 
 

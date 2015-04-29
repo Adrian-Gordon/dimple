@@ -1,6 +1,37 @@
 var markerImageUrls;
 var mapdivid;
 var dimpleMap;
+var infobox;
+
+var commentsStr="<div class='infobox-wrapper' style='display:none'>";
+    commentsStr+="<div style='height:100px;width: 300px !important;' class='comments' id='comments'>";
+    //commentsStr+="    <div class='comments-before-up' id='commentbefore'></div>";
+    commentsStr+="    <div id='comments-content'>";
+    //commentsStr+="      <div class='close-button'>";
+      //commentsStr+="          <img class='close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png' />";
+      //commentsStr+="      </div>";
+      //commentsStr+="    <div>";
+      commentsStr+="    <div class='comment-img'>";
+    commentsStr+="      <img id='comment-img-img' class='comment-img-img' src='http://i.guim.co.uk/media/w-620/h--/q-95/a54bca62f9acf91b80813fa68b271c563e8614c0/0_0_3294_1977/1000.jpg' />";
+    commentsStr+="    </div>";
+    commentsStr+="    <div class='comment-comment'>";
+      commentsStr+="        <div class='comment-user'>";
+      commentsStr+="             <span class='comment-user-username' id='comment-user-username'>J Bowe";
+      commentsStr+="             </span>";
+      commentsStr+="        </div>";
+      commentsStr+="        <div class='comment-text'>";
+      commentsStr+="           <span class='comment-text-text' id='comment-text-text'>This is the message";
+      commentsStr+="          </span>";
+      commentsStr+="        </div>";
+      commentsStr+="    </div>";
+      commentsStr+="    <div class='disclosure-button'>";
+      commentsStr+="    <img src='/images/detaildisclosure.png'>";
+      commentsStr+="      </div>";
+      commentsStr+="  </div>";
+    commentsStr+="  </div>";
+    commentsStr+="  </div>";//infobox-wrapper
+
+
 
 function renderMap(asset,aaid,pid){
 
@@ -9,39 +40,13 @@ function renderMap(asset,aaid,pid){
 		markerImageUrls=assetdata.markers;
 		mapdivid=assetdata.divid;
 
-		var commentsStr="<div class='infobox-wrapper'>";
-		commentsStr+="<div style='height:100px;width: 300px !important;' class='comments' id='comments'>";
-		//commentsStr+="		<div class='comments-before-up' id='commentbefore'></div>";
-		commentsStr+="		<div id='comments-content'>";
-		//commentsStr+="			<div class='close-button'>";
-	    //commentsStr+="	    		<img class='close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png' />";
-	    //commentsStr+="			</div>";
-	    //commentsStr+="		<div>";
-	    commentsStr+="		<div class='comment-img'>";
-		commentsStr+="			<img id='comment-img-img' class='comment-img-img' src='http://i.guim.co.uk/media/w-620/h--/q-95/a54bca62f9acf91b80813fa68b271c563e8614c0/0_0_3294_1977/1000.jpg' />";
-		commentsStr+="		</div>";
-		commentsStr+="		<div class='comment-comment'>";
-	    commentsStr+="		    <div class='comment-user'>";
-	    commentsStr+="		         <span class='comment-user-username' id='comment-user-username'>J Bowe";
-	    commentsStr+="		         </span>";
-	    commentsStr+="    		</div>";
-	    commentsStr+="		    <div class='comment-text'>";
-	    commentsStr+="		       <span class='comment-text-text' id='comment-text-text'>This is the message";
-	    commentsStr+="       		</span>";
-	    commentsStr+="    		</div>";
-	    commentsStr+="		</div>";
-	    commentsStr+="		<div class='disclosure-button'>";
-	    commentsStr+="		<img src='/images/detaildisclosure.png'>";
-	    commentsStr+="	    </div>";
-	    commentsStr+="	</div>";
-		commentsStr+="	</div>";
-		commentsStr+="	</div>";//infobox-wrapper
+		
 
 
 
 
 	$('#nwrapper').append(commentsStr);
-
+/*
 	 infobox = new InfoBox({
          content: document.getElementById("comments"),
          disableAutoPan: false,
@@ -56,7 +61,7 @@ function renderMap(asset,aaid,pid){
         closeBoxMargin: "12px 4px 2px 2px",
         closeBoxURL: "/images/circle_close_delete-20.png",
         infoBoxClearance: new google.maps.Size(1, 1)
-    });
+    });*/
 
 
 		//var url="../GetAllProjectAssemblies?projectid=" + pid + "&callback=renderDimplePOIs&iconsize=" + assetdata.iconsize;
@@ -211,7 +216,7 @@ function renderDimplePOIs(jsonObject){
        var assetassemblyid=sortedAssemblies[i].assetassemblyid;
         
         //add marker
-        var markerObj=addDimplePOI(assetassemblytitle,latitude,longitude,assetassemblyid,layariconid,projectid,n-i);
+        var markerObj=addDimplePOI(assetassemblytitle,latitude,longitude,assetassemblyid,layariconid,projectid,n-i,sortedAssemblies[i]);
         POIArray[i]=markerObj;
         }
         
@@ -305,7 +310,7 @@ else {
 }
 }
 
-function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i){
+function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,assembly){
    if((lat != 0)&&(lon != 0)){
     var markerImageUrl;
     var marker;
@@ -331,10 +336,120 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i){
 	//styleMarker2.oldlat=lat;
       //   styleMarker2.oldlon=lon;
          marker.assetassemblyid=assetassemblyid;
+         marker.assetassembly=assembly;
         // google.maps.event.addListener(marker,'click',new Function("previewAssetAssembly(" + assetassemblyid + "," + projectid +");"));
         google.maps.event.addListener(marker, 'click', function() {
+
+            var title=this.assetassembly.assetassemblytitle;
+            if(typeof title =='undefined'){
+              title="";
+            }
+            var text=this.assetassembly.summarytext1;
+            if(typeof text =='undefined'){
+              text=""
+            }
+            var imageurl=this.assetassembly.summaryimageurl;
+            if(typeof imageurl=='undefined'){
+              imageurl="";
+            }
+
+            console.log("title: " + title + " text: " + text + " image: " + imageurl);
+
+            var box=document.getElementById('comments');
+
+          if(box==null){
+            $('#nwrapper').append(commentsStr); //recreate the box
+            box=document.getElementById('comments');
+          }
+
+
+            $('#comment-user-username').text(title);
+            $('#comment-text-text').text(text);
+            $('#comment-img-img').attr('src',imageurl);
+
+            $('.disclosure-button').click(function(){
+            // alert('clicked');
+              previewAssetAssembly(assetassemblyid,projectid);
+             })
+
+/*  
+
+            var commentsStr="<div class='infobox-wrapper'>";
+            commentsStr+="<div style='height:100px;width: 300px !important;' class='comments' >";
+            //commentsStr+="    <div class='comments-before-up' id='commentbefore'></div>";
+            commentsStr+="    <div id='comments-content'>";
+            //commentsStr+="      <div class='close-button'>";
+              //commentsStr+="          <img class='close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png' />";
+              //commentsStr+="      </div>";
+              //commentsStr+="    <div>";
+              commentsStr+="    <div class='comment-img'>";
+           // commentsStr+="      <img id='comment-img-img' class='comment-img-img' src='http://i.guim.co.uk/media/w-620/h--/q-95/a54bca62f9acf91b80813fa68b271c563e8614c0/0_0_3294_1977/1000.jpg' />";
+            commentsStr+="      <img id='comment-img-img' class='comment-img-img' src='" + imageurl +"' />";
+            commentsStr+="    </div>";
+            commentsStr+="    <div class='comment-comment'>";
+              commentsStr+="        <div class='comment-user'>";
+              commentsStr+="             <span class='comment-user-username' id='comment-user-username'>" + title;
+              commentsStr+="             </span>";
+              commentsStr+="        </div>";
+              commentsStr+="        <div class='comment-text'>";
+              commentsStr+="           <span class='comment-text-text' id='comment-text-text'>" + text;
+              commentsStr+="          </span>";
+              commentsStr+="        </div>";
+              commentsStr+="    </div>";
+              commentsStr+="    <div id='disclosure-button' class='disclosure-button' onclick='previewAssetAssembly(" + this.assetassemblyid +"," + projectid +")'>";
+             // commentsStr+="    <img src='/images/detaildisclosure.png' onclick='previewAssetAssembly(" + this.assetassemblyid +"," + projectid +")'/>";
+              commentsStr+="    <img class='disclosure-button-img' src='/images/detaildisclosure.png' />";
+              commentsStr+="      </div>";
+              commentsStr+="  </div>";
+            commentsStr+="  </div>";
+            commentsStr+="  </div>";//infobox-wrapper
+
+            console.log(commentsStr);
+            //var boxText = document.createElement("div");
+          // boxText.innerHTML=commentsStr;
+         var boxText=$("<div>");
+          //$(boxText).appendTo('body');
+          $(boxText).html(commentsStr);
+
+          //var db=document.getElementById('disclosure-button');
+          var db=$('#comment-image-image');
+
+          $('.disclosure-button-img').click(function(){
+            alert('clicked');
+          })
+          console.log("db: " + db);*/
+          // google.maps.event.addDomListener(db, 'click', showAlert);
+
+
+          //var box=document.getElementById('comments');
+
+          console.log("BOX: " + box);
+             if(typeof infobox !== 'undefined'){
+                 infobox.close();
+                 infobox=null;
+              }
+              
+             infobox = new InfoBox({
+               content: box,
+               disableAutoPan: false,
+               maxWidth: 300,
+               pixelOffset: new google.maps.Size(-140, 0),
+               zIndex: 900000000,
+               boxStyle: {
+                  background: "url('/images/map-marker-up-grey.png') no-repeat",
+                  opacity: 1.0,
+                  width: "300px"
+              },
+              closeBoxMargin: "12px 4px 2px 2px",
+              closeBoxURL: "/images/circle_close_delete-20.png",
+              infoBoxClearance: new google.maps.Size(1, 1)
+          });
+
+          
         	infobox.open(dimpleMap, this);
+          
         	//map.panTo(loc);
+          
     	});
 
     //  var tableElement=document.getElementById("poitable");
@@ -372,6 +487,8 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i){
         }
         else return(null);
  }
+
+ 
 
  function showDimpleMarkers(){
     //alert("Length: "  + POIArray.length);
@@ -434,6 +551,18 @@ function getUrlVars()
     }
     return vars;
 }
+
+function previewAssetAssembly(assetassemblyid,projectid){
+     //assetPresentationsPreviewWin.setURL(url);
+    var url=null;
+    if(typeof projectid=='undefined') url= "../AssembleAssets?assetassemblyid=" + assetassemblyid +"&return=html";
+    
+    else url= "../AssembleAssets?assetassemblyid=" + assetassemblyid + "&projectid=" + projectid +"&return=html";
+    //alert(url);
+  
+    window.location=url;
+}
+
 
 
 
