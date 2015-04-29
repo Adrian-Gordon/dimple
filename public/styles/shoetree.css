@@ -19,10 +19,11 @@
 
 	width:100px;
 	height:100px;
-	margin:25px auto;
+	margin:5px auto;
 	overflow:hidden;
 	border-radius:50%;
 	position:absolute;
+	-webkit-transform:translate3d(0,0,0);
 }
 
 .shoeimgwrapper img{
@@ -35,12 +36,17 @@
 
 .interactions{
 	margin-top:150px;
+	height:30px;
 	
 }
 
 #msginputdiv{
 	position:absolute;
 	
+}
+
+#usermessage{
+	font-size:1em;
 }
 
 
@@ -52,7 +58,8 @@
 
 .action-button
 {
-	position: relative;
+	 -webkit-transform: translateZ(0);
+	position: absolute;
 	padding: 10px 40px;
   margin: 0px 10px 10px 0px;
   //float: left;
@@ -91,37 +98,44 @@
 	text-shadow: 0px -2px #D1B358;
 }
 
-/*.action-button:active
+.action-button:active
 {
 	transform: translate(0px,5px);
   -webkit-transform: translate(0px,5px);
 	border-bottom: 1px solid;
-}*/
+}
 
-
-div.upload {
+#uploaddiv {
    /* background-color:#fff;
     border: 1px solid #ddd;
     border-radius:5px;*/
     display:inline-block;
     height: 30px;
    /* padding:3px 40px 3px 3px;*/
-    position:relative;
-    width: auto;
+    position:absolute;
+    width: 100%;
+    top:0px;
+    left:0px;
+}
+
+#choose{
+	top:0px;
+	left:0px;
 }
 
 div.upload:hover {
-    opacity:0.95;
+    opacity:0.80;
 }
 
 div.upload input[type="file"] {
     display: input-block;
-    width: 100%;
+    width: 25%;
     height: 30px;
     opacity: 0;
     cursor:pointer;
     position:absolute;
-    left:0;
+    left:-100000;
+
 }
 .uploadButton {
     background-color: #425F9C;
@@ -204,7 +218,7 @@ div.upload input[type="file"] {
 }
 
 .comment-img-img{
-   width:100%;
+   height:100%;
 }
 
 .comment-user{

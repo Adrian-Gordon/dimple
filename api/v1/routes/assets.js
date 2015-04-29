@@ -172,7 +172,7 @@ module.exports.updateAsset=function(req,res,next){
               asset.captions=captions;
               asset.presentations=presentations;
               logger.info("Asset after update: " + JSON.stringify(asset));
-              //asset.save();
+              asset.save();
               res.end(JSON.stringify(asset));
             });
             

@@ -60,7 +60,7 @@ module.exports.addAssetAssembly=function(req,res){
 
            newAssetAssembly.save(function (err) {
                  if (err) console.log("Add AssetAssembly error:" + err);
-                 console.log("Saved new AssetAssembly: " + JSON.stringify(newAssetAssembly));
+                 logger.info("Saved new AssetAssembly: " + JSON.stringify(newAssetAssembly));
                  res.end(JSON.stringify(newAssetAssembly));
            });
 }

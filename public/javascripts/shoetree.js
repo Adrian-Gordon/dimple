@@ -3,6 +3,7 @@ var targetIndex;
 var targetInterval;
 var shoetreeAsset;
 var assetassemblyid;
+var projectid;
 
 
 function renderShoeTree(asset,aaid,pid){
@@ -13,15 +14,16 @@ function renderShoeTree(asset,aaid,pid){
 	$('#' + shoetreeData.divid).append("<img id='shoetreeimg' class='shoetreeimg' src='" + shoetreeData.treeimgsrc +"' /><div id='target'><img id='target' class='target' src='/images/target-logo.png'/></div>");
 	
 	var interactionsS="<div class='interactions'>";
-	interactionsS+="<a id='launch' style='display:none' class='action-button shadow animate blue'>Launch!</a>";
-	interactionsS+="<div class='upload' id='uploaddiv'>";
+	//interactionsS+="<a id='launch' style='display:none' class='action-button shadow animate blue'>Launch!</a>";
+	//interactionsS+="<div class='upload' id='uploaddiv'>";
 	//interactionsS+="<input type='button' class='uploadButton' value='Upload Your Shoes' />";
 
-	interactionsS+="<a id='choose' class='action-button shadow animate blue'>upload your shoes!</a>";
+	//interactionsS+="<a id='choose' class='action-button shadow animate blue'>upload!</a>";
 	
-	interactionsS+="<input type='file' name='upload' accept='image/*' id=fileUpload></input>";
-	interactionsS+="</div>";//upload
+	//interactionsS+="<input type='file' name='upload' accept='image/*' id=fileUpload></input>";
+	//interactionsS+="</div>";//upload
 	interactionsS+="</div>";
+
 
 
 	$('#' + shoetreeData.divid).append(interactionsS);
@@ -29,6 +31,9 @@ function renderShoeTree(asset,aaid,pid){
 	//$('#' + data.divid).append("<div style='visibility:visible' id='shoeimgwrapper' class='shoeimgwrapper'><img src='/images/converse.jpg' /></div>");
 	$('#' + shoetreeData.divid).append("<div><div style='visibility:visible' id='shoeimgwrapper' class='shoeimgwrapper'><img id='shoeimg' src='' /></div>");
 	$('#' + shoetreeData.divid).append("<div style='visibility:hidden' id='msginputdiv'><input type='text' size='35' id='usermessage' placeholder='Leave a message with your shoes' /></div></div>"); 
+	$('#' + shoetreeData.divid).append("<a id='launch' style='display:none' class='action-button shadow animate blue'>launch!</a>");
+	$('#' + shoetreeData.divid).append("<div class='upload' id='uploaddiv'><a id='choose' class='action-button shadow animate blue'>upload!</a><input type='file' name='upload' accept='image/*' id=fileUpload></input></div>");
+
 	var commentsStr="<div style='display:none;height:100px;width: 300px !important;' class='comments' id='comments'>";
 	commentsStr+="		<div class='comments-before-up' id='commentbefore'></div>";
 	commentsStr+="		<div id='comments-content'>";
@@ -74,6 +79,11 @@ function renderShoeTree(asset,aaid,pid){
 			launch();
 		});
 
+		$('#choose').click(function(o){
+			o.preventDefault();
+			$('#fileUpload').trigger('click');
+		})
+
 		var treewidth=$('#shoetreeimg').width();
 		var treeheight=$('#shoetreeimg').height();
 
@@ -95,9 +105,14 @@ function renderShoeTree(asset,aaid,pid){
 			var left=onepercentWidth * x;
 
 			//console.log("x: " + x + " y: " + y + " top: " + top + " left: " + left);
+			console.log("std.contents: " + JSON.stringify(std) + " std.contents.length: " + std.contents.length);
+			var src;
 
-			var src=std.contents[0].url;
+			if((typeof std.contents !== 'undefined')&&(std.contents.length > 0)){
+				src=std.contents[0].url;
+			}
 
+			console.log("typeof srs: " + typeof src);
 			if(typeof src !== 'undefined'){
 				$('#' + shoetreeData.divid).append("<div><div style='visibility:visible;width:40px;height:40px;top:" + top +"px;left:" + left+"px;margin-top:-20px;margin-left:-20px' class='shoeimgwrapper' id='sir" + i +"'><img src='" + src +"' /></div>");
 			}
@@ -166,8 +181,12 @@ function renderShoeTree(asset,aaid,pid){
 //<div style="visibility:visible;width:40px;height:40px;top:113.80000000000001px;left:160px;margin-top:-20px;margin-left:-20px" id="shoeimgwrapper" class="shoeimgwrapper">
 		var showImageWrapperX=(treewidth/2) - (shoeImageWrapperWidth /2);
 
+		$('#uploaddiv').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10+ 'px'});
+		$('#launch').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10+ 'px'});
+		//$('#choose').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10 + 'px'});
+		//$('#fileUpload').css({'top': treeheight + 40+'px','left': (showImageWrapperX/2) -10 + 'px'});
 		$('#shoeimgwrapper').css({'top': treeheight + 'px','left': showImageWrapperX + 'px'});
-		$('#msginputdiv').css({'top': treeheight +75 +'px','left': showImageWrapperX + 115 +'px'});
+		$('#msginputdiv').css({'top': treeheight + 40 +'px','left': showImageWrapperX + 115 +'px'});
 
 		$('#fileUpload').change(function(evt) {
 		    $in = $(this);
@@ -294,6 +313,8 @@ function launch(){
 
 			//and tell parse what we have done: assetassemblyid and shoetreeAsset._id
 
+			reportProgress(projectid,assetassemblyid,shoetreeAsset._id,true)
+
 		});
 
 		
@@ -351,7 +372,7 @@ function uploadShoe(userid,description,elid,targetIndex){
            //add it to the tree data
 
 
-          shoetreeData.shoelocations[targetIndex].contents.push(newShoeImageUrl);
+          shoetreeData.shoelocations[targetIndex].contents.push(newContents);
 
           var originalAsset=shoetreeAsset.asset;
 

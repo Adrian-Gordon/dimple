@@ -17,13 +17,18 @@
 		-}
 		- else if(asset.mimetype=='text/json'){
 			- if((asset.data !== 'undefined')&&(asset.data !== "")){
+			-if(typeof asset.data.libraries !== 'undefined'){
+			-for(var i=0;i<asset.data.libraries.length;i++){
+			script(src="" + asset.data.libraries[i])
+			-}
+			-}
 			div(id='' + asset.data.divid class='' + asset.data.divclass)
-				- if(typeof asset.data.stylesurl !== 'undefined'){
-				link(rel='stylesheet',href='' +asset.data.stylesurl)
-				-}
-				script(src="" + asset.data.scriptsrc)
-				script.
-					 !{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
+			- if(typeof asset.data.stylesurl !== 'undefined'){
+			link(rel='stylesheet',href='' +asset.data.stylesurl)
+			-}
+			script(src="" + asset.data.scriptsrc)
+			script.
+				 !{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
 			- }
 		-}
 

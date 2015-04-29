@@ -1,0 +1,35 @@
+#footermenu {
+   width: 800px; /* change this to see effect */
+   left:50%;
+  /* border: 1px black solid;*/
+   text-align: center;
+  /* margin-left: auto;
+   margin-right: auto;*/
+   position:fixed;
+   margin:0 0 0 -400px;
+
+}
+
+.menuitemcontent {
+    width: 60px;  /* made smaller for this demo */
+    height: 75px;  /* made smaller for this demo */
+    background-color: blue;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.menuitemcontent img{
+  width:50px;
+}
+
+.menuitemcontent span{
+  color:#ffffff;
+}
+
+.menuitem{
+   
+    float: left;
+    text-align: center;
+     padding-top:5px;
+}
