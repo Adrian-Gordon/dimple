@@ -1,86 +1,64 @@
 - var nextAudioAssetId=0;
--  var nextVideoAssetIndex=0;
-- for(var i=0;i<assets.length;i++){
-	- var asset=assets[i];
-	- console.log("assetdata: " + JSON.stringify(asset.data))
-	- var assettype=asset.assettypeid;
-	- if(assettype==0){
-		- if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null')){
-			div(class='text-item-title')
-				| !{asset.assetcaption}
-		- }
-		- if(asset.mimetype=='text/html'){
-			- if((asset.data !== 'undefined')&&(asset.data !== "")){
+- var nextVideoAssetIndex=0;
+style.
+	#dimple-content{
+		position:absolute;top:50px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:800px;margin-left:-400px;left:50%
+	}
+div(id='dimple-content')
+	each asset, index in assets
+		if asset.assettypeid==0
+			if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+				div(class='text-item-title')
+					|!{asset.assetcaption}
 			div(class='text-item')
-				| !{asset.data}
-			- }
-		-}
-		- else if(asset.mimetype=='text/json'){
-			- if((asset.data !== 'undefined')&&(asset.data !== "")){
-			-if(typeof asset.data.libraries !== 'undefined'){
-			-for(var i=0;i<asset.data.libraries.length;i++){
-			script(src="" + asset.data.libraries[i])
-			-}
-			-}
-			div(id='' + asset.data.divid class='' + asset.data.divclass)
-			- if(typeof asset.data.stylesurl !== 'undefined'){
-			link(rel='stylesheet',href='' +asset.data.stylesurl)
-			-}
-			script(src="" + asset.data.scriptsrc)
-			script.
-				 !{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
-			- }
-		-}
+				if(asset.mimetype=='text/html')
+					if((asset.data !== 'undefined')&&(asset.data !== ""))
+						div(class='text-item')
+						| !{asset.data}
+				else if(asset.mimetype=='text/json')
+					if(asset.data)
+						if(asset.data.libraries)
+							each library in asset.data.libraries
+								script(src="" + library)
+					div(id='' + asset.data.divid class='' + asset.data.divclass)
+						if(typeof asset.data.stylesurl !== 'undefined')
+							link(rel='stylesheet',href='' +asset.data.stylesurl)
+						script(src="" + asset.data.scriptsrc)
+						script.
+							!{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
+		else if asset.assettypeid==1
+			- nextVideoAssetIndex++
+			if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+				div(class='image-caption-above')
+					|!{asset.assetcaption}
 
-	- }
-	- else if(assettype==1){
-		- nextVideoAssetIndex++
-		- if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null')){
-			div(class='image-caption-above')
-				| !{asset.assetcaption}
-		- }
-		- if(typeof serveQuicktime !== 'undefined'){
-			div(id='videoasset' + nextVideoAssetIndex)
-				video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
-
-		- }
-		- else if(!iswirelessdevice){
-			video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-				- if(typeof asset.urls != 'undefined'){
+			if(typeof serveQuicktime !== 'undefined')
+				div(id='videoasset' + nextVideoAssetIndex)
+					video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
+			else if(!iswirelessdevice)
+				video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+				if(typeof asset.urls != 'undefined')
 					source(src='' + asset.urls[0].url type='' + asset.urls[0].mimetype)
 					source(src='' + asset.urls[1].url type='' + asset.urls[1].mimetype)
-				-}
+			else 
+				video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+					source(src='' + asset.url type='' + asset.mimetype)
+		else if asset.assettypeid==2
+				-nextAudioAssetId++;
+				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+					div(class='image-caption-above')
+						| !{asset.assetcaption}
+				div(id='audiodiv' + nextAudioAssetId)
+				div(class='audioimgdiv')
+					img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
 
-		- }
-		- else {
-			video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-				source(src='' + asset.url type='' + asset.mimetype)
-		- }
-
+		else if((asset.assettype==3)||(asset.assettype==4))
+				div(class='dimple-image-asset-div')
+					img(class='dimple-image-asset' src='' + asset.url)
+				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+					div(class='image-caption-below')
+						| !{asset.assetcaption}
+	
 		
-	
 
-	- }
-	- if(assettype==2){
-		-nextAudioAssetId++;
-		- if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null')){
-			div(class='image-caption-above')
-				| !{asset.assetcaption}
-		- }
-		div(id='audiodiv' + nextAudioAssetId)
-		div(class='audioimgdiv')
-			img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
-
-	- }
-
-	- else if((assettype==3)||(assettype==4)){
-			div(class='dimple-image-asset-div')
-				img(class='dimple-image-asset' src='' + asset.url)
-		- if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null')){
-			div(class='image-caption-below')
-				| !{asset.assetcaption}
-		- }
-
-	- }
-	
-- }
+			

@@ -16,7 +16,7 @@ function renderFooterMenu(asset,aaid,pid){
 
 	for(var i=0;i<menuData.menuitems.length;i++){
 		var menuItem=menuData.menuitems[i];
-		menuStr+="<div class='menuitem' style='width:" + widthPercent + "%;background-color:" + menuItem.bgcolour + "'>" +"<div class='menuitemcontent' style='background-color:" + menuItem.bgcolour +"'><img src='" + menuItem.imageurl+"'></img><span>" + menuItem.title + "<span></div></div>";
+		menuStr+="<div class='menuitem' style='width:" + widthPercent + "%;background-color:" + menuItem.bgcolour + "'>" +"<div class='menuitemcontent' style='background-color:" + menuItem.bgcolour +"'><a class='" + menuItem.class+"'>" + menuItem.title +"</a></div></div>";
 
 	}
 

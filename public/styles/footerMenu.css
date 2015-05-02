@@ -10,6 +10,8 @@
 
 }
 
+
+
 .menuitemcontent {
     width: 60px;  /* made smaller for this demo */
     height: 75px;  /* made smaller for this demo */
@@ -17,11 +19,19 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
+    color:#ffffff;
 }
 
-.menuitemcontent img{
+.menuitemcontent a{
   width:50px;
+  padding-top:55px;
+  text-align:center;
+  display:inline-block;
 }
+
+/*.menuitemcontent a:hover{
+  color:#29c5ff;
+}*/
 
 .menuitemcontent span{
   color:#ffffff;
@@ -33,3 +43,71 @@
     text-align: center;
      padding-top:5px;
 }
+
+.menu-home{
+  background:url("/images/noun_house_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-home:hover, .menu-home-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_house_50_active.png");
+}
+
+.menu-proggy{
+  background:url("/images/noun_rug_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-proggy:hover,.menu-proggy-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_rug_50_active.png");
+}
+
+.menu-map{
+  background:url("/images/noun_map_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-map:hover,.menu-map-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_map_50_active.png");
+}
+
+.menu-list{
+  background:url("/images/noun_list_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-list:hover,.menu-list-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_list_50_active.png");
+}
+
+.menu-badges{
+  background:url("/images/noun_badge_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-badges:hover,.menu-badges-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_badge_50_active.png");
+}
+
+.menu-me{
+  background:url("/images/noun_person_50.png") top center no-repeat;
+  color:#ffffff;
+}
+
+.menu-me:hover,.menu-me-active{
+  color:#29c5ff;
+  background-image:url("/images/noun_person_50_active.png");
+}
+
+
+
+
+
+
+
+
