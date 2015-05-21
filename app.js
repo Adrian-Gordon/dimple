@@ -404,6 +404,14 @@ function selectImageAP(req,res){
 
     var assetid=query.assetid;
     var maxwidth=query.maxwidth;
+    var rtype=query.r;
+
+    var returnUrl=false;
+
+    if(typeof rtype !== 'undefined'){
+      if(rtype=='url')
+        returnUrl=true;
+    }
 
     models.AssetModel.findOne({_id:assetid},function(err,doc){
 
@@ -442,8 +450,13 @@ function selectImageAP(req,res){
           else redirectUrl=presentations[presentations.length -1].url;
         }
 
-        res.writeHead(302, {'location':redirectUrl});
+        if(returnUrl){
+          res.end(redirectUrl)
+        }
+        else{
+          res.writeHead(302, {'location':redirectUrl});
                     res.end();
+        }
 
     });
 

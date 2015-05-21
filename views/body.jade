@@ -1,9 +1,15 @@
 - var nextAudioAssetId=0;
 - var nextVideoAssetIndex=0;
-style.
-	#dimple-content{
-		position:absolute;top:137px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:800px;margin-left:-400px;left:50%
-	}
+if(iswirelessdevice)
+	style.
+		#dimple-content{
+			position:absolute;top:137px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:100%;display:none;
+		}
+else
+	style.
+		#dimple-content{
+			position:absolute;top:137px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:800px;margin-left:-400px;left:50%;display:none;
+		}
 script.
 	var dimpleUserProgress;
 div(id='dimple-content')
@@ -20,7 +26,19 @@ div(id='dimple-content')
 						!{callbackStr}
 			}
 		script.
-			$(document).ready(function(){getDimpleUserProgress(progresscallback)});
+			$(document).ready(function(){
+				$('#bannerimg').load(function(){
+					var headerTop=$('#pageheader').position().top;
+					var headerHeight=$('#pageheader').height();
+					console.log("headerTop: " + headerTop);
+					console.log("headerHeight: " + headerHeight);
+					$('#dimple-content').css('top',headerTop + headerHeight);
+					$('#dimple-content').toggle();
+
+				});
+				
+				getDimpleUserProgress(progresscallback)
+			});
 
 		each asset, index in assets
 			if asset.assettypeid==0
@@ -34,14 +52,16 @@ div(id='dimple-content')
 						div(class='json-text-item')
 						| !{asset.data}
 				else if(asset.mimetype=='text/json')
-					div(class='json-text-item')
+					div(class='json-text-item' id='json-attr-' +asset.asset._id )
 					if(asset.data)
 						if(asset.data.libraries)
 							each library in asset.data.libraries
 								script(src="" + library)
 					div(id='' + asset.data.divid class='' + asset.data.divclass)
-					if(typeof asset.data.stylesurl !== 'undefined')
+					if(!iswirelessdevice && typeof asset.data.stylesurl !== 'undefined')
 						link(rel='stylesheet',href='' +asset.data.stylesurl)
+					else if(iswirelessdevice && typeof asset.data.mstylesurl !== 'undefined')
+						link(rel='stylesheet',href='' +asset.data.mstylesurl)
 					script(src="" + asset.data.scriptsrc)
 			else if asset.assettypeid==1
 				- nextVideoAssetIndex++

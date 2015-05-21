@@ -118,7 +118,7 @@ function renderShoeTree(asset,aaid,pid){
 
 			console.log("src: " + src +  " typeof src: " + typeof src);
 			if(typeof src !== 'undefined'){
-				$('#' + shoetreeData.divid).append("<div><div style='visibility:visible;width:40px;height:40px;top:" + top +"px;left:" + left+"px;margin-top:-20px;margin-left:-20px' class='shoeimgwrapper treeimgwrapper' id='sir" + i +"'><img src='" + src +"' /></div>");
+				$('#' + shoetreeData.divid).append("<div><div style='visibility:visible;top:" + top +"px;left:" + left+"px;margin-top:-20px;margin-left:-20px' class='shoeimgwrapper treeimgwrapper' id='sir" + i +"'><img src='" + src +"' /></div>");
 			}
 
 
@@ -329,7 +329,7 @@ function launch(){
 			var leftPos=$('#shoeimgwrapper').position().left;
 			var topPos=$('#shoeimgwrapper').position().top;
 
-			$('#' + shoetreeData.divid).append("<div><div style='visibility:visible;width:40px;height:40px;top:" + topPos +"px;left:" + leftPos+"px;margin-top:-20px;margin-left:-20px' class='shoeimgwrapper treeimgwrapper' id='sir" + targetIndex +"'><img src='" + src +"' /></div>");
+			$('#' + shoetreeData.divid).append("<div><div style='visibility:visible;top:" + topPos +"px;left:" + leftPos+"px;margin-top:-20px;margin-left:-20px' class='shoeimgwrapper treeimgwrapper' id='sir" + targetIndex +"'><img src='" + src +"' /></div>");
 
 			$('#sir'+targetIndex).on('click',treeImageClick);
 			$('#shoeimgwrapper').toggle();
@@ -389,6 +389,12 @@ function uploadShoe(userid,description,elid,targetIndex){
           console.log("uploadShoe returns: " + JSON.stringify(rval));
 
           var newImageAssetId=rval.assetid;
+
+         // var imageUrl='/SelectImageAP?assetid=' + newImageAssetId + "&maxwidth=50",
+         // $.get(url).done(function(url){
+      
+				
+		//	}
 
           var newContents={
 

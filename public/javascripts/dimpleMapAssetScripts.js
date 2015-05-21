@@ -43,6 +43,8 @@ function renderMap(asset,aaid,pid){
     markerImageUrlsPresent=assetdata.markerspresent;
 		mapdivid=assetdata.divid;
 
+    $('#' + mapdivid).css('height',window.innerHeight);
+
 		
 
 

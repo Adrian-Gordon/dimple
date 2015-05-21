@@ -4,6 +4,7 @@ var assetassemblyid;
 var projectid;
 
 function renderFooterMenu(asset,aaid,pid){
+
 	console.log("renderfootermenu");
 	assetassemblyid=aaid;
 	 menuAsset=asset;

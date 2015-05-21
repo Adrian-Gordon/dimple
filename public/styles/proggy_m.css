@@ -1,0 +1,158 @@
+div.text-item{
+  margin-left:0px;
+  padding-left:0px;
+}
+
+#asset-assembly-title{
+	display:none;
+}
+
+#proggymat{
+	position:absolute;
+  width:100%;
+  
+
+}
+.proggybgimg{
+  width:100%;
+}
+
+#shrink{
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index:10000;
+}
+
+#shrink img{
+  width:50px;
+}
+
+#shrink:hover{
+  opacity:0.5
+}
+
+#grow{
+  display:none;
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index:10000;
+}
+
+#grow img{
+  width:50px;
+}
+
+#grow:hover{
+  opacity:0.5
+}
+
+.proggypiece{
+  width:100%;
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+.proggypiece img{
+  width:100%;
+}
+
+.iconimage{
+	position:absolute;
+  z-index:10000;
+}
+
+.iconimage:hover{
+	opacity:0.5
+}
+
+
+.comments { /*width: 34px !important;*/ 
+	display: inline-block; 
+	vertical-align: top; 
+	/*margin-left: 21px !important;*/ 
+	background: #BCC2C4; 
+	/*padding-top: 20px;*/
+	border-radius: 3px; 
+	-webkit-border-radius: 3px;
+	 -moz-border-radius: 3px;
+	  -o-border-radius: 3px; 
+	  -ms-border-radius: 3px; 
+	  position: absolute; 
+	  bottom: 65px; 
+	  z-index: 11000; }
+
+.comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
+
+.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 140px; padding: 0 10px; }
+
+
+#comments-content {
+  background: white;
+  height: 120px;
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 280px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.close-button{
+    position:absolute;
+      top:0px;
+    left:280px
+    
+}
+
+.close-button:hover{
+	opacity:0.5;
+}
+
+.close-button-img{
+    width:20px;
+  
+}
+
+.comment-comment{
+
+  width: 70%;
+  float: left;
+
+}
+
+
+.comment-img{
+    width:25%;
+    float:left;
+    margin:5px;
+}
+
+.comment-img-img{
+   height:70px;
+}
+
+.comment-user{
+    text-align:center;
+    margin-top:5px;
+}
+
+.comment-user-username{
+  font-size:110%;
+}
+
+
+
+.comment-text{
+    margin-top:8px;
+    overflow: hidden;
+  	height: 100px;
+    text-align:left;
+    
+}
+.comment-text-text{
+    margin-left:10px;
+    float:left;
+   
+}

@@ -7,6 +7,7 @@ var bgOriginalHeight;
 var bgOriginalLeft;
 
 function renderProggy(asset,aaid,pid){
+
 	proggyAsset=asset;
 	console.log('Proggy asset: ' + JSON.stringify(asset));
 	proggyProjectid=pid;
@@ -538,7 +539,11 @@ function shrinkToFit(){
 
 
 	$('#proggymat .proggybgimg').height(availableHeight);
+	$('#proggymat .proggybgimg').css('width','auto');
+	$('#proggymat').css('width','auto');
+
 	$('.proggypiece img').height(availableHeight);
+	$('.proggypiece img').css('width','auto');
 
 	var divWidth=$('#dimple-content').width();
 	var imgWidth=$('#proggymat .proggybgimg').width();
@@ -562,6 +567,7 @@ function grow(){
 	$('#proggybgimg').height(bgOriginalHeight);
 	$('.proggypiece img').height(bgOriginalHeight);
 	$('#proggymat').css({'left':bgOriginalLeft + 'px'});
+	$('#proggymat').css('width','100%');
 	//re-position the icons
 	for(var i=0;i<proggyAsset.data.pieces.length;i++){
 			var piece=proggyAsset.data.pieces[i];

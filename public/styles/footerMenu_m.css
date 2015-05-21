@@ -1,13 +1,13 @@
 #footermenu {
   z-index:15000;
-   width: 800px; /*change this to see effect */
-   left:50%;
+   width: 100%; /*change this to see effect */
+   /*left:50%;*/
   /* border: 1px black solid;*/
    text-align: center;
   /* margin-left: auto;
    margin-right: auto;*/
    position:fixed;
-   margin:0 0 0 -400px;
+   /*margin:0 0 0 -400px;*/
 
 }
 
