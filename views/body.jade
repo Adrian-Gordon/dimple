@@ -2,62 +2,79 @@
 - var nextVideoAssetIndex=0;
 style.
 	#dimple-content{
-		position:absolute;top:50px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:800px;margin-left:-400px;left:50%
+		position:absolute;top:137px;left:0px;right:0px;bottom:0px;overflow-y:scroll;overflow-x:hidden;width:800px;margin-left:-400px;left:50%
 	}
+script.
+	var dimpleUserProgress;
 div(id='dimple-content')
-	each asset, index in assets
-		if asset.assettypeid==0
-			if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-				div(class='text-item-title')
-					|!{asset.assetcaption}
-			div(class='text-item')
+	if typeof title !== 'undefined'
+		div(id='asset-assembly-title' class='asset-assembly-title') !{title}
+	if ((typeof subtitle !== 'undefined')&&(subtitle !== null)&&(subtitle !== ""))
+		div(id='asset-assembly-subtitle' class='asset-assembly-subtitle') !{subtitle}
+	-var callbackStr=""
+		each asset,index in assets
+			if((asset.assettypeid==0)&&(asset.mimetype=='text/json'))
+				-callbackStr+=asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"
+		script.
+			function progresscallback(){
+						!{callbackStr}
+			}
+		script.
+			$(document).ready(function(){getDimpleUserProgress(progresscallback)});
+
+		each asset, index in assets
+			if asset.assettypeid==0
+				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+					div(class='text-item-title' style='position:relative')
+						|!{asset.assetcaption }
+				
 				if(asset.mimetype=='text/html')
+					div(class='text-item')
 					if((asset.data !== 'undefined')&&(asset.data !== ""))
-						div(class='text-item')
+						div(class='json-text-item')
 						| !{asset.data}
 				else if(asset.mimetype=='text/json')
+					div(class='json-text-item')
 					if(asset.data)
 						if(asset.data.libraries)
 							each library in asset.data.libraries
 								script(src="" + library)
 					div(id='' + asset.data.divid class='' + asset.data.divclass)
-						if(typeof asset.data.stylesurl !== 'undefined')
-							link(rel='stylesheet',href='' +asset.data.stylesurl)
-						script(src="" + asset.data.scriptsrc)
-						script.
-							!{asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"}
-		else if asset.assettypeid==1
-			- nextVideoAssetIndex++
-			if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-				div(class='image-caption-above')
-					|!{asset.assetcaption}
-
-			if(typeof serveQuicktime !== 'undefined')
-				div(id='videoasset' + nextVideoAssetIndex)
-					video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
-			else if(!iswirelessdevice)
-				video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-				if(typeof asset.urls != 'undefined')
-					source(src='' + asset.urls[0].url type='' + asset.urls[0].mimetype)
-					source(src='' + asset.urls[1].url type='' + asset.urls[1].mimetype)
-			else 
-				video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-					source(src='' + asset.url type='' + asset.mimetype)
-		else if asset.assettypeid==2
-				-nextAudioAssetId++;
+					if(typeof asset.data.stylesurl !== 'undefined')
+						link(rel='stylesheet',href='' +asset.data.stylesurl)
+					script(src="" + asset.data.scriptsrc)
+			else if asset.assettypeid==1
+				- nextVideoAssetIndex++
 				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
 					div(class='image-caption-above')
-						| !{asset.assetcaption}
-				div(id='audiodiv' + nextAudioAssetId)
-				div(class='audioimgdiv')
-					img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
+						|!{asset.assetcaption}
 
-		else if((asset.assettype==3)||(asset.assettype==4))
-				div(class='dimple-image-asset-div')
-					img(class='dimple-image-asset' src='' + asset.url)
-				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-					div(class='image-caption-below')
-						| !{asset.assetcaption}
+				if(typeof serveQuicktime !== 'undefined')
+					div(id='videoasset' + nextVideoAssetIndex)
+						video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
+				else if(!iswirelessdevice)
+					video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+					if(typeof asset.urls != 'undefined')
+						source(src='' + asset.urls[0].url type='' + asset.urls[0].mimetype)
+						source(src='' + asset.urls[1].url type='' + asset.urls[1].mimetype)
+				else 
+					video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+						source(src='' + asset.url type='' + asset.mimetype)
+			else if asset.assettypeid==2
+					-nextAudioAssetId++;
+					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+						div(class='image-caption-above')
+							| !{asset.assetcaption}
+					div(id='audiodiv' + nextAudioAssetId)
+					div(class='audioimgdiv')
+						img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
+
+			else if((asset.assettype==3)||(asset.assettype==4))
+					div(class='dimple-image-asset-div')
+						img(class='dimple-image-asset' src='' + asset.url)
+					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+						div(class='image-caption-below')
+							| !{asset.assetcaption}
 	
 		
 

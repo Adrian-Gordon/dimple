@@ -64,7 +64,8 @@ var AssetAssemblySchema=new Schema({
         layarImageUrl: String,
         imageAsset:Number,
         assets:[{assetid:Number,index:Number}],
-        textElements:Object
+        textElements:Object,
+        minzoom:Number,
         /*[{
           languageCode: String,
           title: String,

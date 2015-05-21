@@ -1,9 +1,46 @@
+div.text-item{
+  margin-left:0px;
+  padding-left:0px;
+}
+
 #asset-assembly-title{
 	display:none;
 }
 
 #proggymat{
 	position:absolute;
+
+}
+
+#shrink{
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index:10000;
+}
+
+#shrink img{
+  width:50px;
+}
+
+#shrink:hover{
+  opacity:0.5
+}
+
+#grow{
+  display:none;
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index:10000;
+}
+
+#grow img{
+  width:50px;
+}
+
+#grow:hover{
+  opacity:0.5
 }
 
 .proggypiece{
@@ -14,6 +51,7 @@
 
 .iconimage{
 	position:absolute;
+  z-index:10000;
 }
 
 .iconimage:hover{
@@ -34,16 +72,16 @@
 	  -ms-border-radius: 3px; 
 	  position: absolute; 
 	  bottom: 65px; 
-	  z-index: 999; }
+	  z-index: 11000; }
 
 .comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
 
-.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 100px; padding: 0 10px; }
+.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 140px; padding: 0 10px; }
 
 
 #comments-content {
   background: white;
-  height: 80px;
+  height: 120px;
   margin-top: 10px;
   margin-left: 10px;
   width: 280px;
@@ -90,15 +128,21 @@
     margin-top:5px;
 }
 
+.comment-user-username{
+  font-size:110%;
+}
+
 
 
 .comment-text{
     margin-top:8px;
     overflow: hidden;
-  	height: 50px;
+  	height: 100px;
+    text-align:left;
     
 }
 .comment-text-text{
     margin-left:10px;
+    float:left;
    
 }

@@ -1,7 +1,9 @@
 var markerImageUrls;
+var markerImageUrlsPresent;
 var mapdivid;
 var dimpleMap;
 var infobox;
+var ALLMARKERS={};
 
 var commentsStr="<div class='infobox-wrapper' style='display:none'>";
     commentsStr+="<div style='height:100px;width: 300px !important;' class='comments' id='comments'>";
@@ -38,6 +40,7 @@ function renderMap(asset,aaid,pid){
 	$(document).ready(function(){
 		var assetdata=asset.data;
 		markerImageUrls=assetdata.markers;
+    markerImageUrlsPresent=assetdata.markerspresent;
 		mapdivid=assetdata.divid;
 
 		
@@ -68,7 +71,8 @@ function renderMap(asset,aaid,pid){
 		var url="../GetAllProjectAssemblies?projectid=" + pid + "&iconsize=" + assetdata.iconsize;
 		console.log("GO DO MAP");
 		$.get(url).done(function(data){
-			
+      //alert('got data');
+			//google.maps.event.addDomListener(window, 'load', function(){alert('loaded');renderDimplePOIs(data);});
 			renderDimplePOIs(data);
 
 		}).fail(function(error) {
@@ -143,6 +147,7 @@ function renderDimplePOIs(jsonObject){
        
         var nMarkers=markerImageUrls.length;
   markerImages=new Array(nMarkers);
+  markerPresentImages=new Array(nMarkers);
 
   for(var i=0;i<nMarkers;i++){
       
@@ -151,6 +156,9 @@ function renderDimplePOIs(jsonObject){
      // var imageUrl="http://d3ox1gfjdlf15b.cloudfront.net/mapmarkers/campustrails/PurpleCircle_1.png"
       
    markerImages[i]= new google.maps.MarkerImage(markerImageUrls[i],size1,new google.maps.Point(0,0),new google.maps.Point(iconSize/2,iconSize/2),size2);//,new google.maps.Size(0,0),null,null,new google.maps.Size(iconSize,iconSize));   
+   
+  markerPresentImages[i]=new google.maps.MarkerImage(markerImageUrlsPresent[i],size1,new google.maps.Point(0,0),new google.maps.Point(iconSize/2,iconSize/2),size2);//,new google.maps.Size(0,0),null,null,new google.maps.Size(iconSize,iconSize));   
+ 
      //markerImages[i]= new google.maps.MarkerImage(imageUrl,size1,new google.maps.Point(0,0),new google.maps.Point(iconSize/2,iconSize/2),size2);//,new google.maps.Size(0,0),null,null,new google.maps.Size(iconSize,iconSize));   
 
     //  markerImages[i]= new google.maps.MarkerImage(markerImageUrls[i],new google.maps.Size(35,35),new google.maps.Point(0,0),new google.maps.Point(17,35),new google.maps.Size(35,35));   
@@ -174,8 +182,15 @@ function renderDimplePOIs(jsonObject){
 	var myLatLng;
 	var clat=getUrlVars()["clat"];
 	var clon=getUrlVars()["clon"];
+  var zS=getUrlVars()["z"];
+  var zoom;
+  if(typeof zS =='undefined')zoom=17;
+  else zoom=parseInt(getUrlVars()["z"]);
+  console.log("Zoom: " + zoom);
 
 	console.log("clat: " + clat + " clon: " + clon);
+
+  var sib=getUrlVars()["sib"];
 
      if(typeof clat == 'undefined' || typeof clon=='undefined'){
      		myLatLng = new google.maps.LatLng(centreLat, centreLon);
@@ -185,13 +200,15 @@ function renderDimplePOIs(jsonObject){
      	myLatLng = new google.maps.LatLng(clat, clon);
      }
     var myOptions = {
-     zoom: 17,
+      zoom:17,
       center: myLatLng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
  
      dimpleMap = new google.maps.Map(document.getElementById('dimplemap'),
         myOptions);
+
+     
        
        //dimpleMap.fitBounds(bounds);
        
@@ -204,25 +221,48 @@ function renderDimplePOIs(jsonObject){
 
        showUserLocation();
          for(var i=0;i<n;i++){
-        var longitude=sortedAssemblies[i].longitude;
-        var latitude=sortedAssemblies[i].latitude;
-        //alert("longitude: " + longitude + "latitude: " + latitude);
-        var layariconid=sortedAssemblies[i].layariconid;
-        
-        assetassemblytitle=sortedAssemblies[i].assetassemblytitle;
-        assetassemblysubtitle=sortedAssemblies[i].assetassemblysubtitle;
-        assetassemblydescription=sortedAssemblies[i].assetassemblydescription;
-     
-       var assetassemblyid=sortedAssemblies[i].assetassemblyid;
-        
-        //add marker
-        var markerObj=addDimplePOI(assetassemblytitle,latitude,longitude,assetassemblyid,layariconid,projectid,n-i,sortedAssemblies[i]);
-        POIArray[i]=markerObj;
+            var longitude=sortedAssemblies[i].longitude;
+            var latitude=sortedAssemblies[i].latitude;
+            //alert("longitude: " + longitude + "latitude: " + latitude);
+            var layariconid=sortedAssemblies[i].layariconid;
+            
+            assetassemblytitle=sortedAssemblies[i].assetassemblytitle;
+            assetassemblysubtitle=sortedAssemblies[i].assetassemblysubtitle;
+            assetassemblydescription=sortedAssemblies[i].assetassemblydescription;
+         
+           var assetassemblyid=sortedAssemblies[i].assetassemblyid;
+           var minzoom=sortedAssemblies[i].minzoom;
+            
+            //add marker
+            var markerObj=addDimplePOI(assetassemblytitle,latitude,longitude,assetassemblyid,layariconid,projectid,n-i,sortedAssemblies[i],minzoom);
+            POIArray[i]=markerObj;
         }
         
-       showDimpleMarkers();
-       dimpleMap.fitBounds(bounds);
+      
+      
+      // dimpleMap.panTo(myLatLng);
+
+       if(typeof zS !='undefined'){
+          dimpleMap.setZoom(zoom);
+       }
+       else{
+         dimpleMap.fitBounds(bounds);
+       }
        dimpleMap.panTo(myLatLng);
+
+       google.maps.event.addListener(dimpleMap, 'zoom_changed', function() {
+         showDimpleMarkers();
+      });
+
+       
+        showDimpleMarkers();
+
+       if(typeof sib !== 'undefined'){
+          var markerToShow=ALLMARKERS[sib];
+          google.maps.event.trigger(markerToShow,'click');
+
+       }
+
      
    }
      else if(response=="ERROR"){
@@ -281,7 +321,7 @@ function showUserLocation(){
                  
                  var watchid=navigator.geolocation.watchPosition(
                      function(position){
-                         if(userMarker !=null)userMarker.setPosition(new google.maps.LatLng(position.coords.latitude,position.coords.longitude));
+                         if((typeof userMarker !== 'undefined')&&(userMarker !=null))userMarker.setPosition(new google.maps.LatLng(position.coords.latitude,position.coords.longitude));
                        //  alert("Position now: " + position.coords.latitude + " " + position.coords.longitude);
                         },
                      function (error)
@@ -310,13 +350,26 @@ else {
 }
 }
 
-function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,assembly){
+function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,assembly,minzoom){
    if((lat != 0)&&(lon != 0)){
     var markerImageUrl;
     var marker;
+    var icon; //the icon to use - depending on user progress
+
+    if(checkProgress(projectid,assetassemblyid,null)){
+      console.log("checkProgress returns true");
+      icon=markerPresentImages[layariconid];
+    }
+    else{
+      icon=markerImages[layariconid];
+      console.log("checkProgress returns false");
+    }
+
+
+
    console.log("addDimplePOI, label: " + label + " assetassemblyid: " + assetassemblyid + " layariconid: " + layariconid );
         //markerImageUrl=markerImageUrls[layariconid];
-        marker=new google.maps.Marker({position:new google.maps.LatLng(lat, lon),icon:markerImages[layariconid]});
+        marker=new google.maps.Marker({position:new google.maps.LatLng(lat, lon),icon:icon});
        // trackingMarkerImg;
         //marker=new google.maps.Marker({position:new google.maps.LatLng(lat, lon),icon:markerImageUrl});
         marker.setZIndex(i*1000);
@@ -337,10 +390,13 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
       //   styleMarker2.oldlon=lon;
          marker.assetassemblyid=assetassemblyid;
          marker.assetassembly=assembly;
+         marker.minzoom=minzoom;
         // google.maps.event.addListener(marker,'click',new Function("previewAssetAssembly(" + assetassemblyid + "," + projectid +");"));
+
+        ALLMARKERS[assetassemblyid]=marker;
         google.maps.event.addListener(marker, 'click', function() {
 
-            var title=this.assetassembly.assetassemblytitle;
+            var title=this.assetassembly.assetassemblytitle + " " + this.assetassembly.assetassemblyid;
             if(typeof title =='undefined'){
               title="";
             }
@@ -491,10 +547,17 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
  
 
  function showDimpleMarkers(){
+    var z=dimpleMap.getZoom();
     //alert("Length: "  + POIArray.length);
      for(var i=0;i< POIArray.length;i++){
        //  alert(POIArray[i]);
-         if(POIArray[i] != null)POIArray[i].setMap(dimpleMap);
+         if(POIArray[i] != null){
+            if((z >= POIArray[i].minzoom)|(POIArray[i].minzoom==15)){
+              POIArray[i].setMap(dimpleMap);
+            }
+           else POIArray[i].setMap(null);
+         }
+         //if(POIArray[i] != null)markerManager.addMarker(POIArray[i],17);
     }
 
     //alert("showMarkers: " + windowid);
@@ -554,10 +617,7 @@ function getUrlVars()
 
 function previewAssetAssembly(assetassemblyid,projectid){
      //assetPresentationsPreviewWin.setURL(url);
-    var url=null;
-    if(typeof projectid=='undefined') url= "../AssembleAssets?assetassemblyid=" + assetassemblyid +"&return=html";
-    
-    else url= "../AssembleAssets?assetassemblyid=" + assetassemblyid + "&projectid=" + projectid +"&return=html";
+     url= "../assemble?a=" + assetassemblyid + "&p=" + projectid;
     //alert(url);
   
     window.location=url;

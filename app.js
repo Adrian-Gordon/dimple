@@ -269,6 +269,7 @@ app.get('/SelectImageAP',selectImageAP);
 app.get('/GetAllProjectAssemblies',getAllProjectAssemblies);
 app.get('/GetProjectDetails',getProjectDetails);
 app.get('/AssembleAssets', assembleAssets); 
+app.get('/assemble',assembleAssets);
 app.get('/DimpleMap_v1',dimpleMap_v1);
 app.get('/GenerateStylesheet',generateStylesheet);
 
@@ -713,10 +714,12 @@ function getAllProjectAssemblies(req,res){
 
       models.AssetAssemblyModel.findOne({_id:aaid},function(err,assetAssembly){
         //console.log("AA: " + JSON.stringify(assetAssembly));
+        logger.info("AA from DB: " + JSON.stringify(assetAssembly));
         var newAA=new Object();
         newAA.longitude=assetAssembly.location[0];
         newAA.latitude=assetAssembly.location[1];
         newAA.layariconid=assetAssembly.icon;
+        newAA.minzoom=assetAssembly.minzoom;
         newAA.assetassemblytitle=assetAssembly.textElements[language].title;
         newAA.assetassemblysubtitle=assetAssembly.textElements[language].subtitle;
         newAA.summarytext1=assetAssembly.textElements[language].summarytext1;
@@ -728,6 +731,8 @@ function getAllProjectAssemblies(req,res){
         newAA.layarurl=assetAssembly.layarImageUrl;
         newAA.assetassemblydescription=assetAssembly.assetAssemblyDescription;
         newAA.assetassemblyid=assetAssembly._id;
+
+        logger.info("newAA: " + JSON.stringify(newAA));
 
         var imageAssetid=assetAssembly.imageAsset;
 
@@ -1053,16 +1058,34 @@ function getDevice(req,res,renderFunction){
         device.ua=ua;
 
         //get query paramaters
-         device.projectId=query.projectid;
+
+        if(typeof query.projectid=='undefined'){
+          if(typeof query.p!=='undefined'){
+            device.projectId=query.p;
+          }
+        }
+        else{
+          device.projectId=query.projectid;
+        }
 
          //for asset assemblies
-         if(query.return != undefined)device.returnType=query.return;
+         if(typeof query.return != 'undefined')device.returnType=query.return;
          else device.returnType='html';
-
+         logger.info("device.returnType: " + device.returnType);
 
          
          device.app=query.app;
-         device.aaid=query.assetassemblyid;
+         if(typeof query.assetassemblyid == 'undefined'){
+            if(typeof query.a !== 'undefined'){
+              device.aaid=query.a;
+            }
+         }
+         else{
+          device.aaid=query.assetassemblyid;
+         }
+
+         
+
          device.languageCode=query.languagecode;
          device.plaintext=query.plaintext;
          if(typeof device.plaintext==='undefined')device.plaintext="false";
@@ -1310,7 +1333,7 @@ function renderAssetAssembly(device,res){
   if(typeof returnObject.title=='undefined'){
     returnObject.title=null;
   }
-  returnObject.subtitle=device.assetAssembly.textElements[device.languageCode].assetassemblysubtitle;
+  returnObject.subtitle=device.assetAssembly.textElements[device.languageCode].subtitle;
   if(typeof returnObject.subtitle == 'undefined'){
     returnObject.subtitle=null;
   }

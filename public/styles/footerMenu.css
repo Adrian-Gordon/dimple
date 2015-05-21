@@ -1,4 +1,5 @@
 #footermenu {
+  z-index:15000;
    width: 800px; /* change this to see effect */
    left:50%;
   /* border: 1px black solid;*/

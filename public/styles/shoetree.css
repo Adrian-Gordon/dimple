@@ -26,6 +26,10 @@
 	-webkit-transform:translate3d(0,0,0);
 }
 
+.treeimgwrapper:hover{
+	opacity:0.5;]
+}
+
 .shoeimgwrapper img{
 	position:absolute;
 	top:50%;
@@ -33,6 +37,8 @@
 	width:150%;
 	transform:translate(-50%,-50%);
 }
+
+
 
 .interactions{
 	margin-top:150px;
@@ -218,7 +224,7 @@ div.upload input[type="file"] {
 }
 
 .comment-img-img{
-   height:100%;
+   width:100%;
 }
 
 .comment-user{

@@ -4,6 +4,7 @@ var assetassemblyid;
 var projectid;
 
 function renderFooterMenu(asset,aaid,pid){
+	console.log("renderfootermenu");
 	assetassemblyid=aaid;
 	 menuAsset=asset;
 	 projectid=pid;
@@ -16,11 +17,12 @@ function renderFooterMenu(asset,aaid,pid){
 
 	for(var i=0;i<menuData.menuitems.length;i++){
 		var menuItem=menuData.menuitems[i];
-		menuStr+="<div class='menuitem' style='width:" + widthPercent + "%;background-color:" + menuItem.bgcolour + "'>" +"<div class='menuitemcontent' style='background-color:" + menuItem.bgcolour +"'><a class='" + menuItem.class+"'>" + menuItem.title +"</a></div></div>";
+		menuStr+="<div class='menuitem' style='width:" + widthPercent + "%;background-color:" + menuItem.bgcolour + "'>" +"<div class='menuitemcontent' style='background-color:" + menuItem.bgcolour +"'><a class='" + menuItem.class+"' onclick='" + menuItem.onclickurl + "'>" + menuItem.title +"</a></div></div>";
 
 	}
 
 	$('#' + menuData.divid).append(menuStr);
+	placeFooter();
 	//$(document.body).append("<div id='footermenu' style='display:none'>" + menuStr + "</div>");
 }
 
@@ -38,6 +40,17 @@ function placeFooter() {
     var windHeight = $(window).height();
     console.log("windheight: " + windHeight);
     var footerHeight = $('#footermenu').height();
+    console.log('footerHeight: ' + footerHeight);
     var offset = parseInt(windHeight) - parseInt(footerHeight);
     $('#footermenu').css('top',offset);
 }
+
+function menuPreviewAssetAssembly(assetassemblyid,projectid){
+     //assetPresentationsPreviewWin.setURL(url);
+     url= "../assemble?a=" + assetassemblyid + "&p=" + projectid;
+    //alert(url);
+  
+    window.location=url;
+}
+
+
