@@ -26,16 +26,17 @@ div(id='dimple-content')
 						!{callbackStr}
 			}
 		script.
-			$(document).ready(function(){
-				$('#bannerimg').load(function(){
-					var headerTop=$('#pageheader').position().top;
+			$('#bannerimg').load(function(){
+				});
+				
+			$(window).load(function(){
+				var headerTop=$('#pageheader').position().top;
 					var headerHeight=$('#pageheader').height();
 					console.log("headerTop: " + headerTop);
 					console.log("headerHeight: " + headerHeight);
 					$('#dimple-content').css('top',headerTop + headerHeight);
 					$('#dimple-content').toggle();
-
-				});
+					
 				
 				getDimpleUserProgress(progresscallback)
 			});
