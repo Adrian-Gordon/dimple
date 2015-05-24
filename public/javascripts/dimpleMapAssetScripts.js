@@ -50,7 +50,7 @@ function renderMap(asset,aaid,pid){
 
 
 
-	$('#nwrapper').append(commentsStr);
+	$('#dimple-content').append(commentsStr);
 /*
 	 infobox = new InfoBox({
          content: document.getElementById("comments"),
@@ -414,11 +414,13 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
             console.log("title: " + title + " text: " + text + " image: " + imageurl);
 
             var box=document.getElementById('comments');
-
+            console.log("box at this point: " +box);
           if(box==null){
-            $('#nwrapper').append(commentsStr); //recreate the box
+            $('#dimple-content').append(commentsStr); //recreate the box
             box=document.getElementById('comments');
           }
+
+          console.log("BOX is now: " + box);
 
 
             $('#comment-user-username').text(title);
