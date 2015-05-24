@@ -3388,6 +3388,13 @@ function assembleAssetsOld(req,res){
 
                       queue.add(job,function(err,id){
 
+                        if(err !== null){
+                          logger.error("queue error: " + err)
+                        }
+                        else{
+                          logger.info("added to queue: " + id);
+                        }
+
                       });
                     /*
                         queue.create('imageconversion', {
@@ -3480,6 +3487,9 @@ function assembleAssetsOld(req,res){
 
 
                                  }//!err
+                                 else{
+                                  logger.err("GM err: " + err);
+                                 }
 
 
 

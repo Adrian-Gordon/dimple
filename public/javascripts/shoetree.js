@@ -374,7 +374,7 @@ function uploadShoe(userid,description,elid,targetIndex){
     }, false);
     if ( xhr.upload ) {
         xhr.upload.onprogress = function(e) {
-            var done = e.position || e.loaded, total = e.totalSize || e.total;
+            var done = e.position || e.loaded, total = e.total || e.total;
             console.log('xhr.upload progress: ' + done + ' / ' + total + ' = ' + (Math.floor(done/total*1000)/10) + '%');
         };
     }
