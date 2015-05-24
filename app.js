@@ -3488,7 +3488,7 @@ function assembleAssetsOld(req,res){
 
                                  }//!err
                                  else{
-                                  logger.err("GM err: " + err);
+                                  logger.error("GM err: " + err);
                                  }
 
 
