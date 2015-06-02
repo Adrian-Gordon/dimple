@@ -1,31 +1,33 @@
 #dimplemap{
-	height:600px;
+  height:600px;
 }
 
 .asset-assembly-title{
-	display:none;
+  display:none;
 }
 
 .infobox-wrapper{
-	
+  
 }
 
-.comments { /*width: 34px !important;*/ 
-	position:relative;
-	display: inline-block; 
-	vertical-align: top; 
-	/*margin-left: 21px !important;*/ 
-	background: #BCC2C4; 
-	/*padding-top: 20px;*/
-	border-radius: 3px; 
-	-webkit-border-radius: 3px;
-	 -moz-border-radius: 3px;
-	  -o-border-radius: 3px; 
-	  -ms-border-radius: 3px; 
-	  margin-top:-23px;
-	 /* position: absolute; 
-	  bottom: 65px; */
-	  z-index: -999; 
+.comments {
+  width:600px !important;
+  height:220px;
+  position:relative;
+  display: inline-block; 
+  vertical-align: top; 
+  /*margin-left: 21px !important;*/ 
+  background: #BCC2C4; 
+  /*padding-top: 20px;*/
+  border-radius: 3px; 
+  -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+    -o-border-radius: 3px; 
+    -ms-border-radius: 3px; 
+    margin-top:-23px;
+   /* position: absolute; 
+    bottom: 65px; */
+    z-index: -999; 
   }
 
 .comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
@@ -35,12 +37,12 @@
 
 #comments-content {
   background: white;
-  height: 80px;
-  margin-top: 10px;
-  margin-left: 10px;
-  width: 280px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  height: 90%;
+  margin-top: 2%;
+  margin-left: 2%;
+  width: 96%;
+  margin-right: 2%;
+  margin-bottom: 2%;
 }
 
 .close-button{
@@ -52,6 +54,128 @@
 
 .close-button-img{
     width:20px;
+  
+}
+
+.comment-comment{
+
+  width: 55%;
+  float: left;
+  font-family: arial,Geneva,Helvetica,sans-serif;
+
+
+}
+
+
+.comment-img{
+    width:40%;
+    float:left;
+    margin:1%;
+    height:91%;
+    overflow-y:hidden;
+}
+
+.comment-img-img{
+   width:100%;
+}
+
+.comment-user{
+    text-align:center;
+    margin-top:5px;
+    font-size:2.5em;
+    line-height:1em;
+}
+
+
+
+.comment-text{
+    margin-top:8px;
+    overflow: hidden;
+    height: 50px;
+    font-size:2.3em;
+    
+}
+.comment-text-text{
+    margin-left:10px;
+   
+}
+
+
+.disclosure-button{
+  position:absolute;
+  top:75%;
+  left:91%;
+  cursor:pointer;
+  z-index: 100000000000;
+}
+
+.disclosure-button-img{
+  cursor:pointer;
+  z-index: 100000000000;
+}
+
+
+
+
+
+
+
+/*
+
+
+
+#dimplemap{
+	height:600px;
+}
+
+.asset-assembly-title{
+	display:none;
+}
+
+.infobox-wrapper{
+	
+}
+
+.comments { 
+	position:relative;
+	display: inline-block; 
+	vertical-align: top; 
+	
+	background: #BCC2C4; 
+	
+	-webkit-border-radius: 3px;
+	 -moz-border-radius: 3px;
+	  -o-border-radius: 3px; 
+	  -ms-border-radius: 3px; 
+	  margin-top:-23px;
+	
+	  z-index: -999; 
+  }
+
+.comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
+
+.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 100px; padding: 0 10px; }
+
+
+#comments-content {
+  background: white;
+  height: 160px;
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 560px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.close-button{
+    position:absolute;
+      top:0px;
+    left:540px
+    
+}
+
+.close-button-img{
+    width:40px;
   
 }
 
@@ -104,6 +228,8 @@
   cursor:pointer;
   z-index: 100000000000;
 }
+
+*/
 
 
 

@@ -6,7 +6,7 @@ var infobox;
 var ALLMARKERS={};
 
 var commentsStr="<div class='infobox-wrapper' style='display:none'>";
-    commentsStr+="<div style='height:100px;width: 300px !important;' class='comments' id='comments'>";
+    commentsStr+="<div class='comments' id='comments'>";
     //commentsStr+="    <div class='comments-before-up' id='commentbefore'></div>";
     commentsStr+="    <div id='comments-content'>";
     //commentsStr+="      <div class='close-button'>";
