@@ -291,12 +291,12 @@ function rosetteCallback(el,assetid,iconurl){
 	$('#comment-img-img').attr('src',iconurl);
 	$('#comment-user-username').text("The Suffragette Colours");
 	var text;
-	//if(checkProgress(proggyProjectid,1050,10082)){
-		text="You already know the colours of the Suffragette movement<br><br> <a href=''>Show them on a Rosette</a>"
-	//}
-	//else{
-		text="Do you know the colours of the Suffragette Movement? <br><br> NOT IMPLEMENTED"
-	//}
+	if(checkProgress(proggyProjectid,1055,10116)){
+		text="You already know the colours of the Suffragette movement<br><br> <a href='/assemble/?a=1055&p=108'>Show them on a Rosette</a>"
+	}
+	else{
+		text="Do you know the colours of the Suffragette Movement? <a href='/assemble/?a=1055&p=108'>Find out</a>";
+	}
 	$('#comment-text-text').html(text);
 
 	$('#comments').css({'left':left +'px','top':top + 'px'});
@@ -354,12 +354,12 @@ function chimneysCallback(el,assetid,iconurl){
 	$('#comment-img-img').attr('src',iconurl);
 	$('#comment-user-username').text("The School Chimneys");
 	var text;
-	//if(checkProgress(proggyProjectid,1050,10082)){
-		text="You already know where the school chimneys go<br><br> <a href=''>See them here</a>"
-	//}
-	//else{
-		text="Do you know where the chimneys go? <br><br> NOT IMPLEMENTED"
-	//}
+	if(checkProgress(proggyProjectid,1049,10122)){
+		text="You already know where the school chimneys go<br><br> <a href='/assemble/?a=1049&p=108'>See them here</a>"
+	}
+	else{
+		text="Do you know where the chimneys go?"
+	}
 	$('#comment-text-text').html(text);
 
 	$('#comments').css({'left':left +'px','top':top + 'px'});
@@ -425,12 +425,12 @@ function sweetshopCallback(el,assetid,iconurl){
 	$('#comment-img-img').attr('src',iconurl);
 	$('#comment-user-username').text("Clough's Sweet Shop");
 	var text;
-	//if(checkProgress(proggyProjectid,1050,10082)){
-		text="You already know your old fashioned sweets<br><br> <a href=''>See them here</a>"
-	//}
-	//else{
-		text="How well do you know your old fashioned sweeties? <br><br> NOT IMPLEMENTED"
-	//}
+	if(checkProgress(proggyProjectid,1029,10119)){
+		text="You already know your old fashioned sweets<br><br> <a href='/assemble/?a=1029&p=108'>See them here</a>"
+	}
+	else{
+		text="How well do you know your old fashioned sweeties?"
+	}
 	$('#comment-text-text').html(text);
 
 	$('#comments').css({'left':left +'px','top':top + 'px'});
