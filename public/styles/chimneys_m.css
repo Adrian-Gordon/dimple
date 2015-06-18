@@ -4,6 +4,9 @@
 
 .satellite img{
 	width:93%;
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
 }
 
 #letter0{

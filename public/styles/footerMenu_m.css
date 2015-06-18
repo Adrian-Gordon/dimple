@@ -8,6 +8,7 @@
    margin-right: auto;*/
    position:fixed;
    /*margin:0 0 0 -400px;*/
+   left:0px;
 
 }
 
@@ -15,19 +16,21 @@
 
 .menuitemcontent {
     width: 60px;  /* made smaller for this demo */
-    height: 75px;  /* made smaller for this demo */
+    height: 120px;  /* made smaller for this demo */
     background-color: blue;
     position: relative;
     margin-left: auto;
     margin-right: auto;
     color:#ffffff;
+    padding-top: 5px;
 }
 
 .menuitemcontent a{
-  width:50px;
-  padding-top:55px;
+  width:75px;
+  padding-top:80px;
   text-align:center;
   display:inline-block;
+  font-size:1.8em;
 }
 
 /*.menuitemcontent a:hover{
@@ -48,6 +51,7 @@
 .menu-home{
   background:url("/images/noun_house_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-home:hover, .menu-home-active{
@@ -58,6 +62,7 @@
 .menu-proggy{
   background:url("/images/noun_rug_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-proggy:hover,.menu-proggy-active{
@@ -68,6 +73,7 @@
 .menu-map{
   background:url("/images/noun_map_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-map:hover,.menu-map-active{
@@ -78,6 +84,7 @@
 .menu-list{
   background:url("/images/noun_list_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-list:hover,.menu-list-active{
@@ -88,6 +95,7 @@
 .menu-badges{
   background:url("/images/noun_badge_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-badges:hover,.menu-badges-active{
@@ -98,6 +106,7 @@
 .menu-me{
   background:url("/images/noun_person_50.png") top center no-repeat;
   color:#ffffff;
+  background-size:64px 64px;
 }
 
 .menu-me:hover,.menu-me-active{
