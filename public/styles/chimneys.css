@@ -3,7 +3,7 @@
 }
 
 .satellite img{
-	width:100%;
+	width:93%;
 }
 
 #letter0{
@@ -23,6 +23,12 @@
 
 #letter3{
 
+	top:20%;
+	left:60%;
+}
+
+#letter4{
+
 	top:64%;
 	left:63%;
 }
@@ -30,22 +36,28 @@
 #chimg0{
 	display:none;
 	top:100%;
-	left:17%;
+	left:15%;
 }
 #chimg1{
 	display:none;
 	top:100%;
-	left:36%;
+	left:30%;
 }
 #chimg2{
 	display:none;
 	top:100%;
-	left:55%;
+	left:45%;
 }
 #chimg3{
 	display:none;
 	top:100%;
-	left:74%;
+	left:60%;
+}
+
+#chimg4{
+	display:none;
+	top:100%;
+	left:75%;
 }
 
 .chimneyimages{
@@ -56,8 +68,9 @@
 
 .chimney{
 	float:left;
-	width:24%;
+	width:19%;
 	/*height:200px;*/
+	opacity:0.6;
 }
 
 .chselected{
@@ -66,6 +79,11 @@
     box-shadow: 0px 0px 8px red;
     -moz-box-shadow: 0px 0px 8px red;
     -webkit-box-shadow: 0px 0px 8px red;
+    opacity:1;
+}
+
+.hidden{
+	visibility:hidden;
 }
 
 .numberCircle {
@@ -105,6 +123,14 @@
           width: 100%; 
             min-width: 100%;
             min-height: 100%;
+}
+
+#alldonemessage{
+	width: 50%;
+  /*float: left;*/
+  /* text-align: center; */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 

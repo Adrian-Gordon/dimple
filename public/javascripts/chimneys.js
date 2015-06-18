@@ -22,57 +22,75 @@ function renderChimneys(asset,aaid,pid){
 		chimneysHtml+="<div id='letter1' class='numberCircle' onclick=\"chooses('B')\">B</div>";
 		chimneysHtml+="<div id='letter2' class='numberCircle' onclick=\"chooses('C')\">C</div>";
 		chimneysHtml+="<div id='letter3' class='numberCircle' onclick=\"chooses('D')\">D</div>";
+		chimneysHtml+="<div id='letter4' class='numberCircle' onclick=\"chooses('E')\">E</div>";
 
 		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper' >";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney1_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div id='chimg1' class='chimneyimgwrapper'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney3_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div id='chimg2' class='chimneyimgwrapper'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney2_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div id='chimg3' class='chimneyimgwrapper'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney5_200.png' />";
+		chimneysHtml+="</div>";
+		chimneysHtml+="<div id='chimg4' class='chimneyimgwrapper'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney4_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div class='chimneyimages'>";
 		chimneysHtml+="<div id='chimney0' class='chimney chimney1 chselected' onclick='selectChimney(0)'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney1_200.png' />";
 		chimneysHtml+="</div>";//chimney
 		chimneysHtml+="<div id='chimney1' class='chimney chimney2' onclick='selectChimney(1)'>"
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney3_200.png' />";
 		chimneysHtml+="</div>";//chimney
 		chimneysHtml+="<div id='chimney2' class='chimney chimney3' onclick='selectChimney(2)'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney2_200.png' />";
 		chimneysHtml+="</div>";//chimney
 		chimneysHtml+="<div id='chimney3' class='chimney chimney4' onclick='selectChimney(3)'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney5_200.png' />";
+		chimneysHtml+="</div>";//chimney
+		chimneysHtml+="<div id='chimney4' class='chimney chimney5' onclick='selectChimney(4)'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney4_200.png' />";
+		
 		chimneysHtml+="</div>";//chimney
 
 	chimneysHtml+="</div>"; //chimneyimages
+	chimneysHtml+="</div>"; //satellite
+	chimneysHtml+="<div id='alldonemessage' style='display:none'>";
+	chimneysHtml+="<span>Great,you got them all!</span>"
+		
 	}
 	else{
-		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper'  style='display:block;top:45%;left:35%'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper'  style='display:block;top:20%;left:60%'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney1_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg1' class='chimneyimgwrapper' style='display:block;top:63%;left:64%'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<div id='chimg1' class='chimneyimgwrapper' style='display:block;top:45%;left:35%'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney3_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg2' class='chimneyimgwrapper' style='display:block;top:10%;left:50%'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<div id='chimg2' class='chimneyimgwrapper' style='display:block;top:64%;left:63%'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney2_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div id='chimg3' class='chimneyimgwrapper' style='display:block;top:25%;left:10%'>";
-		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimneysx100.png' />";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney5_200.png' />";
+		chimneysHtml+="</div>";
+		chimneysHtml+="<div id='chimg4' class='chimneyimgwrapper' style='display:block;top:50%;left:10%'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney4_200.png' />";
 		chimneysHtml+="</div>";
 		chimneysHtml+="<div id='alreadydonemessage' class='visible'>";
 		chimneysHtml+="<span>You already know all of these!</span>"
 		chimneysHtml+="</div>";//donemessage
+		chimneysHtml+="</div>"; //satellite
 	}
 
 	
 
 
-	chimneysHtml+="</div>"; //satellite
+	
+	
+	//chimneysHtml+="</div>";//donemessage
 	
 
 	$('#' + chimneysData.divid).append(chimneysHtml);
@@ -90,9 +108,9 @@ function selectChimney(n){
 }
 
 
-var correctChoices=['C','D','B','A'];
-var chosenCorrectly=[false,false,false,false];
-var targets=[['45%','35%',2],['64%','63%',3],['50%','10%',1],['25%','10%',0]];
+var correctChoices=['D','C','E','A','B'];
+var chosenCorrectly=[false,false,false,false,false];
+var targets=[['20%','60%',3],['45%','35%',2],['64%','63%',5],['25%','10%',0],['50%','10%',1]];
 
 function chooses(letter){
 	if(!chosenCorrectly[selectedChimney]){//haven't already done this
@@ -112,7 +130,7 @@ function chooses(letter){
 
 		chosenCorrectly[selectedChimney]=true;
 		var allCorrect=true;
-		for(var i=0;i<4;i++){
+		for(var i=0;i<5;i++){
 			if(!chosenCorrectly[i]){
 				allCorrect=false;
 				break;
@@ -120,13 +138,39 @@ function chooses(letter){
 		}
 		if(allCorrect){
 			reportProgress(projectid,assetassemblyid,assetId,true);
+			$('.chimneyimages').toggle();
+			$('#alldonemessage').toggle();
+		}
+		$('#chimney' + selectedChimney).removeClass('chselected');
+		$('#chimney' + selectedChimney).addClass('hidden');
+
+
+		//make the next available one selected
+
+		if(!allCorrect){
+			
+			var found=false;
+			while(!found){
+				selectedChimney++;
+				if(selectedChimney > 4)
+					selectedChimney=0;
+				if(!chosenCorrectly[selectedChimney]){
+					found=true;
+				}
+
+			}
+			$('#chimney' + selectedChimney).addClass('chselected');
+
+
 		}
 	}
 	else{
 		$('#failAudio')[0].play();
 	}
 
-	$('#chimney' + selectedChimney).removeClass('chselected');
+	
+
+
 	}
 
 
