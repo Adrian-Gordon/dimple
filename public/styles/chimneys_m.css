@@ -1,0 +1,138 @@
+.satellite{
+	position:relative;
+}
+
+.satellite img{
+	width:93%;
+}
+
+#letter0{
+	top:25%;
+	left:10%;
+}
+
+#letter1{
+	top:50%;
+	left:10%;
+}
+
+#letter2{
+	top:45%;
+	left:35%;
+}
+
+#letter3{
+
+	top:20%;
+	left:60%;
+}
+
+#letter4{
+
+	top:64%;
+	left:63%;
+}
+
+#chimg0{
+	display:none;
+	top:100%;
+	left:15%;
+}
+#chimg1{
+	display:none;
+	top:100%;
+	left:30%;
+}
+#chimg2{
+	display:none;
+	top:100%;
+	left:45%;
+}
+#chimg3{
+	display:none;
+	top:100%;
+	left:60%;
+}
+
+#chimg4{
+	display:none;
+	top:100%;
+	left:75%;
+}
+
+.chimneyimages{
+	width: 80%;
+  	margin-left: auto;
+  	margin-right: auto;
+}
+
+.chimney{
+	float:left;
+	width:19%;
+	/*height:200px;*/
+	opacity:0.6;
+}
+
+.chselected{
+	outline: none;
+    border: 1px solid red;
+    box-shadow: 0px 0px 8px red;
+    -moz-box-shadow: 0px 0px 8px red;
+    -webkit-box-shadow: 0px 0px 8px red;
+    opacity:1;
+}
+
+.hidden{
+	visibility:hidden;
+}
+
+.numberCircle {
+    border-radius: 50%;
+    behavior: url(PIE.htc); /* remove if you don't care about IE8 */
+
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    position:absolute;
+    background: #fff;
+    border: 2px solid red;
+    color: red;
+    text-align: center;
+    opacity: 0.6;
+    filter: alpha(opacity=60); /* For IE8 and earlier */
+    
+    font: 32px Arial, sans-serif;
+}
+
+.chimneyimgwrapper{
+	position:absolute;
+	display:block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+   /* padding:5px 4px;*/
+    border: 2px solid red;
+
+}
+
+.chimneyimgwrapper img{
+			display: block;
+           
+          height: 100%;
+          width: 100%; 
+            min-width: 100%;
+            min-height: 100%;
+}
+
+#alldonemessage{
+	width: 50%;
+  /*float: left;*/
+  /* text-align: center; */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+
