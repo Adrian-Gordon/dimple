@@ -488,6 +488,8 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
                  infobox.close();
                  infobox=null;
               }
+
+              var bwidth=$('.comments').width();
               
              infobox = new InfoBox({
                content: box,
@@ -498,10 +500,10 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
                boxStyle: {
                   background: "url('/images/map-marker-up-grey.png') no-repeat",
                   opacity: 1.0,
-                  width: "300px"
+                  width: bwidth + "px"
               },
               closeBoxMargin: "12px 4px 2px 2px",
-              closeBoxURL: "/images/circle_close_delete-20.png",
+              closeBoxURL: "https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png",
               infoBoxClearance: new google.maps.Size(1, 1)
           });
 
