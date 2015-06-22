@@ -25,7 +25,7 @@ div.text-item{
 }
 
 #shrink img{
-  width:50px;
+  width:100px;
 }
 
 #shrink:hover{
@@ -41,7 +41,7 @@ div.text-item{
 }
 
 #grow img{
-  width:50px;
+  width:100px;
 }
 
 #grow:hover{
