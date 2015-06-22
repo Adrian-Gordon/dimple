@@ -70,6 +70,8 @@ div.text-item{
 
 
 .comments { /*width: 34px !important;*/ 
+  width:600px !important;
+  height:220px;
 	display: inline-block; 
 	vertical-align: top; 
 	/*margin-left: 21px !important;*/ 
@@ -86,23 +88,23 @@ div.text-item{
 
 .comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
 
-.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 140px; padding: 0 10px; }
+.comments-before-up { height: 26px; width: 54px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 54px 26px; content: ' '; position: absolute; left: 137px; bottom: 220px; padding: 0 10px; }
 
 
 #comments-content {
   background: white;
-  height: 120px;
-  margin-top: 10px;
-  margin-left: 10px;
-  width: 280px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  height: 90%;
+  margin-top: 2%;
+  margin-left: 2%;
+  width: 96%;
+  margin-right: 2%;
+  margin-bottom: 2%;
 }
 
 .close-button{
     position:absolute;
       top:0px;
-    left:280px
+    left:560px
     
 }
 
@@ -111,31 +113,36 @@ div.text-item{
 }
 
 .close-button-img{
-    width:20px;
+    width:30px;
   
 }
 
 .comment-comment{
 
-  width: 70%;
+ width: 55%;
   float: left;
+  font-family: arial,Geneva,Helvetica,sans-serif;
 
 }
 
 
 .comment-img{
-    width:25%;
+    width:40%;
     float:left;
-    margin:5px;
+    margin:1%;
+    height:91%;
+    overflow-y:hidden;
 }
 
 .comment-img-img{
-   height:70px;
+   height:100%;
 }
 
 .comment-user{
-    text-align:center;
+     text-align:center;
     margin-top:5px;
+    font-size:1.6em;
+    line-height:1em;
 }
 
 .comment-user-username{
@@ -149,6 +156,8 @@ div.text-item{
     overflow: hidden;
   	height: 100px;
     text-align:left;
+    font-size:1.4em;
+    line-height:1.1em;
     
 }
 .comment-text-text{

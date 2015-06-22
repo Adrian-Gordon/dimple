@@ -12,7 +12,7 @@ function renderChimneys(asset,aaid,pid){
 	
 	projectid=pid;
 	chimneysData=asset.data;
-	chimneysHtml="<audio id='failAudio'><source src='/images/chilliroad/rosette/wrong.mp3' type='audio/mpeg'></audio>";
+	chimneysHtml="<audio id='failAudio'><source src='/audio/wrong.mp3' type='audio/mpeg'></audio>";
 	chimneysHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
 	chimneysHtml+="<div class='satellite'>";
 	chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";

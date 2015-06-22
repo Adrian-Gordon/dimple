@@ -30,7 +30,7 @@ function renderProggy(asset,aaid,pid){
 		var piece=data.pieces[i];
 		renderProggyPiece(data,piece);
 	}*/
-	var commentsStr="<div style='display:none;height:140px;width: 300px !important;' class='comments' id='comments'>";
+	var commentsStr="<div style='display:none;' class='comments' id='comments'>";
 	commentsStr+="		<div class='comments-before-up' id='commentbefore'></div>";
 	commentsStr+="		<div id='comments-content'>";
 	commentsStr+="			<div class='close-button'>";
@@ -253,7 +253,8 @@ function rosetteCallback(el,assetid,iconurl){
 	console.log("centreLeft: " + centreLeft);
 
 	var commentWidth=$('#comments').width();
-	var beforeWidth=27;
+	//var beforeWidth=27;
+	var beforeWidth=$('.comments-before-up').width();
 
 	var left=centreLeft-(commentWidth /2);
 

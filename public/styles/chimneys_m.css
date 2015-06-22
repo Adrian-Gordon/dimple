@@ -93,8 +93,8 @@
     border-radius: 50%;
     behavior: url(PIE.htc); /* remove if you don't care about IE8 */
 
-    width: 36px;
-    height: 36px;
+    width: 50px;
+    height: 50px;
     padding: 8px;
     position:absolute;
     background: #fff;
@@ -104,14 +104,22 @@
     opacity: 0.6;
     filter: alpha(opacity=60); /* For IE8 and earlier */
     
-    font: 32px Arial, sans-serif;
+    font: 45px Arial, sans-serif;
+}
+
+.numberCircle:active{
+	opacity:1;
+}
+
+.numberCircle:hover{
+	opacity:1;
 }
 
 .chimneyimgwrapper{
 	position:absolute;
 	display:block;
-    width: 50px;
-    height: 50px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
     overflow: hidden;
    /* padding:5px 4px;*/
