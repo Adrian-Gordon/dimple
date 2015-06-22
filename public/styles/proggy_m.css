@@ -104,7 +104,7 @@ div.text-item{
 .close-button{
     position:absolute;
       top:0px;
-    left:560px
+    left:550px
     
 }
 
@@ -113,13 +113,13 @@ div.text-item{
 }
 
 .close-button-img{
-    width:40px;
+    width:50px;
   
 }
 
 .comment-comment{
 
- width: 55%;
+ width: 50%;
   float: left;
   font-family: arial,Geneva,Helvetica,sans-serif;
 
