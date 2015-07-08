@@ -131,6 +131,7 @@ function getDimpleUserProgress(callback){
 function checkProgress(projectid,assetassemblyid,assetid){
 	console.log("check progress: " + projectid + " " + assetassemblyid + " " + assetid);
 	if(typeof dimpleUserProgress == 'undefined'){
+		console.log('dup undefined');
 		return(false);
 	}
 
@@ -154,6 +155,7 @@ function checkProgress(projectid,assetassemblyid,assetid){
 			}
 			
 	}
+	console.log("hascompleted: " + hasCompleted);
 	return(hasCompleted);
 
 }

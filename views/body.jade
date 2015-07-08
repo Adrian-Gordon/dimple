@@ -43,11 +43,10 @@ div(id='dimple-content' class='dimple-body')
 
 		each asset, index in assets
 			if asset.assettypeid==0
-				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-					div(class='text-item-title' style='position:relative')
-						|!{asset.assetcaption }
-				
 				if(asset.mimetype=='text/html')
+					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+						div(class='text-item-title' style='position:relative')
+							|!{asset.assetcaption }
 					div(class='text-item')
 					if((asset.data !== 'undefined')&&(asset.data !== ""))
 						div(class='json-text-item')
