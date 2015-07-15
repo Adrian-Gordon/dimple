@@ -12,12 +12,19 @@ function renderChimneys(asset,aaid,pid){
 	
 	projectid=pid;
 	chimneysData=asset.data;
-	chimneysHtml="<audio id='failAudio'><source src='/audio/wrong.mp3' type='audio/mpeg'></audio>";
+	/*chimneysHtml="<audio id='failAudio'><source src='/audio/wrong.mp3' type='audio/mpeg'></audio>";
 	chimneysHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+	chimneysHtml+="<div class='image-caption-above'>" + chimneysAsset.asset.captions.en +"</div>";
 	chimneysHtml+="<div class='satellite'>";
-	chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";
+	chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";*/
 
 	if(!checkProgress(pid,aaid,asset.asset._id)){
+		chimneysHtml="<audio id='failAudio'><source src='/audio/wrong.mp3' type='audio/mpeg'></audio>";
+		chimneysHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+		chimneysHtml+="<div class='image-caption-above'>" + chimneysAsset.asset.captions.en +"</div>";
+		chimneysHtml+="<div class='satellite'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";
+
 		chimneysHtml+="<div id='letter0' class='numberCircle' onclick=\"chooses('A')\">A</div>";
 		chimneysHtml+="<div id='letter1' class='numberCircle' onclick=\"chooses('B')\">B</div>";
 		chimneysHtml+="<div id='letter2' class='numberCircle' onclick=\"chooses('C')\">C</div>";
@@ -64,6 +71,11 @@ function renderChimneys(asset,aaid,pid){
 		
 	}
 	else{
+
+		chimneysHtml="<audio id='failAudio'><source src='/audio/wrong.mp3' type='audio/mpeg'></audio>";
+		chimneysHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+		chimneysHtml+="<div class='satellite'>";
+		chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";
 		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper'  style='display:block;top:20%;left:60%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney1_200.png' />";
 		chimneysHtml+="</div>";

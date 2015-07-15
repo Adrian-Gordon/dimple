@@ -53,6 +53,7 @@ function renderSweets(asset,aaid,pid){
 	if(progressDone){
 		sweetsHtml+="<audio id='failAudio'><source src='/images/chilliroad/rosette/wrong.mp3' type='audio/mpeg'></audio>";
 	sweetsHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+	//sweetsHtml+="<div class='image-caption-above'>" + asset.asset.captions.en +"</div>";
 	sweetsHtml+="<div class='sweetsdiv'>";
 	sweetsHtml+="<table>"
 	sweetsHtml+="<tr id='sweets0' class='sweetsrow visible'>";
@@ -91,6 +92,7 @@ function renderSweets(asset,aaid,pid){
 	else{
 	sweetsHtml+="<audio id='failAudio'><source src='/images/chilliroad/rosette/wrong.mp3' type='audio/mpeg'></audio>";
 	sweetsHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+	sweetsHtml+="<div class='image-caption-above'>" + asset.asset.captions.en +"</div>";
 	sweetsHtml+="<div class='sweetsdiv'>";
 	sweetsHtml+="<table>"
 	sweetsHtml+="<tr id='sweets0' class='sweetsrow visible'>";

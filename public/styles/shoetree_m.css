@@ -216,6 +216,7 @@ div.upload input[type="file"] {
   width: 280px;
   margin-right: 5px;
   margin-bottom: 5px;
+   overflow-y: scroll;
 }
 
 .close-button{
@@ -242,6 +243,7 @@ div.upload input[type="file"] {
     width:40%;
     float:left;
     margin:5px;
+    max-height: 100%;
 }
 
 .comment-img-img{

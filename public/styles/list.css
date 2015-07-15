@@ -1,3 +1,11 @@
+.asset-assembly-title{
+	display:none;
+}
+
+#poitable{
+	padding-bottom:100px;
+}
+
 #poitable div{
 
 	display:table;
@@ -16,7 +24,8 @@
  }
 
  #poitable div a:hover{
-  opacity:0.5
+  opacity:0.5;
+  cursor: pointer;
 }
 
  #poitable div h2{
@@ -26,7 +35,8 @@
  }
 
   #poitable div h2:hover{
-  opacity:0.5
+  opacity:0.5;
+   cursor: pointer;
 }
 
  #poitable div img{

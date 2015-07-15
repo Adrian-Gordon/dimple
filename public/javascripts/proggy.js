@@ -175,13 +175,8 @@ function reRenderProggyPieceIcon(data,piece){
 
 }*/
 
-
-
-
-
-
 function crossingGuardCallback(el,assetid,iconurl){
-	var pos=$(el).position();
+var pos=$(el).position();
 
 	console.log("el pos: " + pos.left + " " + pos.top);
 
@@ -233,6 +228,72 @@ function crossingGuardCallback(el,assetid,iconurl){
 	}
 	else{
 		text="Get a weather report from the Lollipop Man. <br><br>Show him on the <a href='/assemble/?a=1060&p=108&clon=-1.576464492827654&clat=54.98500918273556&z=17&sib=1050'>Map</a>"
+	}
+	$('#comment-text-text').html(text);
+
+	$('#comments').css({'left':left +'px','top':top + 'px'});
+	$('#commentbefore').css({'left': cbPos + 'px'})
+
+	$('#comments').css({'display':'block'});
+
+}
+
+
+
+
+function musicCallback(el,assetid,iconurl){
+	var pos=$(el).position();
+
+	console.log("el pos: " + pos.left + " " + pos.top);
+
+	var centreLeft=pos.left + ($(el).width() / 2);//of icon image
+
+	console.log("centreLeft: " + centreLeft);
+
+	var commentWidth=$('#comments').width();
+	var beforeWidth=27;
+
+	var left=centreLeft-(commentWidth /2);
+
+	console.log("left: " + left);
+	var cbPos=(commentWidth/2) -(beforeWidth/2);
+
+	var shift=0;
+	if(left < 0){
+		shift=left;
+		left=0;
+
+	}
+
+	cbPos=cbPos+shift;
+
+	//var left=pos.left -($(el).width() / 2) -10 ;
+
+	//if(left < 0){
+	//	left=0;
+	//}
+
+	//var diff=0;
+	//var cbPos=150 - ($(el).width() /2)//half of 47 (width of component)
+
+	//var cbLeft=$('#commentbefore').position().left;
+
+	//if(left< 0){
+	//	 diff=0-left;
+	//	left=0;
+	//	 cbPos=cbPos-diff;
+	//}
+
+	var top=pos.top + $(el).height() + 10;
+
+	$('#comment-img-img').attr('src',iconurl);
+	$('#comment-user-username').text("Chilli Road Band");
+	var text;
+	if(checkProgress(proggyProjectid,1064,10125)){
+		text="You already have the complete set of instruments from the Chilli Road Band<br><br> <a href='/assemble/?a=1064&p=108'>Listen</a>"
+	}
+	else{
+		text="You need to collect <em>all</em> of the instruments from the Chilli Road Band <br><a href='/assemble/?a=1064&p=108'>Listen to your collection</a>"
 	}
 	$('#comment-text-text').html(text);
 
@@ -359,7 +420,7 @@ function chimneysCallback(el,assetid,iconurl){
 		text="You already know where the school chimneys go<br><br> <a href='/assemble/?a=1049&p=108'>See them here</a>"
 	}
 	else{
-		text="Do you know where the chimneys go?"
+		text="Do you know where the chimneys go?<br> <a href='/assemble/?a=1049&p=108'>Find out here</a>"
 	}
 	$('#comment-text-text').html(text);
 
@@ -430,7 +491,7 @@ function sweetshopCallback(el,assetid,iconurl){
 		text="You already know your old fashioned sweets<br><br> <a href='/assemble/?a=1029&p=108'>See them here</a>"
 	}
 	else{
-		text="How well do you know your old fashioned sweeties?"
+		text="How well do you know your old fashioned sweeties?<br> <a href='/assemble/?a=1029&p=108'>Find out here</a>"
 	}
 	$('#comment-text-text').html(text);
 

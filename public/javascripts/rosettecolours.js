@@ -31,10 +31,12 @@ function renderRosette(asset,aaid,pid){
 	rosetteData=asset.data;
 	rosetteHtml="<audio id='failAudio'><source src='/images/chilliroad/rosette/wrong.mp3' type='audio/mpeg'></audio>";
 	rosetteHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
+	rosetteHtml+="<div class='image-caption-above'>" + rosetteAsset.asset.captions.en +"</div>";
 	 rosetteHtml+="<img id='rosetteimg' class='rosette' src='" + getRosetteSource(hasGreen,hasWhite,hasPurple) +"' />";
 	rosetteHtml+="<div class='" +coloursDivClass +  "'><div class='rosetteRow'><div class='rosetteCell yellow' onclick='rosetteFail(this)'><img src='/images/chilliroad/rosette/cross2.png' /></div><div class='rosetteCell blue' onclick='rosetteFail(this)'><img src='/images/chilliroad/rosette/cross2.png' /></div><div class='rosetteCell white' onclick=\"rosetteSucceed(this,'white')\"><img src='/images/chilliroad/rosette/tick2.png' /></div><div class='rosetteCell green' onclick=\"rosetteSucceed(this,'green')\"><img src='/images/chilliroad/rosette/tick2.png' /></div></div>";
 	rosetteHtml+="<div class='rosetteRow'><div class='rosetteCell orange' onclick='rosetteFail(this)'><img src='/images/chilliroad/rosette/cross2.png' /></div><div class='rosetteCell purple' onclick=\"rosetteSucceed(this,'purple')\"><img src='/images/chilliroad/rosette/tick2.png' /></div><div class='rosetteCell pink' onclick=\"rosetteFail(this,'pink')\"><img src='/images/chilliroad/rosette/cross2.png' /></div><div class='rosetteCell brown' onclick=\"rosetteFail(this)\"><img src='/images/chilliroad/rosette/cross2.png' /></div></div></div>";
 	rosetteHtml+="<span id='congrats' class='"+msgClass +" image-caption-below'>You already successfully finished this task, Well done!</span>";
+	rosetteHtml+="<div style='padding-bottom:20%'></div>";
 
 	$('#' + rosetteData.divid).append(rosetteHtml);
 

@@ -8,15 +8,17 @@ var audioState;
 var selectedCount=0;
 var _player;
 
+var completedCollection=false;
+
 
 var statuses=[
-	{'status':'_gray','img':'tuba','styles':'padding-top:18px;width:75%','aaid':1057,'assetid':10128},
-	{'status':'_gray','img':'guitar','styles':'padding-top:18px;width:75%','aaid':1040,'assetid':10146},
-	{'status':'_gray','img':'drum','styles':'padding-top:10px','aaid':1030,'assetid':10143},
-	{'status':'_gray','img':'saxophone','styles':'padding-top:10px','aaid':1034,'assetid':10140},
-	{'status':'_gray','img':'pan','styles':'padding-top:18px;width:70%','aaid':1053,'assetid':10131},
-	{'status':'_gray','img':'trumpet','styles':'padding-top:20px;width:73%','aaid':1026,'assetid':10138},
-	{'status':'_gray','img':'clarinet','styles':'padding-top:11px;width:73%','aaid':1054,'assetid':10149}
+	{'status':'_gray','img':'tuba','styles':'padding-top:18px;width:75%','styles_m':'padding-top:18px;width:75%','aaid':1057,'assetid':10128},
+	{'status':'_gray','img':'guitar','styles':'padding-top:18px;width:75%','styles_m':'padding-left:0px;padding-top:18px;width:75%','aaid':1040,'assetid':10146},
+	{'status':'_gray','img':'drum','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:00px','aaid':1030,'assetid':10143},
+	{'status':'_gray','img':'saxophone','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:0px','aaid':1034,'assetid':10140},
+	{'status':'_gray','img':'pan','styles':'padding-top:18px;width:70%','styles_m':'padding-top:18px;width:70%;padding-left:0px','aaid':1053,'assetid':10131},
+	{'status':'_gray','img':'trumpet','styles':'padding-top:20px;width:73%','styles_m':'padding-top:20px;width:73%;padding-left:0px','aaid':1026,'assetid':10138},
+	{'status':'_gray','img':'clarinet','styles':'padding-top:11px;width:73%','styles_m':'padding-left:0px;padding-top:11px;width:68%','aaid':1054,'assetid':10149}
 
 ]
 
@@ -30,8 +32,8 @@ function renderBand(asset,aaid,pid){
 	projectid=pid;
 	bandData=asset.data;
 
-	reportProgress(pid,aaid,asset.asset._id,true);
-	//console.log("Aset: " + JSON.stringify(asset));
+	//reportProgress(pid,aaid,asset.asset._id,true);
+	//console.log("Asset: " + JSON.stringify(asset));
 
 	//var bandHtml="<div id=\"center\"><span class='helper'><img src='/images/chilliroad/band/play_grey.png'/></span></div>";
 	var bandHtml="<div class='image-caption-above'>" + asset.asset.captions.en +"</div>"
@@ -97,28 +99,46 @@ function renderBand(asset,aaid,pid){
 }
 
 function createFields() {
-		var thisSelectedIndex=0;
+		var presentCount=0;
+
+		var thisSelectedIndex=-1;
 	    $('.field').remove();
 	    var container = $('#container');
 	    for(var i = 0; i < 7; i++) {
 	    	var imgFilename=statuses[i].img;
-	    	var styles=statuses[i].styles;
+	    	var styles;
+	    	if(isWirelessDevice){
+	    		styles=statuses[i].styles_m;
+	    	}
+	    	else{
+	    		styles=statuses[i].styles_m;
+	    	}
+
+	    	
 	    	var status=statuses[i].status;
 	    	var assetid=statuses[i].assetid;
 	    	var aaid=statuses[i].aaid;
 	    	if(assetid==assetId){ //this is the page for this asset
 	    		statuses[i].status=status='_present';
+	    		presentCount++
 	    		thisSelectedIndex=i;
 	    		//selectInstrument(i);
 	    	}
 	    	else if((typeof assetid !== 'undefined')&&(checkProgress(projectid,aaid,assetid))) {
 	    		statuses[i].status=status='_present';
+	    		presentCount++;
+	    	}
+
+	    	if(presentCount==7){
+	    		reportProgress(108,1064,10125,true);
+	    		completedCollection=true;
 	    	}
 
 	        $("<div id='field" + i + "'class='field'><span class='helper'><img src='/images/chilliroad/band/" + imgFilename + status +".png' style='" + styles + "' onclick='selectInstrument(" + i + ")'/></span></div>").appendTo(container);
 	    }
 	    //console.log("thisSelectedIndex: " + thisSelectedIndex);
-	    selectInstrument(thisSelectedIndex)
+	    if(thisSelectedIndex >= 0)
+	    		selectInstrument(thisSelectedIndex)
 }
 
 function distributeFields() {
@@ -174,6 +194,11 @@ function selectInstrument(i){
 	if(selectedCount==0){
 		audioState=undefined;
 		$('#centreimage').attr('src','/images/chilliroad/band/play_gray.png');
+
+	}
+	if((selectedCount==7)&&(completedCollection==true)){
+		soundUrl="/audio/music/fulltrack.mp3";//the whole thing
+
 	}
 
 }

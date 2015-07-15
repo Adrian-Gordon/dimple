@@ -48,9 +48,7 @@ div(id='dimple-content' class='dimple-body')
 						div(class='text-item-title' style='position:relative')
 							|!{asset.assetcaption }
 					div(class='text-item')
-					if((asset.data !== 'undefined')&&(asset.data !== ""))
-						div(class='json-text-item')
-						| !{asset.data}
+						|!{asset.data}
 				else if(asset.mimetype=='text/json')
 					div(class='json-text-item' id='json-attr-' +asset.asset._id )
 					if(asset.data)

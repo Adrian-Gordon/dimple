@@ -10,6 +10,7 @@ div.text-item{
 #proggymat{
 	position:absolute;
   width:100%;
+  padding-bottom:40%;
   
 
 }
@@ -154,7 +155,7 @@ div.text-item{
 .comment-text{
     margin-top:8px;
     overflow: hidden;
-  	height: 100px;
+  	/*height: 100px;*/
     text-align:left;
     font-size:1.4em;
     line-height:1.1em;

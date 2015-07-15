@@ -398,7 +398,7 @@ function addDimplePOI(label,lat,lon,assetassemblyid,layariconid,projectid,i,asse
         ALLMARKERS[assetassemblyid]=marker;
         google.maps.event.addListener(marker, 'click', function() {
 
-            var title=this.assetassembly.assetassemblytitle + " " + this.assetassembly.assetassemblyid;
+            var title=this.assetassembly.assetassemblytitle ;//+ " " + this.assetassembly.assetassemblyid;
             if(typeof title =='undefined'){
               title="";
             }

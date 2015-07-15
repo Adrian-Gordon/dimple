@@ -16,12 +16,16 @@ function renderList(asset,aaid,pid){
       //alert('got data');
 			//google.maps.event.addDomListener(window, 'load', function(){alert('loaded');renderDimplePOIs(data);});
 			//console.log("Data: " + JSON.stringify(data));
-			var contentStr="<div id='poitable'>";
+			var contentStr="<div class='image-caption-above'>" + listAsset.asset.captions.en +"</div><div id='poitable'>";
 
 			
+			//presentations.sort(function(a,b){
+            //    return(b.width - a.width);
+           //});
 
-
-			var projectAssemblies=data.assemblies;
+			var projectAssemblies=data.assemblies.sort(function(a,b){
+				return(a.assetassemblyid - b.assetassemblyid);
+			});
 			for(var i=0;i<projectAssemblies.length;i++){
 				var assembly=projectAssemblies[i];
 				 var aaid=assembly.assetassemblyid;
@@ -30,11 +34,22 @@ function renderList(asset,aaid,pid){
 				 var title=assembly.assetassemblytitle;
 				 var iconid=assembly.layariconid;
 
-				 var iconImageUrl=listAsset.data.markers[iconid];
+				 var iconImageUrl;//=listAsset.data.markers[iconid];
+
+				 if(checkProgress(projectid,aaid,null)){
+				      console.log("checkProgress returns true");
+				      iconImageUrl=listAsset.data.markerspresent[iconid];
+				      //icon=markerPresentImages[layariconid];
+				  }
+				  else{
+				  		iconImageUrl=listAsset.data.markers[iconid];
+				      //icon=markerImages[layariconid];
+				      console.log("checkProgress returns false");
+				  }
 
 				 if(typeof latitude !== 'undefined' && typeof longitude !== 'undefined'){
 				 	console.log("AA: " + aaid + " " + title +" lat: " + latitude + " long: " + longitude);
-				 	contentStr+="<div><a onclick='previewAssetAssembly(" + aaid + "," + projectid + ");'><img src='" + iconImageUrl +"' /></a><h2 onclick='previewAssetAssembly(" + assetassemblyid + "," + projectid + ");'>" + title + "</h2></div>";
+				 	contentStr+="<div><a href='/assemble/?a=1060&p=108&clon=" + longitude +"&clat=" + latitude + "&z=17&sib="+aaid + "'><img src='" + iconImageUrl +"' /></a><h2 onclick='previewAssetAssembly(" + aaid + "," + projectid + ");'>" + title + "</h2></div>";
 				 }
 			}
 
