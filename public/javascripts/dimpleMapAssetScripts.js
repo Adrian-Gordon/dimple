@@ -88,8 +88,8 @@ function renderMap(asset,aaid,pid){
 
 function renderDimplePOIs(jsonObject){
      var iconSize=jsonObject.iconsize; //get from elsewhere
-     console.log("iconSize" + iconSize);
-    //alert("renderDimplePOIs " + jsonObject);
+    // console.log("iconSize" + iconSize);
+    //console.log("renderDimplePOIs " + JSON.stringify(jsonObject));
     var response=jsonObject.response;
     var projectid=jsonObject.projectid;
    // alert(response);
@@ -102,13 +102,13 @@ function renderDimplePOIs(jsonObject){
        
        //sort by layariconid
        var sortedAssemblies =jsonObject.assemblies.sort(function(a,b){return(a.layariconid - b.layariconid)});
-       
+       //console.log('sorted: ' + JSON.stringify(sortedAssemblies));
        //find the first non-zero zero elememnt
        var startIndex;
        for(var i=0;i< sortedAssemblies.length;i++){
             var lat= sortedAssemblies[i].latitude;
             var lng= sortedAssemblies[i].longitude
-            if((lat!=0)&&(lng != 0)){
+            if((typeof lat !== 'undefined')&&(typeof lng !== 'undefined')&&(lat!=0)&&(lng != 0)){
                 startIndex=i;
                 break;
             }
@@ -123,14 +123,17 @@ function renderDimplePOIs(jsonObject){
            
             var lat= sortedAssemblies[i].latitude;
             var lng= sortedAssemblies[i].longitude;
-            if(i==startIndex){
-                maxLat=minLat=lat;
-                minLng=maxLng=lng;
+            //console.log('lat: ' + lat + 'lon: ' + lng);
+            if(typeof lat !== 'undefined' && typeof lng !== 'undefined'){
+              if(i==startIndex){
+                  maxLat=minLat=lat;
+                  minLng=maxLng=lng;
+              }
+              if(lat > maxLat)maxLat=lat;
+              if(lat < minLat)minLat=lat;
+              if(lng > maxLng)maxLng=lng;
+              if(lng< minLng)minLng=lng;
             }
-            if(lat > maxLat)maxLat=lat;
-            if(lat < minLat)minLat=lat;
-            if(lng > maxLng)maxLng=lng;
-            if(lng< minLng)minLng=lng;
         }
        // console.log("minLat: "  + minLat + " min Long: " + minLng + " maxLat: " + maxLat + " maxLong: " + maxLng)
         
