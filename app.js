@@ -740,7 +740,7 @@ function getAllProjectAssemblies(req,res){
         newAA.summarytext3=assetAssembly.textElements[language].summarytext3;
         newAA.summarytext4=assetAssembly.textElements[language].summarytext4;
 
-        newAA.visible=project.assetAssemblies[assetAssembly._id].visible;
+        newAA.visible=project.assetAssemblies[assetAssembly._id];//.visible;
         newAA.layarurl=assetAssembly.layarImageUrl;
         newAA.assetassemblydescription=assetAssembly.assetAssemblyDescription;
         newAA.assetassemblyid=assetAssembly._id;

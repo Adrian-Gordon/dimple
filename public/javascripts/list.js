@@ -33,6 +33,7 @@ function renderList(asset,aaid,pid){
 				 var longitude=assembly.longitude;
 				 var title=assembly.assetassemblytitle;
 				 var iconid=assembly.layariconid;
+				 var visible=assembly.visible;
 
 				 var iconImageUrl;//=listAsset.data.markers[iconid];
 
@@ -47,7 +48,7 @@ function renderList(asset,aaid,pid){
 				      console.log("checkProgress returns false");
 				  }
 
-				 if(typeof latitude !== 'undefined' && typeof longitude !== 'undefined'){
+				 if(typeof latitude !== 'undefined' && typeof longitude !== 'undefined' && visible){
 				 	console.log("AA: " + aaid + " " + title +" lat: " + latitude + " long: " + longitude);
 				 	contentStr+="<div><a href='/assemble/?a=1060&p=108&clon=" + longitude +"&clat=" + latitude + "&z=17&sib="+aaid + "'><img src='" + iconImageUrl +"' /></a><h2 onclick='previewAssetAssembly(" + aaid + "," + projectid + ");'>" + title + "</h2></div>";
 				 }

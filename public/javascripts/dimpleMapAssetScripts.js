@@ -96,12 +96,18 @@ function renderDimplePOIs(jsonObject){
     if(response=="OK"){ //session has timed out - go to login page
         //alert("REspopnse is OK");
       //  hideDimpleMarkers();
-       var n=jsonObject.assemblies.length;
-       POIArray=new Array(n);
+       
        //alert(n + " asset assemblies");
        
        //sort by layariconid
-       var sortedAssemblies =jsonObject.assemblies.sort(function(a,b){return(a.layariconid - b.layariconid)});
+
+       var filteredAssemblies=jsonObject.assemblies.filter(function(o){
+        return(o.visible);
+       });
+       var n=filteredAssemblies.length;
+       POIArray=new Array(n);
+       //var sortedAssemblies =jsonObject.assemblies.sort(function(a,b){return(a.layariconid - b.layariconid)});
+       var sortedAssemblies=filteredAssemblies.sort(function(a,b){return(a.layariconid - b.layariconid)});
        //console.log('sorted: ' + JSON.stringify(sortedAssemblies));
        //find the first non-zero zero elememnt
        var startIndex;
@@ -123,6 +129,7 @@ function renderDimplePOIs(jsonObject){
            
             var lat= sortedAssemblies[i].latitude;
             var lng= sortedAssemblies[i].longitude;
+            var visible=sortedAssemblies[i].visible;
             //console.log('lat: ' + lat + 'lon: ' + lng);
             if(typeof lat !== 'undefined' && typeof lng !== 'undefined'){
               if(i==startIndex){

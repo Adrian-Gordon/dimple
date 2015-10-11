@@ -113,7 +113,7 @@ function createNewSimpleAsset(assetType,mimetype){
 	                  	}
 
 	                  	assets.push(newAAasset);
-	                  	aamodel.set('asets',assets);
+	                  	aamodel.set('assets',assets);
 
 	                  	aamodel.save();
 	                    

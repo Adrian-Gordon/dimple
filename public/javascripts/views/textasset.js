@@ -43,8 +43,8 @@ dimpleConsoleApp.TextAssetView=Backbone.View.extend({
 
 	render:function(){
 		var templatehtml=this.template(this.model.toJSON());
-		console.log("model: " + JSON.stringify(this.model));
-       console.log("TextAssetView " + templatehtml);
+		//console.log("model: " + JSON.stringify(this.model));
+       //console.log("TextAssetView " + templatehtml);
         this.$el.html(templatehtml);
 
         var textAreaId="#htmledit-textarea-" + this.model.get("_id");
@@ -52,13 +52,28 @@ dimpleConsoleApp.TextAssetView=Backbone.View.extend({
         var presentations=this.model.get("presentations");
        
 
-        console.log("textAreaId: " + textAreaId );
+        //console.log("textAreaId: " + textAreaId );
+
+        var that=this;
 
         if(presentations[0].mimetype=="text/html"){
             setTimeout(function(){
             	//var editor=new wysihtml5.Editor(textAreaId,{toolbar:toolbarId,parserRules:wysihtml5ParserRules,stylesheets:['styles/editor.css']});
-            	$(textAreaId).jqte({fsize:false,format:false,remove:false,source:false,sub:false,strike:false,sup:false,color:false});//[0].execCommand('inserthtml','Here is some dynamic text');
+            	//$(textAreaId).jqte({fsize:false,format:false,remove:false,source:false,sub:false,strike:false,sup:false,color:false});//[0].execCommand('inserthtml','Here is some dynamic text');
 
+                $(textAreaId).jqte({fsize:false,format:false,remove:false,source:false,sub:false,strike:false,sup:false,color:false,change: function(){ 
+                    //alert("The editor is changed");
+                    var presentations=that.model.get("presentations");
+
+                        presentations[0].data=$(textAreaId).parent().parent().find('.jqte_editor').html();
+                        // var change = {};
+                        // change[target.name] = target.value;
+                         //console.log("change: " + JSON.stringify(change));
+                         //console.log("data is: " + presentations[0].data)
+                         that.model.set('presentations',presentations);
+                        that.model.save();
+                    //$(textAreaId).html(); }
+                }});
             	//$(textAreaId).val('<strong>testing</strong>').blur();
             	//$editor.updateFrame();
 

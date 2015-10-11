@@ -103,6 +103,7 @@ module.exports.updateAssetAssembly=function(req,res){
       var imageAsset=req.body.imageAsset;
       
       console.log("update AA textElement:" + JSON.stringify(textElements));
+      console.log("update AA assets: " + JSON.stringify(assets));
      // AssetModel.update({_id:id},
       //       {$set:{"assetSubtypeId":assetsubtypeid,"assetTypeId":assettypeid,"assetDescription":assetdescription,"posterAsset":posterassetid,"rating":rating,"userid":userid,"version":version,"captions":captions,"presentations":presentations}});
 
