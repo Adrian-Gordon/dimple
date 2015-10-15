@@ -60,12 +60,13 @@ function renderLollipopMan(asset,aaid,pid){
                 });*/
 
 
-	/*	$.ajax({
+		$.ajax({
 	       type:"GET",
 	       url:url,
 	       dataType : "jsonp",
 	       crossDomain: true,
 	       success:function(data){
+	       	renderWeather(data);
 	           $('#weathericondiv').click(function(o){ 
 				nextSoundSourceIndex=0;
 				_player=document.getElementById('weatheraudioplayer');
@@ -83,10 +84,10 @@ function renderLollipopMan(asset,aaid,pid){
 	       error: function(xhr, status, error) {
 	            console.log( "error" + JSON.stringify(error));
 	       }
-    	});*/
+    	});
 
 
-
+/*
 		$.get(url,{},'jsonp').done(function(data){
       //alert('got data');
 			//google.maps.event.addDomListener(window, 'load', function(){alert('loaded');renderDimplePOIs(data);});
@@ -109,7 +110,7 @@ function renderLollipopMan(asset,aaid,pid){
 
 		}).fail(function(error) {
 		    console.log( "error" + JSON.stringify(error));
-		  });
+		  });*/
 
 }
 
