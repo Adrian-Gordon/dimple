@@ -45,9 +45,49 @@ function renderLollipopMan(asset,aaid,pid){
 	//now get the weather
 
 
-	var url="http://api.openweathermap.org/data/2.5/weather?lat=54.98500918273556&lon=-1.576464492827654&units=metric";
+	var url="http://api.openweathermap.org/data/2.5/weather?lat=54.98500918273556&lon=-1.576464492827654&units=metric&appid=83b6f03858673e12e6021d8bc22b9d7b";
 		console.log("GO Get Weather");
-		$.get(url).done(function(data){
+
+		/*$.ajax({
+                    type: "GET",
+                    dataType: "jsonp",
+                    url: url,
+                    crossDomain: true,
+                    success: function(result) {
+                        console.log(result);
+                        //$("#div1").html(result.clouds.all);
+                    }
+                });*/
+
+
+	/*	$.ajax({
+	       type:"GET",
+	       url:url,
+	       dataType : "jsonp",
+	       crossDomain: true,
+	       success:function(data){
+	           $('#weathericondiv').click(function(o){ 
+				nextSoundSourceIndex=0;
+				_player=document.getElementById('weatheraudioplayer');
+
+				_player.addEventListener('ended',playNext);
+
+				_player.src=(soundSources[0]);
+				//_player.src="http://translate.google.com/translate_tts?tl=en&q=its%20raining%20heavily"
+
+				_player.play();
+				reportProgress(pid,aaid,asset.asset._id,true)
+				
+			});
+	       },
+	       error: function(xhr, status, error) {
+	            console.log( "error" + JSON.stringify(error));
+	       }
+    	});*/
+
+
+
+		$.get(url,{},'jsonp').done(function(data){
       //alert('got data');
 			//google.maps.event.addDomListener(window, 'load', function(){alert('loaded');renderDimplePOIs(data);});
 			renderWeather(data);
@@ -70,6 +110,7 @@ function renderLollipopMan(asset,aaid,pid){
 		}).fail(function(error) {
 		    console.log( "error" + JSON.stringify(error));
 		  });
+
 }
 
 function renderWeather(weather){
