@@ -1,4 +1,4 @@
-var cannedWeather=[
+/*var cannedWeather=[
 	"",
 	"its%20thundery%20right%20now ",
 	"its%20drizzling%20right%20now",
@@ -27,6 +27,39 @@ var cannedWeather=[
 	"theres%20a%20gale%20blowing"
 
 ]
+*/
+
+var cannedWeather=[
+	"",
+	"/audio/weather/weather01.mp3",
+	"/audio/weather/weather02.mp3",
+	"/audio/weather/weather03.mp3",
+	"/audio/weather/weather04.mp3",
+	"/audio/weather/weather05.mp3",
+	"/audio/weather/weather06.mp3",
+	"/audio/weather/weather07.mp3",
+	"/audio/weather/weather08.mp3",
+	"/audio/weather/weather09.mp3",
+	"/audio/weather/weather10.mp3",
+	"/audio/weather/weather11.mp3",
+	"/audio/weather/weather12.mp3",
+	"/audio/weather/weather13.mp3",
+	"/audio/weather/weather14.mp3",
+	"/audio/weather/weather15.mp3",
+	"/audio/weather/weather16.mp3",
+	"/audio/weather/weather17.mp3",
+	"/audio/weather/weather18.mp3",
+	"/audio/weather/weather19.mp3",
+	"/audio/weather/weather20.mp3",
+	"/audio/weather/weather21.mp3",
+	"/audio/weather/weather22.mp3",
+	"/audio/weather/weather23.mp3",
+	"/audio/weather/weather24.mp3",
+	"/audio/weather/weather25.mp3",
+
+
+
+]
 
 
 
@@ -45,7 +78,7 @@ function renderLollipopMan(asset,aaid,pid){
 	//now get the weather
 
 
-	var url="http://api.openweathermap.org/data/2.5/weather?lat=54.98500918273556&lon=-1.576464492827654&units=metric&appid=83b6f03858673e12e6021d8bc22b9d7b";
+	var url="http://api.openweathermap.org/data/2.5/weather?q=Newcastle,uk&&appid=83b6f03858673e12e6021d8bc22b9d7b";
 		console.log("GO Get Weather");
 
 		/*$.ajax({
@@ -125,7 +158,7 @@ function renderWeather(weather){
 	var iconUrl="http://openweathermap.org/img/w/" + iconId + ".png";
 
 
-	var temperature=weather.main.temp;
+	var temperature=weather.main.temp-273.15;
 
 	var windspeed=weather.wind.speed * 3.6;//for kph
 
@@ -218,9 +251,9 @@ function renderWeather(weather){
 	}
 
 
-	soundSources.push("http://translate.google.com/translate_tts?tl=en&q=" + cannedWeather[weatherIndex]);
-	soundSources.push("http://translate.google.com/translate_tts?tl=en&q=" + cannedWeather[temperatureIndex]);
-	soundSources.push("http://translate.google.com/translate_tts?tl=en&q=" + cannedWeather[windIndex]);
+	soundSources.push( cannedWeather[weatherIndex]);
+	soundSources.push( cannedWeather[temperatureIndex]);
+	soundSources.push( cannedWeather[windIndex]);
 
 
 	//soundSources.push("../audio/weather/weather" + weatherIndex + ".mp3");
