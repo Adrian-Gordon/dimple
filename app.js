@@ -39,7 +39,7 @@ if(typeof String.prototype.endsWith !== "function") {
     };
 }
 
-
+ var genava = require('genava');
 
 //nconf is used globally
 nconf=require('nconf');
@@ -273,6 +273,8 @@ app.get('/assemble',assembleAssets);
 app.get('/DimpleMap_v1',dimpleMap_v1);
 app.get('/GenerateStylesheet',generateStylesheet);
 
+app.get('/generateAvatar',generateAvatar);
+
 
 app.post('/UploadImageFromUrl',authenticateAPI,uploadImageFromUrl);
 
@@ -394,6 +396,24 @@ function check_auth_user(username,password,done,public_id){
 }
     
 
+function generateAvatar(req,res){
+  var userid=req.query.userid;
+
+
+  avatar(userid, {bg:'#Ffd841',theme:'default'}, function(err, filename) {
+    if(err)logger.error("Error: " + JSON.stringify(err));
+    console.log("Saved avatar as: "+filename);
+
+
+  
+
+
+    var returnObject={
+      url: '../images/avatars/' + userid +'.w.png'
+    }
+    res.json(returnObject);
+  });
+}
 
 
 
@@ -3657,6 +3677,20 @@ request.post({
   })*/
 
 
+// create a function that caches your avatar so you're not generating it every time you need it
+  function avatar(user_id, options, cb) {
+    var filename = './public/images/avatars/'+user_id+'.w.png'; // filename for our cached image
+    fs.exists(filename, function(exists) {
+      if(exists) return cb(null, filename);
+      else {
+        genava.gen(user_id, options, function(err, file) {
+          return fs.writeFile(filename, file, {encoding:'binary'}, function(err) {
+            return cb(err, filename);
+          });
+        });
+      }
+    });
+  };
 
 
 

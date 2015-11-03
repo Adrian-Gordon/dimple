@@ -47,7 +47,8 @@ function renderShoeTree(asset,aaid,pid){
 	commentsStr+="		</div>";
 	commentsStr+="		<div class='comment-comment'>";
     commentsStr+="		    <div class='comment-user'>";
-    commentsStr+="		         <span class='comment-user-username' id='comment-user-username'>J Bowe";
+   	commentsStr+="		    	<img id='comment-user-avatar'></img>";
+    commentsStr+="		         <span class='comment-user-username' id='comment-user-username'>";
     commentsStr+="		         </span>";
     commentsStr+="    		</div>";
     commentsStr+="		    <div class='comment-text'>";
@@ -203,11 +204,40 @@ function treeImageClick(){
 	std=shoetreeData.shoelocations[shid];
 	var src=std.contents[0].url;
 	var name=std.contents[0].user;
+
+	//get the parse user
+
+	var parseQuery=new Parse.Query(Parse.User);
+	parseQuery.equalTo("username",name);
+	parseQuery.find({
+		success:function(u){
+			console.log("parse query returns: " + JSON.stringify(u) + " " + u.length + " " + JSON.stringify(u[0]));
+
+			if(u.length > 0){
+				var avatarUrl=u[0].get('avatarurl');
+				var screenname=u[0].get('screenname');
+				console.log("screenname: " + screenname);
+				$('#comment-user-username').text(screenname);
+				$('#comment-user-avatar').attr('src',avatarUrl);
+			}
+
+		},
+
+    	error: function (error) {
+        //Show if no user was found to match
+        console.log("error: " + JSON.stringify(error));
+    	}
+	})
+
+
+
+
+
 	var msg=std.contents[0].message
 
 
 	$('#comment-img-img').attr('src',src);
-	$('#comment-user-username').text(name);
+	//$('#comment-user-username').text(name);
 	$('#comment-text-text').text(msg);
 
 	var shoeImgHeight=$(this).outerHeight(true);
@@ -400,10 +430,14 @@ function uploadShoe(userid,description,elid,targetIndex){
 
           		url:'/SelectImageAP?assetid=' + newImageAssetId + "&maxwidth=50",
           		user:'placeholder user',
-          		message:'placeholder message'
+          		message:$('#usermessage').val()
       		}
            //add it to the tree data
 
+           var currentUser = Parse.User.current(); 
+			if (currentUser) {
+				newContents.user=currentUser.get('username');
+			}
 
           shoetreeData.shoelocations[targetIndex].contents.push(newContents);
 

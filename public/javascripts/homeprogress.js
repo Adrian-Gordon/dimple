@@ -37,23 +37,25 @@ if (!Array.prototype.filter) {
 function renderHomeProgress(asset,aaid,pid){
 	console.log("Render Home Progress" + JSON.stringify(dimpleUserProgress));
 	var assemblies=[];
-	var assets=[]
-	for(var i=0;i<dimpleUserProgress.length;i++){
-		var dup=dimpleUserProgress[i];
-		console.log("apname: " + dup.appname);
-		console.log("dup: " + JSON.stringify(dup));
-		if(dup.get('appname')=='project108'){
-			if(assemblies.indexOf(dup.get('assetassemblyid'))== -1){
-				console.log("push assemblies " + dup.get('assetassemblyid'));
-				assemblies.push(dup.get('assetassemblyid'));
-			}
-			if(assets.indexOf(dup.get('assetid'))==-1){
-				console.log("push assets: " + dup.get('assetid'));
-				assets.push(dup.get('assetid'));
-			}
-		}
+	var assets=[];
+  if(typeof dimpleUserProgress !== 'undefined'){
+    	for(var i=0;i<dimpleUserProgress.length;i++){
+    		var dup=dimpleUserProgress[i];
+    		console.log("apname: " + dup.appname);
+    		console.log("dup: " + JSON.stringify(dup));
+    		if(dup.get('appname')=='project108'){
+    			if(assemblies.indexOf(dup.get('assetassemblyid'))== -1){
+    				console.log("push assemblies " + dup.get('assetassemblyid'));
+    				assemblies.push(dup.get('assetassemblyid'));
+    			}
+    			if(assets.indexOf(dup.get('assetid'))==-1){
+    				console.log("push assets: " + dup.get('assetid'));
+    				assets.push(dup.get('assetid'));
+    			}
+    		}
 
-	}
+    	}
+  }
 
 	var poisCount=assemblies.length;
 	var poisPlural='s';

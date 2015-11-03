@@ -14,6 +14,11 @@ var currentUser = Parse.User.current();
 if (currentUser) {
     document.getElementById('dimple-signup-login-widget-div').style.display='none';
     document.getElementById('dimple-remaining-content-div').style.display='block';
+
+    
+
+
+
 	} 
 }
 
@@ -28,16 +33,67 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 			var currentUser = Parse.User.current(); 
 			if (currentUser) {//already logged in
 								//show the content
+				var avatarUrl=currentUser.get("avatarurl");
 				console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
 				//remainingContentDiv.style.display='block';
+
+				if(typeof avatarUrl=='undefined'){
+			    	console.log("Go Get Avatarturl");
+
+			    	var url="../generateAvatar?userid=" + currentUser.getUsername();
+					
+					$.get(url).done(function(data){
+			      
+			      		console.log("avatarurl: " + JSON.stringify(data));
+			      		currentUser.set("avatarurl",data.url);
+			      		currentUser.save();
+
+
+					}).fail(function(error) {
+					    console.log( "error" + JSON.stringify(error));
+					  });
+			    }
 			}
 			else{ //create a new dummy user
 
 				var user = new Parse.User();
-				user.set("username", makeid(15));
+				var userid=makeid(15);
+				user.set("username", userid);
 				user.set("password", "pwanonymous");
+
+
+				var url="../generateAvatar?userid=" + userid;
+					
+					$.get(url).done(function(data){
+			      
+			      		console.log("avatarurl: " + JSON.stringify(data));
+			      		user.set("avatarurl",data.url);
+			      		user.signUp(null, {
+				  			success: function(user) {
+				    		// Hooray! Let them use the app now.
+				    			
+				    			//remainingContentDiv.style.display='block';
+				    			//loginDiv.style.display='none';
+				    			console.log("created new anon user : " + user.getUsername() + " " + JSON.stringify(user));
+
+				  			},
+				  			error: function(user, error) {
+				    			// Show the error message somewhere and let the user try again.
+				    			//if(error.code==202){
+				    				//msgspan.innerText=error.message;
+				    				//msgspan.style.display='block';
+									
+								//}
+								console.log("error: " + JSON.stringify(error))
+				 		 	}
+						});
+
+
+					}).fail(function(error) {
+					    console.log( "error" + JSON.stringify(error));
+					  });
 		 
-				user.signUp(null, {
+				/*user.signUp(null, {
 		  			success: function(user) {
 		    		// Hooray! Let them use the app now.
 		    			
@@ -55,7 +111,7 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 						//}
 						console.log("error: " + JSON.stringify(error))
 		 		 	}
-				});
+				});*/
 
 
 				
