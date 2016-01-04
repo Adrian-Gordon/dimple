@@ -136,6 +136,7 @@ function checkProgress(projectid,assetassemblyid,assetid){
 	}
 
 	var hasCompleted=false;
+	console.log("DUP: " +JSON.stringify(dimpleUserProgress));
 
 	for (var i = 0; i < dimpleUserProgress.length; i++) { 
 			var object = dimpleUserProgress[i];

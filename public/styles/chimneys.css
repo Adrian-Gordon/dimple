@@ -135,6 +135,13 @@
   /* text-align: center; */
   margin-left: auto;
   margin-right: auto;
+  font-size:1.5em;
+	margin-top:2%;
+}
+
+.allreadydonemessage{
+	font-size:1.5em;
+	margin-top:2%;
 }
 
 

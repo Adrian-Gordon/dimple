@@ -82,18 +82,24 @@ function renderProggyPiece(data,piece){
 	var absentUrl=piece.imgurlabsent;
 	var presentUrl=piece.imgurlpresent;
 
+	var iconpresentUrl=piece.iconimageurlpresent;
+	var iconabsentUrl=piece.iconimageurlabsent;
+
 
 	var src;
+	var iconsrc;
 
 	if(checkProgress(proggyProjectid,piece.assetassemblyid,piece.assetid)){
 		console.log("checkProgress returns true");
 		src=presentUrl;
+		iconsrc=iconpresentUrl
 	}
 	else{
 		src=absentUrl;
+		iconsrc=iconabsentUrl;
 		console.log("checkProgress returns false");
 	}
-	var iconimageurl=piece.iconimageurl;
+	//var iconimageurl=piece.iconimageurl;
 
 
 	var top=piece.icontop *bgHeight;
@@ -103,7 +109,7 @@ function renderProggyPiece(data,piece){
 	console.log("bgHeight: " + bgHeight + " bgWidth: " + bgWidth + " top: " + top + " left: " + left);
 
 	$('#' + data.divid).append("<div class='proggypiece'><img src='" + src + "'/></div>");
-	$('#' + data.divid).append("<div id='proggypiece-" + piece.assetassemblyid + "-" + piece.assetid + "' onclick=\"" +piece.onclickcallback + "(this," + piece.assetid + ",'" + iconimageurl +"')\" style='top:" + top + "px;left:" + left + "px' class='iconimage'><img src='" + iconimageurl + "' style='height:" + iconheight +"px'/></div>");
+	$('#' + data.divid).append("<div id='proggypiece-" + piece.assetassemblyid + "-" + piece.assetid + "' onclick=\"" +piece.onclickcallback + "(this," + piece.assetid + ",'" + iconsrc +"')\" style='top:" + top + "px;left:" + left + "px' class='iconimage'><img src='" + iconsrc + "' style='height:" + iconheight +"px'/></div>");
 
 
 
@@ -565,11 +571,11 @@ function shoeTreeCallback(el,assetid,iconurl){
 	$('#comment-img-img').attr('src',iconurl);
 	$('#comment-user-username').text("The Shoe Tree");
 	var text;
-	if(checkProgress(proggyProjectid,1036,10043)){
+	if(checkProgress(proggyProjectid,1036,10042)){
 		text="Your shoes are already in the Shoe Tree<br><br> <a href=''>See them here</a>"
 	}
 	else{
-		text="Launch your shoes into the Shoe Tree<br><br><a href='/assemble/?a=1036&p=108&clon=-1.586969532072544&clat=54.98502899769934&z=17&sib=1036'>Show it on the Map</a>"
+		text="Launch your shoes into <br><a href='/assemble/?a=1036&p=108&clon=-1.586969532072544&clat=54.98502899769934&z=17&sib=1036'>the shoe tree</a>"
 	}
 	$('#comment-text-text').html(text);
 

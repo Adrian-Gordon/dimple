@@ -24,6 +24,78 @@ if (currentUser) {
 
 function checkLoginAnonymous(asset,assetassemblyid,projectid){
 	data=asset.data;
+	//contentStr="<div class='avatartitle'>My Avatar</div><img id='avatar' src='></img><div class='avatartext'>Click to change me</div><div class='myname'><input id='screenname' type='text' placeholder='Your Name' /></div>";
+
+	var commentsStr="<div id='openModal' class='modalDialog'>";
+	commentsStr+="</div>";
+	commentsStr+="		<div  class='login-comments' id='login-comments'>";
+	commentsStr+="		<div id='login-comments-content'>";
+	commentsStr+="			<div class='login-close-button'>";
+    commentsStr+="	    		<img class='login-close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png')/>";
+    commentsStr+="			</div>";
+    //commentsStr+="		<div>";
+	commentsStr+="		<div class='login-comment-comment'>";
+    commentsStr+="		    <div class='login-comment-text'>";
+    commentsStr+="		       <span class='login-comment-text-text' id='login-comment-text-text'>Before you begin. you can choose a monster avatar, and tell us your name";
+    commentsStr+="					<div class='avatartitle'>My Avatar</div>"
+    commentsStr+="					 <img id='avatar' src=''></img>";
+    commentsStr+="								<div class='avatartext'>Click to change me</div>";
+    commentsStr+="								<div class='myname'>";
+    commentsStr+="									<input id='screenname' type='text' placeholder='Your Name' />";
+    commentsStr+="								</div>";
+
+    commentsStr+="       		</span>";
+    commentsStr+="				<div class='login-action-button-div'><a id='userchangeok' class='login-action-button login-shadow login-animate login-blue'>OK</a></div>";
+    commentsStr+="    		</div>";
+    commentsStr+="		</div>";
+    commentsStr+="	</div>";
+	commentsStr+="	</div>";
+	commentsStr+="	</div>";
+	
+
+
+	$('#' + asset.data.divid).append(commentsStr);
+
+	$('#avatar').click(function(){
+
+			var currentUser = Parse.User.current(); 
+			if (currentUser) {
+				var id=makeid(15);
+				var url="../generateAvatar?userid=" + id;
+						
+						$.get(url).done(function(data){
+				      
+				      		console.log("avatarurl: " + JSON.stringify(data));
+				      		currentUser.set("avatarurl",data.url);
+				      		currentUser.save();
+				      		$('#avatar').attr('src',data.url);
+
+
+						}).fail(function(error) {
+						    console.log( "error" + JSON.stringify(error));
+						  });
+			}
+
+		});
+
+	$('#screenname').on('input',function(){
+		var currentUser = Parse.User.current(); 
+			if (currentUser) {
+				console.log('name:' + this.value);
+				currentUser.set("screenname",this.value);
+				currentUser.save();
+			}
+
+		});
+
+	$('.login-close-button').on('click',function(){
+			$('#parselogin').css({'display':'none'});
+		})
+
+	$('#userchangeok').on('click',function(){
+			$('#parselogin').css({'display':'none'});
+		})
+
 
 	$.getScript("http://www.parsecdn.com/js/parse-1.2.13.min.js",function(){
 
@@ -34,6 +106,9 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 			if (currentUser) {//already logged in
 								//show the content
 				var avatarUrl=currentUser.get("avatarurl");
+				var screenname=currentUser.get('screenname');
+				$('#screenname').attr('value',screenname);
+				$('#mescreenname').attr('value',screenname);
 				console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
 				//remainingContentDiv.style.display='block';
 
@@ -45,6 +120,7 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 					$.get(url).done(function(data){
 			      
 			      		console.log("avatarurl: " + JSON.stringify(data));
+			      		$('#avatar').attr('src',data.url);
 			      		currentUser.set("avatarurl",data.url);
 			      		currentUser.save();
 
@@ -53,6 +129,9 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 					    console.log( "error" + JSON.stringify(error));
 					  });
 			    }
+			    else{
+			    	$('#avatar').attr('src',avatarUrl);
+			    }
 			}
 			else{ //create a new dummy user
 
@@ -60,6 +139,7 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 				var userid=makeid(15);
 				user.set("username", userid);
 				user.set("password", "pwanonymous");
+				user.set("firstuse",true);
 
 
 				var url="../generateAvatar?userid=" + userid;
@@ -68,6 +148,7 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 			      
 			      		console.log("avatarurl: " + JSON.stringify(data));
 			      		user.set("avatarurl",data.url);
+			      		$('#avatar').attr('src',data.url);
 			      		user.signUp(null, {
 				  			success: function(user) {
 				    		// Hooray! Let them use the app now.
@@ -75,6 +156,10 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 				    			//remainingContentDiv.style.display='block';
 				    			//loginDiv.style.display='none';
 				    			console.log("created new anon user : " + user.getUsername() + " " + JSON.stringify(user));
+				    			$('#openModal').width($('#dimple-content').width());
+				    			$('#openModal').height($( window ).height());
+				    			//window.location='../assemble?a=1070&p=108';
+				    			$('#parselogin').fadeIn('fast');//toggle();
 
 				  			},
 				  			error: function(user, error) {
@@ -241,4 +326,6 @@ function makeid(n)
 
     return text;
 }
+
+
 

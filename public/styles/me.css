@@ -1,3 +1,36 @@
 input{
 	text-align:center;
+	font-size:1em;
+}
+
+
+.comment-text{
+    margin-top:8px;
+    overflow: hidden;
+  /*	height: 50px;*/
+  	text-align:center;
+    
+}
+.comment-text-text{
+    margin-left:0px;
+    font-size:1.2em;
+   
+}
+
+.avatartitle{
+  margin-top:7px;
+  font-weight:bold;
+}
+
+.avatartext{
+  font-style:italic;
+  margin-bottom: 12px;
+  margin-top:3px;
+}
+
+.myname{
+  padding-bottom:7px;
+}
+#mescreenname{
+  font-size:1em;
 }

@@ -30,12 +30,13 @@ function renderShoeTree(asset,aaid,pid){
 	$('#' + shoetreeData.divid).append(interactionsS);
 	
 	//$('#' + data.divid).append("<div style='visibility:visible' id='shoeimgwrapper' class='shoeimgwrapper'><img src='/images/converse.jpg' /></div>");
-	$('#' + shoetreeData.divid).append("<div><div style='visibility:visible' id='shoeimgwrapper' class='shoeimgwrapper'><img id='shoeimg' src='' /></div>");
+	$('#' + shoetreeData.divid).append("<div><div style='visibility:visible' id='shoeimgwrapper' class='shoeimgwrapper'><img style='background-color:grey;opacity:0.5' id='shoeimg' src='/images/chilliroad/proggy/noun_high-heel_2213.png' /></div>");
 	$('#' + shoetreeData.divid).append("<div style='visibility:hidden' id='msginputdiv'><input type='text' size='35' id='usermessage' placeholder='Leave a message with your shoes' /></div></div>"); 
 	$('#' + shoetreeData.divid).append("<a id='launch' style='display:none' class='action-button shadow animate blue'>launch!</a>");
 	$('#' + shoetreeData.divid).append("<div class='upload' id='uploaddiv'><a id='choose' class='action-button shadow animate blue'>upload!</a><input type='file' name='upload' accept='image/*' id=fileUpload></input></div>");
 
-	var commentsStr="<div style='display:none;height:100px;width: 300px !important;' class='comments' id='comments'>";
+	//var commentsStr="<div style='display:none;height:100px;width: 300px !important;' class='comments' id='comments'>";
+	var commentsStr="<div style='display:none;' class='comments' id='comments'>";
 	commentsStr+="		<div class='comments-before-up' id='commentbefore'></div>";
 	commentsStr+="		<div id='comments-content'>";
 	commentsStr+="			<div class='close-button'>";
@@ -127,6 +128,8 @@ function renderShoeTree(asset,aaid,pid){
 
 		$('.close-button').on('click',function(){
 			$('#comments').css({'display':'none'});
+			$('#comment-user-avatar').attr('src','');
+			$('#comment-user-username').html("");
 		})
 
 		$('.treeimgwrapper').on('click',treeImageClick);
@@ -138,12 +141,13 @@ function renderShoeTree(asset,aaid,pid){
 //<div style="visibility:visible;width:40px;height:40px;top:113.80000000000001px;left:160px;margin-top:-20px;margin-left:-20px" id="shoeimgwrapper" class="shoeimgwrapper">
 		var showImageWrapperX=(treewidth/2) - (shoeImageWrapperWidth /2);
 
-		$('#uploaddiv').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10+ 'px'});
-		$('#launch').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10+ 'px'});
+		$('#uploaddiv').css({'top': treeheight -20 +'px','left': (showImageWrapperX/2) -10+ 'px'});
+		$('#launch').css({'top': treeheight -20 +'px','left': (showImageWrapperX/2) -10+ 'px'});
+		$('#shoeimg').css({'opacity':1})
 		//$('#choose').css({'top': treeheight + 40 +'px','left': (showImageWrapperX/2) -10 + 'px'});
 		//$('#fileUpload').css({'top': treeheight + 40+'px','left': (showImageWrapperX/2) -10 + 'px'});
-		$('#shoeimgwrapper').css({'top': treeheight + 'px','left': showImageWrapperX + 'px'});
-		$('#msginputdiv').css({'top': treeheight + 40 +'px','left': showImageWrapperX + 115 +'px'});
+		$('#shoeimgwrapper').css({'top': treeheight -20 + 'px','left': showImageWrapperX + 'px','visibility':'visible'});
+		$('#msginputdiv').css({'top': treeheight -13+'px','left': showImageWrapperX + 70 +'px'});
 
 		$('#fileUpload').change(function(evt) {
 			console.log("fileupload change");
@@ -363,6 +367,7 @@ function launch(){
 
 			$('#sir'+targetIndex).on('click',treeImageClick);
 			$('#shoeimgwrapper').toggle();
+			$('#launch').toggle();
 
 			//now upload the file
 

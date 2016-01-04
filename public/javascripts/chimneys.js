@@ -67,7 +67,7 @@ function renderChimneys(asset,aaid,pid){
 	chimneysHtml+="</div>"; //chimneyimages
 	chimneysHtml+="</div>"; //satellite
 	chimneysHtml+="<div id='alldonemessage' style='display:none'>";
-	chimneysHtml+="<span>Great,you got them all!</span>"
+	chimneysHtml+="<span>Great, you got them all!</span>"
 		
 	}
 	else{
@@ -76,23 +76,24 @@ function renderChimneys(asset,aaid,pid){
 		chimneysHtml+="<audio id='succeedAudio'><source src='/images/chilliroad/rosette/correct.mp3' type='audio/mpeg'></audio>";
 		chimneysHtml+="<div class='satellite'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/satellite.png' />";
-		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper'  style='display:block;top:20%;left:60%'>";
+		chimneysHtml+="<div id='chimg0' class='chimneyimgwrapper'  style='display:block;top:18%;left:60%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney1_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg1' class='chimneyimgwrapper' style='display:block;top:45%;left:35%'>";
+		chimneysHtml+="<div id='chimg1' class='chimneyimgwrapper' style='display:block;top:43%;left:35%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney3_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg2' class='chimneyimgwrapper' style='display:block;top:64%;left:63%'>";
+		chimneysHtml+="<div id='chimg2' class='chimneyimgwrapper' style='display:block;top:62%;left:63%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney2_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg3' class='chimneyimgwrapper' style='display:block;top:25%;left:10%'>";
+		chimneysHtml+="<div id='chimg3' class='chimneyimgwrapper' style='display:block;top:23%;left:10%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney5_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='chimg4' class='chimneyimgwrapper' style='display:block;top:50%;left:10%'>";
+		chimneysHtml+="<div id='chimg4' class='chimneyimgwrapper' style='display:block;top:48%;left:10%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney4_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='alreadydonemessage' class='visible'>";
-		chimneysHtml+="<span>You already know all of these!</span>"
+		chimneysHtml+="<div id='alreadydonemessage' style='font-size:1.5em;margin-top:2%;'>";
+		chimneysHtml+="<span >You already know all of these!</span>"
+		chimneysHtml+="</div>";
 		chimneysHtml+="</div>";//donemessage
 		chimneysHtml+="</div>"; //satellite
 	}

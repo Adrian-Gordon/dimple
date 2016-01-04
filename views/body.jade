@@ -45,7 +45,7 @@ div(id='dimple-content' class='dimple-body')
 			if asset.assettypeid==0
 				if(asset.mimetype=='text/html')
 					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-						div(class='text-item-title' style='position:relative')
+						div(class='text-item-title')
 							|!{asset.assetcaption }
 					div(class='text-item')
 						|!{asset.data}

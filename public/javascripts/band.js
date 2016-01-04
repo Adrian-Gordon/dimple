@@ -12,12 +12,12 @@ var completedCollection=false;
 
 
 var statuses=[
-	{'status':'_gray','img':'tuba','styles':'padding-top:18px;width:75%','styles_m':'padding-top:18px;width:75%','aaid':1057,'assetid':10128},
+	{'status':'_gray','img':'tuba','styles':'padding-top:18px;width:75%','styles_m':'padding-top:18px;width:75%','aaid':1068,'assetid':10128},
 	{'status':'_gray','img':'guitar','styles':'padding-top:18px;width:75%','styles_m':'padding-left:0px;padding-top:18px;width:75%','aaid':1040,'assetid':10146},
-	{'status':'_gray','img':'drum','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:00px','aaid':1030,'assetid':10143},
-	{'status':'_gray','img':'saxophone','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:0px','aaid':1034,'assetid':10140},
+	{'status':'_gray','img':'drum','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:00px','aaid':1069,'assetid':10143},
+	{'status':'_gray','img':'saxophone','styles':'padding-top:10px','styles_m':'padding-top:10px;padding-left:0px','aaid':1031,'assetid':10140},
 	{'status':'_gray','img':'pan','styles':'padding-top:18px;width:70%','styles_m':'padding-top:18px;width:70%;padding-left:0px','aaid':1053,'assetid':10131},
-	{'status':'_gray','img':'trumpet','styles':'padding-top:20px;width:73%','styles_m':'padding-top:20px;width:73%;padding-left:0px','aaid':1026,'assetid':10138},
+	{'status':'_gray','img':'trumpet','styles':'padding-top:20px;width:73%','styles_m':'padding-top:20px;width:73%;padding-left:0px','aaid':1025,'assetid':10138},
 	{'status':'_gray','img':'clarinet','styles':'padding-top:11px;width:73%','styles_m':'padding-left:0px;padding-top:11px;width:68%','aaid':1054,'assetid':10149}
 
 ]
@@ -32,7 +32,7 @@ function renderBand(asset,aaid,pid){
 	projectid=pid;
 	bandData=asset.data;
 
-	//reportProgress(pid,aaid,asset.asset._id,true);
+	reportProgress(pid,aaid,asset.asset._id,true);
 	//console.log("Asset: " + JSON.stringify(asset));
 
 	//var bandHtml="<div id=\"center\"><span class='helper'><img src='/images/chilliroad/band/play_grey.png'/></span></div>";
@@ -117,6 +117,7 @@ function createFields() {
 	    	
 	    	var status=statuses[i].status;
 	    	var assetid=statuses[i].assetid;
+	    	console.log('i: ' + i + " assetid: " + assetid);
 	    	var aaid=statuses[i].aaid;
 	    	if(assetid==assetId){ //this is the page for this asset
 	    		statuses[i].status=status='_present';
