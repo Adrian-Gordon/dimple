@@ -66,6 +66,7 @@ var AssetAssemblySchema=new Schema({
         assets:[{assetid:Number,index:Number}],
         textElements:Object,
         minzoom:Number,
+        arp:Boolean
         /*[{
           languageCode: String,
           title: String,

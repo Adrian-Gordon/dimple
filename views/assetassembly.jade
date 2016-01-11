@@ -25,6 +25,13 @@ html
 		script.
 			videojs.options.flash.swf="/javascripts/video-js.swf"
 		-}
+		-if(autoreportprogress){
+			script.
+				$.getScript("http://www.parsecdn.com/js/parse-1.2.13.min.js",function(){
+				Parse.initialize("UBibVG5WBbXwa658BS1yVfCONmw3YKCRvpjx3wqy", "c7Ks1BrdmgWylo6wIP526DO67ne2E0HgD7TiYGPa");
+				reportProgress(!{projectid},!{assetassemblyid},-1,true);
+				})
+		-}
 
 	body(style='margin:0px')
 		-if(!iswirelessdevice){

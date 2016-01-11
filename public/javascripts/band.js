@@ -40,32 +40,36 @@ function renderBand(asset,aaid,pid){
 	 bandHtml+="<div id=\"container\">";
 	
     bandHtml+="<div id=\"center\"><div id='loader'><img src='/images/loading.gif' /></div><span class='helper'><img id='centreimage' src='/images/chilliroad/band/play_gray.png' onclick='playpauseaudio()'/></span></div>";
-	bandHtml+="</div>";
+	//bandHtml+="</div>";
 
 	bandHtml+="<audio id='audioplayer'></audio>"
-	var commentsStr="<div style='display:none;' class='comments' id='comments'>";
-	commentsStr+="		<div class='comments-before-up' id='commentbefore'></div>";
-	commentsStr+="		<div id='comments-content'>";
-	commentsStr+="			<div class='close-button'>";
-    commentsStr+="	    		<img class='close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png' />";
-    commentsStr+="			</div>";
+	bandHtml+="<div style='display:none;' class='comments' id='comments'>";
+	bandHtml+="		<div class='comments-before-up' id='commentbefore'></div>";
+	bandHtml+="		<div id='comments-content'>";
+	bandHtml+="			<div class='close-button'>";
+    bandHtml+="	    		<img class='close-button-img'  src='https://cdn4.iconfinder.com/data/icons/miu/22/circle_close_delete-128.png' />";
+    bandHtml+="			</div>";
     //commentsStr+="		<div>";
-    commentsStr+="		<div class='comment-img'>";
-	commentsStr+="			<img id='comment-img-img' class='comment-img-img' src='http://i.guim.co.uk/media/w-620/h--/q-95/a54bca62f9acf91b80813fa68b271c563e8614c0/0_0_3294_1977/1000.jpg' />";
-	commentsStr+="		</div>";
-	commentsStr+="		<div class='comment-comment'>";
-    commentsStr+="		    <div class='comment-user'>";
-    commentsStr+="		         <span class='comment-user-username' id='comment-user-username'>Oops!";
-    commentsStr+="		         </span>";
-    commentsStr+="    		</div>";
-    commentsStr+="		    <div class='comment-text'>";
-    commentsStr+="		       <span class='comment-text-text' id='comment-text-text'>You must collect this instrument before you can select it to listen";
-    commentsStr+="       		</span>";
-    commentsStr+="    		</div>";
-    commentsStr+="		</div>";
-    commentsStr+="	</div>";
-	commentsStr+="	</div>";
-	commentsStr+="	</div>";
+    bandHtml+="		<div class='comment-img'>";
+	bandHtml+="			<img id='comment-img-img' class='comment-img-img' src='http://i.guim.co.uk/media/w-620/h--/q-95/a54bca62f9acf91b80813fa68b271c563e8614c0/0_0_3294_1977/1000.jpg' />";
+	bandHtml+="		</div>";
+	bandHtml+="		<div class='comment-comment'>";
+    bandHtml+="		    <div class='comment-user'>";
+    bandHtml+="		         <span class='comment-user-username' id='comment-user-username'>Oops!";
+    bandHtml+="		         </span>";
+    bandHtml+="    		</div>";
+    bandHtml+="		    <div class='comment-text'>";
+    bandHtml+="		       <span class='comment-text-text' id='comment-text-text'>You must collect this instrument before you can select it to listen to.<p>Find it somewhere on <a href='/assemble?a=1060&p=108'>The Map</a>";
+    bandHtml+="       		</span>";
+    bandHtml+="    		</div>";
+    bandHtml+="		</div>";
+    bandHtml+="	</div>";
+	bandHtml+="	</div>";
+	bandHtml+="	</div>";
+
+	bandHtml+="</div>";
+
+
 
 
 
@@ -74,7 +78,7 @@ function renderBand(asset,aaid,pid){
 	
 
 	$('#' + bandData.divid).append(bandHtml);
-	$('#' + bandData.divid).append(commentsStr);
+	//$('#' + bandData.divid).append(commentsStr);
 	createFields();
 	distributeFields();
 	$('.close-button').on('click',function(){
@@ -169,6 +173,7 @@ function selectInstrument(i){
 		statuses[i].status='_selected';
 		var img=statuses[i].img;
 		$('#field' + i +" img").attr('src','/images/chilliroad/band/' +img + statuses[i].status + ".png");
+		$('#comment-img-img').attr('src','/images/chilliroad/band/' +img + statuses[i].status + ".png");
 		$('#centreimage').attr('src','/images/chilliroad/band/play_selected.png');
 		 soundUrl=buildSoundUrl();
 		 audioState='play';
@@ -179,6 +184,7 @@ function selectInstrument(i){
 		statuses[i].status='_present';
 		var img=statuses[i].img;
 		$('#field' + i +" img").attr('src','/images/chilliroad/band/' +img + statuses[i].status + ".png");
+		$('#comment-img-img').attr('src','/images/chilliroad/band/' +img + statuses[i].status + ".png");
 		$('#centreimage').attr('src','/images/chilliroad/band/play_selected.png');
 		 soundUrl=buildSoundUrl();
 		 audioState='play';
@@ -186,8 +192,12 @@ function selectInstrument(i){
 	}
 	else{
 		audioState=undefined;
-		var top=$('#field' + i).offset().top -($('#field' + i).height() /2);
-		var left=$('#field' + i).offset().left-$('#comments').width();
+		//var top=$('#field' + i).offset().top -($('#field' + i).height() /2);
+		//var left=$('#field' + i).offset().left-$('#comments').width();
+		var img=statuses[i].img;
+		$('#comment-img-img').attr('src','/images/chilliroad/band/' +img + statuses[i].status + ".png");
+		var top=$('#field' + i).position().top + $('#field' + i).height();
+		var left=$('#field' + i).position().left-($('#comments').width() /2) + ($('#field' + i).width() /2);
 		$('#comments').css({'left':left +'px','top':top + 'px'});
 		$('#comments').css({'display':'block'});
 	}

@@ -71,7 +71,7 @@ var theWeather;
 function renderLollipopMan(asset,aaid,pid){
 	console.log("render lollipop man");
 
-	var contentStr="<div><div class='lmleft'><img src='/images/chilliroad/lollipopman/lollipop_man.png' /><div id='weathericondiv'><img id='weathericon' style='width:80px'/></div></div></div><div><audio id='weatheraudioplayer'></audio></div>";
+	var contentStr="<div><div class='image-caption-above'>Click the lollipop to get today's weather</div><div class='lmleft'><img src='/images/chilliroad/lollipopman/lollipop_man.png' /><div id='weathericondiv'><img id='weathericon' style='width:80px'/></div></div></div><div><audio id='weatheraudioplayer'></audio></div>";
 
 	$('#' + asset.data.divid).append(contentStr);
 

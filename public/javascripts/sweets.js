@@ -98,32 +98,32 @@ function renderSweets(asset,aaid,pid){
 	sweetsHtml+="<tr id='sweets0' class='sweetsrow visible'>";
 	sweetsHtml+="<td class='imagetd'><div class='sweetimgwrapper'><img  src='/images/chilliroad/sweetshop/question-mark.png'/></div></td>";
 	sweetsHtml+="<td><span id='row0' class='sweetstext'>";
-	sweetsHtml+="____ H_____";//LOVE HEARTS
+	sweetsHtml+="L___ H_____";//LOVE HEARTS
 	sweetsHtml+="</span></td>"
 	sweetsHtml+="</tr>";//sweetsrow
 	
 	sweetsHtml+="<tr id='sweets1' class='sweetsrow invisible'>";
 	sweetsHtml+="<td class='imagetd'><div class='sweetimgwrapper'><img class='sweetsimg' src='/images/chilliroad/sweetshop/question-mark.png'/></div></td>";
 	sweetsHtml+="<td><span id='row1' class='sweetstext'>";
-	sweetsHtml+="P____ _______";//PARMA VIOLETS
+	sweetsHtml+="P____ V______";//PARMA VIOLETS
 	sweetsHtml+="</span></td>"
 	sweetsHtml+="</tr>";//sweetsrow
 	sweetsHtml+="<tr id='sweets2' class='sweetsrow  invisible'>";
 	sweetsHtml+="<td class='imagetd'><div class='sweetimgwrapper'><img class='sweetsimg' src='/images/chilliroad/sweetshop/question-mark.png'/></div></td>";
 	sweetsHtml+="<td><span id='row2' class='sweetstext'>";
-	sweetsHtml+="______Y _";//VICTORY V
+	sweetsHtml+="V______ V";//VICTORY V
 	sweetsHtml+="</span></td>"
 	sweetsHtml+="</tr>";//sweetsrow
 	sweetsHtml+="<tr id='sweets3' class='sweetsrow  invisible'>";
 	sweetsHtml+="<td class='imagetd'><div class='sweetimgwrapper'><img class='sweetsimg' src='/images/chilliroad/sweetshop/question-mark.png'/></div></td>";
 	sweetsHtml+="<td><span id='row3' class='sweetstext'>";
-	sweetsHtml+="___B___";//HUMBUGS
+	sweetsHtml+="H__B___";//HUMBUGS
 	sweetsHtml+="</span></td>"
 	sweetsHtml+="</tr>";//sweetsrow
 	sweetsHtml+="<tr id='sweets4' class='sweetsrow  invisible'>";
 	sweetsHtml+="<td class='imagetd'><div class='sweetimgwrapper'><img class='sweetsimg' src='/images/chilliroad/sweetshop/question-mark.png'/></div></td>";
 	sweetsHtml+="<td><span id='row4' class='sweetstext'>";
-	sweetsHtml+="B____ B______";//BLACK BULLETS
+	sweetsHtml+="B___K B______";//BLACK BULLETS
 	sweetsHtml+="</span></td>"
 	sweetsHtml+="</tr>";//sweetsrow
 	sweetsHtml+="</table>";

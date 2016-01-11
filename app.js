@@ -1362,6 +1362,11 @@ function renderAssetAssembly(device,res){
   returnObject.visible=device.visible;
 
   returnObject.title=device.assetAssembly.textElements[device.languageCode].title;
+  returnObject.autoreportprogress=device.assetAssembly.arp;
+
+  //logger.error("device.assetAssembly: " + JSON.stringify(device.assetAssembly.arp));
+
+ // logger.error("returnObject.autoreportprogress: " + returnObject.autoreportprogress)
 
   if(typeof returnObject.title=='undefined'){
     returnObject.title=null;

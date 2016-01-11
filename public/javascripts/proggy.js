@@ -233,7 +233,7 @@ var pos=$(el).position();
 		text="You already got a weather report from the Lollipop Man.<br><br> <a href='/assemble/?a=1050&p=108'>Get the latest one</a>"
 	}
 	else{
-		text="Get a weather report from the Lollipop Man. <br><br>Show him on the <a href='/assemble/?a=1060&p=108&clon=-1.576464492827654&clat=54.98500918273556&z=17&sib=1050'>Map</a>"
+		text="Get a weather report from <a href='/assemble/?a=1050&p=108'>The Lollipop Man</a>"
 	}
 	$('#comment-text-text').html(text);
 
@@ -296,10 +296,10 @@ function musicCallback(el,assetid,iconurl){
 	$('#comment-user-username').text("Chilli Road Band");
 	var text;
 	if(checkProgress(proggyProjectid,1064,10125)){
-		text="You already have the complete set of instruments from the Chilli Road Band<br><br> <a href='/assemble/?a=1064&p=108'>Listen</a>"
+		text="You already have the complete set of instruments <br><br><a href='/assemble/?a=1064&p=108'>Listen</a>"
 	}
 	else{
-		text="You need to collect <em>all</em> of the instruments from the Chilli Road Band <br><a href='/assemble/?a=1064&p=108'>Listen to your collection</a>"
+		text="You need to collect <em>all</em> of the instruments from the Chilli Road Band <br><br><a href='/assemble/?a=1064&p=108'>Listen to your collection</a>"
 	}
 	$('#comment-text-text').html(text);
 
@@ -426,7 +426,7 @@ function chimneysCallback(el,assetid,iconurl){
 		text="You already know where the school chimneys go<br><br> <a href='/assemble/?a=1049&p=108'>See them here</a>"
 	}
 	else{
-		text="Do you know where the chimneys go?<br> <a href='/assemble/?a=1049&p=108'>Find out here</a>"
+		text="Do you know where the chimneys go?<br><br> <a href='/assemble/?a=1049&p=108'>Find out here</a>"
 	}
 	$('#comment-text-text').html(text);
 
@@ -497,7 +497,7 @@ function sweetshopCallback(el,assetid,iconurl){
 		text="You already know your old fashioned sweets<br><br> <a href='/assemble/?a=1029&p=108'>See them here</a>"
 	}
 	else{
-		text="How well do you know your old fashioned sweeties?<br> <a href='/assemble/?a=1029&p=108'>Find out here</a>"
+		text="How well do you know your old fashioned sweeties?<br><br> <a href='/assemble/?a=1029&p=108'>Find out here</a>"
 	}
 	$('#comment-text-text').html(text);
 

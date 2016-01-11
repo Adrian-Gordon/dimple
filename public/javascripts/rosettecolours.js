@@ -103,6 +103,10 @@ function rosetteSucceed(el,colour){
 	//have we completed the task
 
 	if(hasPurple && hasWhite && hasGreen){
+		$('#congrats').text("Well done, you got them all");
+		$('#congrats').removeClass("hidden");
+		$('#congrats').addClass("visible");
+
 		reportProgress(projectid,assetassemblyid,assetId,true);
 	}
 }

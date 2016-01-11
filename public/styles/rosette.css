@@ -2,9 +2,15 @@
 	display:none;
 }
 
+
+#congrats.visible{
+	display:inline-block;
+}
 .visible{
 	display:block;
 }
+
+
 
 .rosette{
 	text-align:center;
