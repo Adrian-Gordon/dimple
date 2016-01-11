@@ -3684,7 +3684,7 @@ request.post({
 
 // create a function that caches your avatar so you're not generating it every time you need it
   function avatar(user_id, options, cb) {
-    var filename = './public/images/avatars/'+user_id+'.w.png'; // filename for our cached image
+    var filename = __dirname + '/public/images/avatars/'+user_id+'.w.png'; // filename for our cached image
     fs.exists(filename, function(exists) {
       if(exists) return cb(null, filename);
       else {
