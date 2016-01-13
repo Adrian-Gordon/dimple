@@ -363,7 +363,7 @@ function rosetteCallback(el,assetid,iconurl){
 		text="You already know the colours of the Suffragette movement<br><br> <a href='/assemble/?a=1055&p=108'>Show them on a Rosette</a>"
 	}
 	else{
-		text="Do you know the colours of the Suffragette Movement? <a href='/assemble/?a=1055&p=108'>Find out</a>";
+		text="Do you know the colours of the Suffragette Movement? <br><a href='/assemble/?a=1055&p=108'>Find out</a>";
 	}
 	$('#comment-text-text').html(text);
 
