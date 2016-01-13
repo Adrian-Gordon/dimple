@@ -132,14 +132,15 @@
 #alldonemessage{
 	width: 50%;
   /*float: left;*/
-  /* text-align: center; */
+   text-align: center; 
   margin-left: auto;
   margin-right: auto;
   font-size:1.5em;
 	margin-top:2%;
 }
 
-.allreadydonemessage{
+#alreadydonemessage{
+	text-align:center;
 	font-size:1.5em;
 	margin-top:2%;
 }

@@ -91,7 +91,7 @@ function renderChimneys(asset,aaid,pid){
 		chimneysHtml+="<div id='chimg4' class='chimneyimgwrapper' style='display:block;top:48%;left:10%'>";
 		chimneysHtml+="<img src='/images/chilliroad/chimneys/chimney4_200.png' />";
 		chimneysHtml+="</div>";
-		chimneysHtml+="<div id='alreadydonemessage' style='font-size:1.5em;margin-top:2%;'>";
+		chimneysHtml+="<div id='alreadydonemessage' >";
 		chimneysHtml+="<span >You already know all of these!</span>"
 		chimneysHtml+="</div>";
 		chimneysHtml+="</div>";//donemessage

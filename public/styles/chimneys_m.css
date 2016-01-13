@@ -1,3 +1,6 @@
+.chimneys{
+	margin-bottom:30%;
+}
 .satellite{
 	position:relative;
 }
@@ -137,11 +140,20 @@
 }
 
 #alldonemessage{
-	width: 50%;
+	/*width: 50%;*/
   /*float: left;*/
-  /* text-align: center; */
+   text-align: center; 
   margin-left: auto;
   margin-right: auto;
+  font-size:2.5em;
+	margin-top:2%;
+}
+
+#alreadydonemessage{
+	text-align:center;
+	font-size:1.5em;
+	margin-top:2%;
+
 }
 
 

@@ -1,6 +1,10 @@
 .hidden{
 	display:none;
 }
+#congrats.visible{
+	display:inline-block;
+	font-size:2.5em;
+}
 
 .visible{
 	display:block;

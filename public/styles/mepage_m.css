@@ -1,0 +1,101 @@
+input{
+	text-align:center;
+	font-size:1em;
+}
+
+
+.comment-text{
+    margin-top:8px;
+    overflow: hidden;
+  /*	height: 50px;*/
+  	text-align:center;
+    
+}
+.comment-text-text{
+    margin-left:0px;
+    font-size:1.2em;
+   
+}
+
+.avatartitle{
+  margin-top:7px;
+  font-weight:bold;
+}
+
+.avatartext{
+  font-style:italic;
+  margin-bottom: 12px;
+  margin-top:3px;
+}
+
+.myname{
+  padding-bottom:7px;
+  padding-top:7px;
+}
+#mescreenname{
+  font-size:1em;
+}
+
+.mepage-animate
+{
+  transition: all 0.1s;
+  -webkit-transition: all 0.1s;
+}
+
+.mepage-action-button-div{
+  height:34px;
+  margin-top:20px;
+}
+
+.mepage-action-button-div:hover {
+    opacity:0.80;
+}
+
+.mepage-action-button
+{
+   -webkit-transform: translateZ(0);
+  //position: absolute;
+  padding: 10px 40px;
+  margin: 0px 10px 10px 0px;
+  //float: left;
+  border-radius: 10px;
+  
+ // font-size: 25px;
+  color: #FFF;
+  text-decoration: none;  
+}
+
+.mepage-blue
+{
+  background-color: #3498DB;
+  border-bottom: 5px solid #2980B9;
+  text-shadow: 0px -2px #2980B9;
+}
+
+.mepage-red
+{
+  background-color: #E74C3C;
+  border-bottom: 5px solid #BD3E31;
+  text-shadow: 0px -2px #BD3E31;
+}
+
+.mepage-green
+{
+  background-color: #82BF56;
+  border-bottom: 5px solid #669644;
+  text-shadow: 0px -2px #669644;
+}
+
+.mepage-yellow
+{
+  background-color: #F2CF66;
+  border-bottom: 5px solid #D1B358;
+  text-shadow: 0px -2px #D1B358;
+}
+
+.mepage-action-button:active
+{
+  transform: translate(0px,5px);
+  -webkit-transform: translate(0px,5px);
+  border-bottom: 1px solid;
+}

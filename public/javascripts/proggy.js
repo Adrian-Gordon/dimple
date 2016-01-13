@@ -575,7 +575,7 @@ function shoeTreeCallback(el,assetid,iconurl){
 		text="Your shoes are already in the Shoe Tree<br><br> <a href=''>See them here</a>"
 	}
 	else{
-		text="Launch your shoes into <br><a href='/assemble/?a=1036&p=108&clon=-1.586969532072544&clat=54.98502899769934&z=17&sib=1036'>the shoe tree</a>"
+		text="Launch your shoes into <br><a href='/assemble/?a=1036&p=108'>the shoe tree</a>"
 	}
 	$('#comment-text-text').html(text);
 

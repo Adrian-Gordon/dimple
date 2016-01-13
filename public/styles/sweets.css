@@ -70,8 +70,12 @@
 
 #donemessage{
 	height:200px;
+  font-size: 1.5em;
+    padding-top: 2%;
 }
 
 #alreadydonemessage{
 	height:200px;
+  font-size: 1.5em;
+    padding-top: 2%;
 }
