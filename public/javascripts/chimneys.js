@@ -179,6 +179,7 @@ function chooses(letter){
 	}
 	else{
 		$('#failAudio')[0].play();
+		$('#failAudio')[0].load();
 	}
 
 	

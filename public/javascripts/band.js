@@ -32,7 +32,10 @@ function renderBand(asset,aaid,pid){
 	projectid=pid;
 	bandData=asset.data;
 
-	reportProgress(pid,aaid,asset.asset._id,true);
+	if(aaid !== 1064 || asset.asset._id !== 10125){
+		
+		reportProgress(pid,aaid,asset.asset._id,true);
+	}
 	//console.log("Asset: " + JSON.stringify(asset));
 
 	//var bandHtml="<div id=\"center\"><span class='helper'><img src='/images/chilliroad/band/play_grey.png'/></span></div>";
@@ -142,6 +145,7 @@ function createFields() {
 	        $("<div id='field" + i + "'class='field'><span class='helper'><img src='/images/chilliroad/band/" + imgFilename + status +".png' style='" + styles + "' onclick='selectInstrument(" + i + ")'/></span></div>").appendTo(container);
 	    }
 	    //console.log("thisSelectedIndex: " + thisSelectedIndex);
+	    console.log("Present Count: " + presentCount);
 	    if(thisSelectedIndex >= 0)
 	    		selectInstrument(thisSelectedIndex)
 }
@@ -208,7 +212,9 @@ function selectInstrument(i){
 
 	}
 	if((selectedCount==7)&&(completedCollection==true)){
+		//reportProgress(pid,1064,10125,true);
 		soundUrl="/audio/music/fulltrack.mp3";//the whole thing
+
 
 	}
 
