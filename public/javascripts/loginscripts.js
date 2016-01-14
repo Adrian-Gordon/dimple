@@ -262,6 +262,7 @@ function createNewUser(){ //create a new dummy user
 	    			$('#openModal').width($('#dimple-content').width());
 	    			$('#openModal').height($( window ).height());
 	    			//window.location='../assemble?a=1070&p=108';
+	    			$('#parselogin').css({top:$('#pageheader').height() + 'px'});
 	    			$('#parselogin').fadeIn('fast');//toggle();
 
 	  			},
