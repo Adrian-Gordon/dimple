@@ -195,28 +195,28 @@ div.upload input[type="file"] {
 	/*margin-left: 21px !important;*/ 
 	background: #BCC2C4; 
 	/*padding-top: 20px;*/
-	border-radius: 3px; 
-	-webkit-border-radius: 3px;
-	 -moz-border-radius: 3px;
-	  -o-border-radius: 3px; 
-	  -ms-border-radius: 3px; 
+	border-radius: 5px; 
+	-webkit-border-radius: 5px;
+	 -moz-border-radius: 5px;
+	  -o-border-radius: 5px; 
+	  -ms-border-radius: 5px; 
 	  position: absolute; 
-	  bottom: 65px; 
+	/*  bottom: 65px; */
 	  z-index: 999; }
 
 .comments-before-down { height: 13px; width: 27px; background: transparent url("/images/marker-down-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 147px; bottom: -12px; padding: 0 10px; }
 
-.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; bottom: 100px; padding: 0 10px; }
+.comments-before-up { height: 13px; width: 27px; background: transparent url("/images/marker-up-grey.png") no-repeat center top; background-size: 27px 13px; content: ' '; position: absolute; left: 137px; top:-13px; padding: 0 10px; }
 
 
 #comments-content {
   background: white;
-  height: 80px;
+ /* height: 80px;*/
   margin-top: 10px;
   margin-left: 10px;
   width: 280px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin-right: 10px;
+  margin-bottom: 10px;
    overflow-y: scroll;
 }
 
@@ -266,7 +266,7 @@ div.upload input[type="file"] {
     
 }
 .comment-text-text{
-    margin-left:10px;
+    margin-left:0px;
    
 }
 
