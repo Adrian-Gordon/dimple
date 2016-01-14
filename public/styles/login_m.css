@@ -54,7 +54,7 @@
   /*height: 80px;*/
   margin-top: 10px;
   margin-left: 10px;
-  width: 280px;
+  width: 500px;
   margin-right: 10px;
   margin-bottom: 10px;
     overflow-y: scroll;
@@ -63,12 +63,12 @@
 .login-close-button{
     position:absolute;
       top:0px;
-    left:280px
+    left:466px
     
 }
 
 .login-close-button-img{
-    width:20px;
+    width:50px;
   
 }
 
@@ -76,6 +76,8 @@
 
 
   float: left;
+  padding-right: 35px;
+
 
 }
 
@@ -111,23 +113,28 @@
 }
 .login-comment-text-text{
     margin-left:0px;
-    font-size:1.2em;
+    font-size:1.5em;
    
+}
+#avatar{
+  width:175px;
 }
 
 .avatartitle{
-  margin-top:7px;
   font-weight:bold;
+  padding-top: 15px;
+    padding-bottom: 10px;
 }
 
 .avatartext{
   font-style:italic;
-  margin-bottom: 12px;
-  margin-top:3px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .myname{
   padding-bottom:7px;
+  font-size:1.5em;
 }
 #screenname{
   font-size:1em;
@@ -142,7 +149,9 @@
 }
 
 .login-action-button-div{
-  height:34px;
+  font-size:2em;
+  height:50px;
+  padding-top:20px;
 }
 
 .login-action-button-div:hover {
