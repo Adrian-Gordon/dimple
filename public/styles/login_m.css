@@ -3,11 +3,11 @@
 #parselogin{
 	display:none;
 	width:100%;
-/*	position:fixed;
-	top:128px;
+	position:fixed;
+	/*top:128px;
 	left:50%;*/
 	transform: translate(-50%, 0);
-  z-index: 10000;
+  z-index: 100000;
   text-align:center;
 }
 
