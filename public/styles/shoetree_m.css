@@ -254,6 +254,7 @@ div.upload input[type="file"] {
 .comment-user{
     text-align:left;
     margin-top:5px;
+    font-size:2.2em;
 }
 
 
@@ -273,8 +274,12 @@ div.upload input[type="file"] {
    
 }
 
+#comment-user-username{
+  font-size:1em;
+}
+
 #comment-user-avatar{
-  width:20%;
+  width:30%;
   vertical-align:middle;
 }
 
@@ -283,7 +288,7 @@ div.upload input[type="file"] {
 .comment-text{
     margin-top:8px;
     overflow: hidden;
-    height: 50px;
+    min-height: 80px;
     text-align:left;
     
 }
