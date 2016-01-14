@@ -8,7 +8,7 @@ function showSignupDiv(){
 
 }
 
-
+ 
 function checkLogin(){
 var currentUser = Parse.User.current();
 if (currentUser) {
@@ -105,36 +105,63 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 			var currentUser = Parse.User.current(); 
 			if (currentUser) {//already logged in
 								//show the content
-				var avatarUrl=currentUser.get("avatarurl");
-				var screenname=currentUser.get('screenname');
-				$('#screenname').attr('value',screenname);
-				$('#mescreenname').attr('value',screenname);
-				console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
-				//remainingContentDiv.style.display='block';
-
-				if(typeof avatarUrl=='undefined'){
-			    	console.log("Go Get Avatarturl");
-
-			    	var url="../generateAvatar?userid=" + currentUser.getUsername();
-					
-					$.get(url).done(function(data){
-			      
-			      		console.log("avatarurl: " + JSON.stringify(data));
-			      		$('#avatar').attr('src',data.url);
-			      		currentUser.set("avatarurl",data.url);
-			      		currentUser.save();
 
 
-					}).fail(function(error) {
-					    console.log( "error" + JSON.stringify(error));
-					  });
-			    }
-			    else{
-			    	$('#avatar').attr('src',avatarUrl);
-			    }
+				//check that the user actually still exists
+				var query = new Parse.Query(Parse.User);
+				query.equalTo("username", currentUser.getUsername()); // find users that match
+				query.find({
+				    success: function (user) {
+				    	console.log(user);
+				    	if(user.length > 0){ //existing user, ok
+				    		var avatarUrl=currentUser.get("avatarurl");
+							var screenname=currentUser.get('screenname');
+							$('#screenname').attr('value',screenname);
+							$('#mescreenname').attr('value',screenname);
+							console.log("anonymously logged in: " + currentUser.getUsername() + " " + JSON.stringify(currentUser));
+							//remainingContentDiv.style.display='block';
+
+							if(typeof avatarUrl=='undefined'){
+						    	console.log("Go Get Avatarturl");
+
+						    	var url="../generateAvatar?userid=" + currentUser.getUsername();
+								
+								$.get(url).done(function(data){
+						      
+						      		console.log("avatarurl: " + JSON.stringify(data));
+						      		$('#avatar').attr('src',data.url);
+						      		currentUser.set("avatarurl",data.url);
+						      		currentUser.save();
+
+
+								}).fail(function(error) {
+								    console.log( "error" + JSON.stringify(error));
+								  });
+						    }
+						    else{
+						    	$('#avatar').attr('src',avatarUrl);
+						    }
+				    	}
+				    	else{//no such user, create nother one
+				    		console.log("currentUser doesn't exist")
+				    		createNewUser();
+
+				    	}
+				        
+				    },
+				    error: function (error) {
+				        //Show if no user was found to match
+				        console.log('error: ' + error);
+
+				    }
+				});
+
+
+				
 			}
 			else{ //create a new dummy user
-
+				createNewUser();
+				/*
 				var user = new Parse.User();
 				var userid=makeid(15);
 				user.set("username", userid);
@@ -176,7 +203,7 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 
 					}).fail(function(error) {
 					    console.log( "error" + JSON.stringify(error));
-					  });
+					  });*/
 		 
 				/*user.signUp(null, {
 		  			success: function(user) {
@@ -207,6 +234,76 @@ function checkLoginAnonymous(asset,assetassemblyid,projectid){
 	});
 
 	
+}
+
+function createNewUser(){ //create a new dummy user
+
+	var user = new Parse.User();
+	var userid=makeid(15);
+	user.set("username", userid);
+	user.set("password", "pwanonymous");
+	user.set("firstuse",true);
+
+
+	var url="../generateAvatar?userid=" + userid;
+		
+		$.get(url).done(function(data){
+      
+      		console.log("avatarurl: " + JSON.stringify(data));
+      		user.set("avatarurl",data.url);
+      		$('#avatar').attr('src',data.url);
+      		user.signUp(null, {
+	  			success: function(user) {
+	    		// Hooray! Let them use the app now.
+	    			
+	    			//remainingContentDiv.style.display='block';
+	    			//loginDiv.style.display='none';
+	    			console.log("created new anon user : " + user.getUsername() + " " + JSON.stringify(user));
+	    			$('#openModal').width($('#dimple-content').width());
+	    			$('#openModal').height($( window ).height());
+	    			//window.location='../assemble?a=1070&p=108';
+	    			$('#parselogin').fadeIn('fast');//toggle();
+
+	  			},
+	  			error: function(user, error) {
+	    			// Show the error message somewhere and let the user try again.
+	    			//if(error.code==202){
+	    				//msgspan.innerText=error.message;
+	    				//msgspan.style.display='block';
+						
+					//}
+					console.log("error: " + JSON.stringify(error))
+	 		 	}
+			});
+
+
+		}).fail(function(error) {
+		    console.log( "error" + JSON.stringify(error));
+		  });
+
+	/*user.signUp(null, {
+			success: function(user) {
+		// Hooray! Let them use the app now.
+			
+			//remainingContentDiv.style.display='block';
+			//loginDiv.style.display='none';
+			console.log("created new anon user : " + user.getUsername() + " " + JSON.stringify(user));
+
+			},
+			error: function(user, error) {
+			// Show the error message somewhere and let the user try again.
+			//if(error.code==202){
+				//msgspan.innerText=error.message;
+				//msgspan.style.display='block';
+				
+			//}
+			console.log("error: " + JSON.stringify(error))
+		 	}
+	});*/
+
+
+	
+
 }
 
 function parseLogin(){
