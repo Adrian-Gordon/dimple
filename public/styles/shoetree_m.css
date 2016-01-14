@@ -223,12 +223,12 @@ div.upload input[type="file"] {
 .close-button{
     position:absolute;
       top:0px;
-    left:400px
+    left:395px
     
 }
 
 .close-button-img{
-    width:40px;
+    width:50px;
   
 }
 
