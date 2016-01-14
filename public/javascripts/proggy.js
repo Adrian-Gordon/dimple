@@ -572,7 +572,7 @@ function shoeTreeCallback(el,assetid,iconurl){
 	$('#comment-user-username').text("The Shoe Tree");
 	var text;
 	if(checkProgress(proggyProjectid,1036,10042)){
-		text="Your shoes are already in the Shoe Tree<br><br> <a href=''>See them here</a>"
+		text="Your shoes are already in the Shoe Tree<br><br> <a href='/assemble/?a=1036&p=108'>See them here</a>"
 	}
 	else{
 		text="Launch your shoes into <br><a href='/assemble/?a=1036&p=108'>the shoe tree</a>"
