@@ -273,4 +273,23 @@ div.upload input[type="file"] {
    
 }
 
+#comment-user-avatar{
+  width:20%;
+  vertical-align:middle;
+}
+
+
+
+.comment-text{
+    margin-top:8px;
+    overflow: hidden;
+    height: 50px;
+    text-align:left;
+    
+}
+.comment-text-text{
+    margin-left:0px;
+   
+}
+
 
