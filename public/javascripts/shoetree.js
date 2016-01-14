@@ -248,7 +248,8 @@ function treeImageClick(){
 	var commentsWidth=$('#comments').width();	
 	var thisX=$(this).position().left - (commentsWidth /2);
 	var diff=0;
-	var cbPos=127;//150 - half of 47 (width of component)
+	//var cbPos=127;//150 - half of 47 (width of component)
+	var cbPos=$('#comments').width()/2 - $('#commentbefore').width() /2;
 
 	//var cbLeft=$('#commentbefore').position().left;
 
