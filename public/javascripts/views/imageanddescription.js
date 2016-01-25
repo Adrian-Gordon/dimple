@@ -7,8 +7,11 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
 		 template: _.template($('#image-and-description-template').html()),
 
 		 
-      initialize: function(){
-        this.options = _.extend({}, this.defaults, this.options);
+      initialize: function(options){
+        console.log('options: ' + JSON.stringify(options.targetModel));
+        this.options=options;
+        //this.options = _.extend({}, this.defaults, this.options);
+        console.log("options: " + JSON.stringify(this.options));
         console.log("ImageAndDescriptionView initialize model:" + JSON.stringify(this.model));
       	
         this.render();
@@ -18,6 +21,7 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
         //console.log("render EnterImageUrlView: " + this.template(this.model.toJSON()));
         //console.log("el contents: " + $(this.el).html());
         console.log(" ImageAndDescriptionView el: " + this.el);
+        console.log("IADView: targetModel: " + JSON.stringify(this.options.targetModel));
         $(this.el).html(this.template( this.model != null? this.model.toJSON(): null));
 
         var enterImageEl=$(this.el).find('.enterimageurldiv');
@@ -95,7 +99,13 @@ dimpleConsoleApp.ImageAndDescriptionView=Backbone.View.extend({
             }
           });
 
-          this.options.targetView.resetImageDisplay();
+          if(typeof this.options.targetView=='undefined'){
+            this.resetImageDisplay()
+          }
+          else {
+            this.resetImageDisplay();
+            this.options.targetView.resetImageDisplay();
+          }
         }
     
 

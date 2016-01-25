@@ -11,7 +11,8 @@ function renderFooterMenu(asset,aaid,pid){
 	 projectid=pid;
 	menuData=asset.data;
 
-	menuStr="";
+	//menuStr="<div id='footerplaceholder'></div>";
+    menuStr="";
 
 	//var widthPercent=Math.floor(100/menuData.menuitems.length);
 	var widthPercent=100/menuData.menuitems.length;
@@ -21,7 +22,7 @@ function renderFooterMenu(asset,aaid,pid){
 		menuStr+="<div class='menuitem' style='width:" + widthPercent + "%;background-color:" + menuItem.bgcolour + "'>" +"<div class='menuitemcontent' style='background-color:" + menuItem.bgcolour +"'><a class='" + menuItem.class+"' onclick='" + menuItem.onclickurl + "'>" + menuItem.title +"</a></div></div>";
 
 	}
-
+   
 	$('#' + menuData.divid).append(menuStr);
 	placeFooter();
 	//$(document.body).append("<div id='footermenu' style='display:none'>" + menuStr + "</div>");
@@ -44,6 +45,8 @@ function placeFooter() {
     console.log('footerHeight: ' + footerHeight);
     var offset = parseInt(windHeight) - parseInt(footerHeight);
     $('#footermenu').css('top',offset);
+    $("<div id='footerplaceholder'></div>").insertBefore($('#footermenu'));
+    $('#footerplaceholder').css('height',footerHeight);
 }
 
 function menuPreviewAssetAssembly(assetassemblyid,projectid){

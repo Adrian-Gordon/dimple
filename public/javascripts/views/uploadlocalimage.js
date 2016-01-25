@@ -4,8 +4,9 @@ dimpleConsoleApp.UploadLocalImageView=Backbone.View.extend({
 		 template: _.template($('#upload-local-image-template').html()),
 
 		 
-      initialize: function(){
-      	
+      initialize: function(options){
+        this.options=options;
+      	this.options = _.extend({}, this.defaults, this.options);
         this.render();
       },
       render: function(){

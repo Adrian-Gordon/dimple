@@ -1405,12 +1405,15 @@ function renderAssetAssembly(device,res){
 
   returnObject.assets=new Array(nAssets);
 
+  logger.info("RETURN OBJECT: " + JSON.stringify(returnObject));
+
   if(nAssets==0){
       res.render('assetassembly',returnObject);
   }
 
   else{
     for(var i=0;i<nAssets;i++){
+    //for(var i=0;i<1;i++){
 
     logger.info("asset: " + JSON.stringify(sortedAssets[i]));
      var assetIndex=sortedAssets[i].index;
@@ -1434,16 +1437,16 @@ function renderAssetAssembly(device,res){
               var nPresentations=presentations.length;
 
               for(var i=0;i<nPresentations;i++){
-              var thisPresentation=presentations[i];
+                    var thisPresentation=presentations[i];
 
-              if(typeof selectedPresentation=='undefined'){
-                if(thisPresentation.width <= device.max_image_width)
-                    selectedPresentation=thisPresentation;
-              }
-              else if((thisPresentation.width > selectedPresentation.width)&&(thisPresentation.width <= device.max_image_width)){
-                selectedPresentation=thisPresentation;
+                    if(typeof selectedPresentation=='undefined'){
+                      if(thisPresentation.width <= device.max_image_width)
+                          selectedPresentation=thisPresentation;
+                    }
+                    else if((thisPresentation.width > selectedPresentation.width)&&(thisPresentation.width <= device.max_image_width)){
+                      selectedPresentation=thisPresentation;
 
-              }
+                    }
               }
 
                returnObject.assets[index].posterurl=selectedPresentation.url;
@@ -1471,6 +1474,7 @@ function renderAssetAssembly(device,res){
                     else res.end(device.aacallback + '(' + JSON.stringify(returnObject) + ')');
                   }
                   else if(device.returnType=='html'){
+                    logger.info("returnObject.assets: " + JSON.stringify(returnObject.assets));
                     //render through a jade template
                     //logger.info("output html");
                    // logger.info("stylestring: " + returnObject.stylestring);
@@ -1732,7 +1736,8 @@ function renderAssetAssembly(device,res){
                 //logger.info("output html");
                 //logger.info("stylestring: " + returnObject.stylestring);
                 //res.render('assetassembly',returnObject);
-                logger.info("returnObject: " + JSON.stringify(returnObject));
+                //logger.info("returnObject: " + JSON.stringify(returnObject));
+                logger.info("returnObject.assets: " + JSON.stringify(returnObject.assets));
                 res.render('assetassembly',returnObject);
               }
               else res.end();

@@ -18,8 +18,8 @@ div(id='dimple-content' class='dimple-body')
 	if ((typeof subtitle !== 'undefined')&&(subtitle !== null)&&(subtitle !== ""))
 		div(id='asset-assembly-subtitle' class='asset-assembly-subtitle') !{subtitle}
 	-var callbackStr=""
-		each asset,index in assets
-			if((asset.assettypeid==0)&&(asset.mimetype=='text/json'))
+		each asset in assets
+			if(asset&&(asset.assettypeid==0)&&(asset.mimetype=='text/json'))
 				-callbackStr+=asset.data.scriptcall +"(" + JSON.stringify(asset) + "," + assetassemblyid + "," + projectid + ");"
 		script.
 			function progresscallback(){
@@ -40,60 +40,62 @@ div(id='dimple-content' class='dimple-body')
 				
 				getDimpleUserProgress(progresscallback)
 			});
-
-		each asset, index in assets
-			if asset.assettypeid==0
-				if(asset.mimetype=='text/html')
-					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-						div(class='text-item-title')
-							|!{asset.assetcaption }
-					div(class='text-item')
-						|!{asset.data}
-				else if(asset.mimetype=='text/json')
-					div(class='json-text-item' id='json-attr-' +asset.asset._id )
-					if(asset.data)
-						if(asset.data.libraries)
-							each library in asset.data.libraries
-								script(src="" + library)
-					div(id='' + asset.data.divid class='' + asset.data.divclass)
-					if(!iswirelessdevice && typeof asset.data.stylesurl !== 'undefined')
-						link(rel='stylesheet',href='' +asset.data.stylesurl)
-					else if(iswirelessdevice && typeof asset.data.mstylesurl !== 'undefined')
-						link(rel='stylesheet',href='' +asset.data.mstylesurl)
-					script(src="" + asset.data.scriptsrc)
-			else if asset.assettypeid==1
-				- nextVideoAssetIndex++
-				if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-					div(class='image-caption-above')
-						|!{asset.assetcaption}
-
-				if(typeof serveQuicktime !== 'undefined')
-					div(id='videoasset' + nextVideoAssetIndex)
-						video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
-				else if(!iswirelessdevice)
-					video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-					if(typeof asset.urls != 'undefined')
-						source(src='' + asset.urls[0].url type='' + asset.urls[0].mimetype)
-						source(src='' + asset.urls[1].url type='' + asset.urls[1].mimetype)
-				else 
-					video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
-						source(src='' + asset.url type='' + asset.mimetype)
-			else if asset.assettypeid==2
-					-nextAudioAssetId++;
+		each asset in assets
+			-console.log("ASSET: " + JSON.stringify(asset));
+			if(asset)
+				if(asset.assettypeid==0)
+					if(asset.mimetype=='text/html')
+						if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+							div(class='text-item-title')
+								|!{asset.assetcaption }
+						div(class='text-item')
+							|!{asset.data}
+					else if(asset.mimetype=='text/json')
+						div(class='json-text-item' id='json-attr-' +assetid )
+						if(asset.data)
+							if(asset.data.libraries)
+								each library in asset.data.libraries
+									script(src="" + library)
+						div(id='' + asset.data.divid class='' + asset.data.divclass)
+						if(!iswirelessdevice && typeof asset.data.stylesurl !== 'undefined')
+							link(rel='stylesheet',href='' +asset.data.stylesurl)
+						else if(iswirelessdevice && typeof asset.data.mstylesurl !== 'undefined')
+							link(rel='stylesheet',href='' +asset.data.mstylesurl)
+						script(src="" + asset.data.scriptsrc)
+				else if asset.assettypeid==1
+					- nextVideoAssetIndex++
 					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
 						div(class='image-caption-above')
-							| !{asset.assetcaption}
-					div(id='audiodiv' + nextAudioAssetId)
-					div(class='audioimgdiv')
-						img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
+							|!{asset.assetcaption}
 
-			else if((asset.assettype==3)||(asset.assettype==4))
-					div(class='dimple-image-asset-div')
-						img(class='dimple-image-asset' src='' + asset.url)
-					if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
-						div(class='image-caption-below')
-							| !{asset.assetcaption}
-	
-		
+					if(typeof serveQuicktime !== 'undefined')
+						div(id='videoasset' + nextVideoAssetIndex)
+							video(controls='controls' width='100%' src='' + asset.url poster=''+asset.posterurl)
+					else if(!iswirelessdevice)
+						video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+						if(typeof asset.urls != 'undefined')
+							source(src='' + asset.urls[0].url type='' + asset.urls[0].mimetype)
+							source(src='' + asset.urls[1].url type='' + asset.urls[1].mimetype)
+					else 
+						video(id='video' + nextVideoAssetIndex class='video-js vjs-default-skin' controls preload='auto' width="100%" poster=''+asset.posterurl)
+							source(src='' + asset.url type='' + asset.mimetype)
+				else if asset.assettypeid==2
+						-nextAudioAssetId++;
+						if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+							div(class='image-caption-above')
+								| !{asset.assetcaption}
+						div(id='audiodiv' + nextAudioAssetId)
+						div(class='audioimgdiv')
+							img(id='' + nextAudioAssetId width='150px' src='' + asset.posterurl onclick="playSound(" + nextAudioAssetId + ",'" + asset.url + "')")
+				else if((asset.assettypeid==3)||(asset.assettypeid==4))
+						div(class='dimple-image-asset-div')
+							img(class='dimple-image-asset' src='' + asset.url)
+						if((asset.assetcaption !== 'undefined')&&(asset.assetcaption !== "")&&(asset.assetcaption != null)&&(asset.assetcaption !='null'))
+							div(class='image-caption-below')
+								| !{asset.assetcaption}	
+					
 
-			
+
+
+
+
