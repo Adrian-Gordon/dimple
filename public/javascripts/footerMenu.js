@@ -33,7 +33,7 @@ $(function(){
     	console.log("Resized");
         placeFooter();
     });
-    placeFooter();
+   // placeFooter();
     // hide it before it's positioned
     $('#footermenu').css('display','inline');
 });

@@ -84,6 +84,7 @@ div.infoBox img:first-child{
 
 .comment-img-img{
    width:100% !important;
+    height:100%;
 }
 
 .comment-user{
